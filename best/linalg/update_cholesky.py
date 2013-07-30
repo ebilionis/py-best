@@ -28,7 +28,7 @@ def update_cholesky(L, B, C):
         D22 * D22.T = C - D21 * D21.T.
 
     Arguments:
-        L       ---         The Cholesky decomposition of the original 
+        L       ---         The Cholesky decomposition of the original
                             n x n matrix.
         B       ---         The n x m upper right part of the new matrix.
         C       ---         The m x m bottom diagonal part of the new matrix.

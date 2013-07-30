@@ -56,6 +56,22 @@ class BestLinAlgTest(unittest.TestCase):
         print 'with np.linalg.solve(np.kron(A1, A2), y):'
         print z
 
+    def test_update_cholesky(self):
+        print '-------------------------------------'
+        print 'Testing best.linalg.update_cholesky()'
+        print '-------------------------------------'
+        A = np.array([[2, -1, 0], [-1, 2, -1], [0, -1, 2]])
+        A_new = np.array([[2, -1, 0, 0], [-1, 2, -1, 0], [0, -1, 2, -1],
+                      [0, 0, -1, 2]])
+        L = np.linalg.cholesky(A)
+        B = A_new[:3, 3:]
+        C = A_new[3:, 3:]
+        L_new = best.linalg.update_cholesky(L, B, C)
+        print 'Compare best.linalg.update_cholesky(L, B, C):'
+        print L_new
+        print 'with np.linalg.cholesky(A_new):'
+        print np.linalg.cholesky(A_new)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -125,6 +125,24 @@ scipy but are extremely useful in various Bayesian problems.
     :returns: The lower Cholesky decomposition of the new matrix.
     :rtype: 2D numpy array
 
+    Here is an example:
+
+    >>> import numpy as np
+    >>> import best.linalg
+    >>> A = np.array([[2, -1, 0], [-1, 2, -1], [0, -1, 2]])
+    >>> A_new = np.array([[2, -1, 0, 0], [-1, 2, -1, 0], [0, -1, 2, -1],\
+                         [0, 0, -1, 2]])
+    >>> L = np.linalg.cholesky(A)
+    >>> B = A_new[:3, 3:]
+    >>> C = A_new[3:, 3:]
+    >>> L_new = best.linalg.update_cholesky(L, B, C)
+
+    to be compared with:
+
+    >>> ...
+    >>> L_new = np.linalg.cholesky(A_new)
+
+
 .. function:: best.linalg.update_cholesky_linear_system(x, L_new, z)
 
     Update the solution of Cholesky-solved linear system.
