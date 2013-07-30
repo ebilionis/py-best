@@ -1,0 +1,287 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Linear Algebra &mdash; Bayesian Exploration Statistical Toolbox 0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Bayesian Exploration Statistical Toolbox 0 documentation" href="index.html" />
+    <link rel="up" title="Reference Guide" href="reference.html" />
+    <link rel="prev" title="Reference Guide" href="reference.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="reference.html" title="Reference Guide"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" accesskey="U">Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="linear-algebra">
+<h1>Linear Algebra<a class="headerlink" href="#linear-algebra" title="Permalink to this headline">¶</a></h1>
+<p>The linear module (<tt class="xref py py-mod docutils literal"><span class="pre">best.linalg</span></tt>)
+defines several functions that cannot be found in numpy or
+scipy but are extremely useful in various Bayesian problems.</p>
+<dl class="function">
+<dt id="best.linalg.kron_prod">
+<tt class="descclassname">best.linalg.</tt><tt class="descname">kron_prod</tt><big>(</big><em>A</em>, <em>x</em><big>)</big><a class="headerlink" href="#best.linalg.kron_prod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiply a Kronecker product of matrices with a vector.</p>
+<dl class="docutils">
+<dt>The function computes the product:</dt>
+<dd><div class="first last math">
+<p><img src="_images/math/3a2c086439c21d27eeebc6d858466abe777bea91.png" alt="\mathbf{y} = (\otimes_{i=1}^s \mathbf{A}_i) \mathbf{x},"/></p>
+</div></dd>
+</dl>
+<p>where <img class="math" src="_images/math/5b4f160958078abb4a29e3e3545270fb7a86ff8d.png" alt="\mathbf{A}_i"/> are suitable matrices.
+The characteristic of the routine is that it does not form the
+Kronecker product explicitly. Also, <img class="math" src="_images/math/5f61118f2ae912f86e683687c005145b5eb54aec.png" alt="\mathbf{x}"/> can be a
+matrix of appropriate dimensions. Of course, it will throw an
+exception if you don&#8217;t have the dimensions right.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>A</strong> (<em>a matrix or a collection -list or tuple- of 2D numpy arrays.</em>) &#8211; Represents the Kronecker product of matrices.</li>
+<li><strong>x</strong> (<em>numpy 1D or 2D array.</em>) &#8211; The vector you want to multiply the matrix with.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The product.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">A numpy array of the same type as x.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Here is an example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">best</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A2</span> <span class="o">=</span> <span class="n">A1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">A1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">A2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">best</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">kron_prod</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="best.linalg.kron_solve">
+<tt class="descclassname">best.linalg.</tt><tt class="descname">kron_solve</tt><big>(</big><em>A</em>, <em>y</em><big>)</big><a class="headerlink" href="#best.linalg.kron_solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve a linear system involving Kronecker products.</p>
+<dl class="docutils">
+<dt>The function solves the following linear system:</dt>
+<dd><div class="first last math">
+<p><img src="_images/math/7023e70b35bc9d92b561ce59c7b589e4231ad6e8.png" alt="(\otimes_{i=1}^s\mathbf{A}_i)\mathbf{x} = \mathbf{y},"/></p>
+</div></dd>
+</dl>
+<p>where <img class="math" src="_images/math/5b4f160958078abb4a29e3e3545270fb7a86ff8d.png" alt="\mathbf{A}_i"/> are suitable matrices and
+<img class="math" src="_images/math/6c382eeb0dad017400c2bb6e32c2d5bdf4002c3e.png" alt="\mathbf{y}"/> is a vector or a matrix.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>A</strong> (<em>a matrix or a collection -list or tuple- of 2D numpy arrays.</em>) &#8211; Represents a Kronecker product of matrices.</li>
+<li><strong>y</strong> (<em>a 1D or 2D numpy array</em>) &#8211; The right hand side of the equation.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The solution of the linear system.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">A numpy array of the same type as y.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Here is an example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A2</span> <span class="o">=</span> <span class="n">A1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">A1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">A2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">best</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">kron_solve</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="best.linalg.update_cholesky">
+<tt class="descclassname">best.linalg.</tt><tt class="descname">update_cholesky</tt><big>(</big><em>L</em>, <em>B</em>, <em>C</em><big>)</big><a class="headerlink" href="#best.linalg.update_cholesky" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the Cholesky decomposition of a matrix.</p>
+<p>We assume that <img class="math" src="_images/math/f36a69e6a3b183e05991c8cafae387e99ae527e4.png" alt="\mathbf{L}"/> is the lower Cholesky decomposition
+of an <img class="math" src="_images/math/93f761f7fc79f2bec21a2f31c896840d6f36cdc0.png" alt="n\times n"/> matrix <img class="math" src="_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}"/>, and we want to
+calculate the Cholesky decomposition of the <img class="math" src="_images/math/777df8b723731e75c562bc67723097e994191db6.png" alt="(n+m)\times (n+m)"/>
+matrix:</p>
+<div class="math">
+<p><img src="_images/math/9a184154fd236549a22f2f85cdbde4a684f6a8a3.png" alt="\mathbf{A}' = \left(\begin{array}{cc}\mathbf{A}&amp; \mathbf{B}\\
+\mathbf{B}^T &amp; \mathbf{C} \end{array}\right)"/></p>
+</div><p>It can be easily shown that the Cholesky decomposition of
+<img class="math" src="_images/math/300e827d5db49d05c7a3f15df0a18574576a04fe.png" alt="\mathbf{A}'"/> is given by:</p>
+<div class="math">
+<p><img src="_images/math/ab5e854fdee1aa98f04aafacbc76b1af9700f350.png" alt="\mathbf{L}' = \left(\begin{array}{cc}\mathbf{L}&amp; \mathbf{0}\\
+\mathbf{D}_{21} &amp; \mathbf{D}_{22}\end{array}\right)"/></p>
+</div><p>where</p>
+<div class="math">
+<p><img src="_images/math/ec8d84c9efc7d19eac0c409046cbc5baadf03823.png" alt="\mathbf{B} = \mathbf{L} \mathbf{D}_{21}^T"/></p>
+</div><p>and</p>
+<div class="math">
+<p><img src="_images/math/51e45539a873473cd8ac11ebdd9777b016691140.png" alt="\mathbf{D}_{22} \mathbf{D}_{22} = \mathbf{C}
+- \mathbf{D}_{21}\mathbf{D}_{21}^T."/></p>
+</div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>L</strong> (<em>2D numpy array</em>) &#8211; The Cholesky decomposition of the original matrix.</li>
+<li><strong>B</strong> (<em>2D numpy array</em>) &#8211; The <img class="math" src="_images/math/2404aa4ed92595857808d8bb64c19b016052393f.png" alt="n\times m"/> upper right part of the new matrix.</li>
+<li><strong>C</strong> (<em>2D numpy array</em>) &#8211; The <img class="math" src="_images/math/b14bc3643f1284db09548c8934785923dfebaad2.png" alt="m\times m"/> bottom diagonal part of the new matrix.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The lower Cholesky decomposition of the new matrix.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">2D numpy array</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="best.linalg.update_cholesky_linear_system">
+<tt class="descclassname">best.linalg.</tt><tt class="descname">update_cholesky_linear_system</tt><big>(</big><em>x</em>, <em>L_new</em>, <em>z</em><big>)</big><a class="headerlink" href="#best.linalg.update_cholesky_linear_system" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the solution of Cholesky-solved linear system.</p>
+<p>Assume that originally we had an <img class="math" src="_images/math/93f761f7fc79f2bec21a2f31c896840d6f36cdc0.png" alt="n\times n"/> lower triangular
+matrix <img class="math" src="_images/math/f36a69e6a3b183e05991c8cafae387e99ae527e4.png" alt="\mathbf{L}"/> and that we have already solved the linear
+system:</p>
+<div class="math">
+<p><img src="_images/math/feb0ffc9818b81e7a9d80deb6ed882c0678a8863.png" alt="\mathbf{L} \mathbf{x} = \mathbf{y},"/></p>
+</div><p>Now, we wish to solve the linear system:</p>
+<div class="math">
+<p><img src="_images/math/0024df2e8c64cf78d26b415573eb29a775a0d075.png" alt="\mathbf{L}'\mathbf{x}' = \mathbf{y}',"/></p>
+</div><p>where <img class="math" src="_images/math/f36a69e6a3b183e05991c8cafae387e99ae527e4.png" alt="\mathbf{L}"/> is again lower triangular matrix whose
+top <img class="math" src="_images/math/c3d38f82f48ef9e81c04d49354293305b0067afc.png" alt="n \times n"/> component is identical to <img class="math" src="_images/math/f36a69e6a3b183e05991c8cafae387e99ae527e4.png" alt="\mathbf{L}"/>
+and <img class="math" src="_images/math/cf0f444fe754ad75a8ffc2fb9c44f6bdcc7b2ac8.png" alt="\mathbf{y}'"/> is <img class="math" src="_images/math/d8de90c74edd40d3ee41dd3b41df0b521807eee7.png" alt="(\mathbf{y}, \mathbf{z})"/>. The
+solution is:</p>
+<div class="math">
+<p><img src="_images/math/327d6a6c55f72a103de5238248bc9b3cf31365b8.png" alt="\mathbf{x}' = (\mathbf{x}, \mathbf{x}_u),"/></p>
+</div><p>where <img class="math" src="_images/math/fb87ace223168d725d1223c1fd42622d1900fed8.png" alt="\mathbf{x}_u"/> is the solution of the triangular system:</p>
+<div class="math">
+<p><img src="_images/math/82c8490c311bec689457c7a36f7a3f45f3cd186a.png" alt="\mathbf{L}_{22}' * \mathbf{x}_u = \mathbf{z} - \mathbf{L}_{21}' \mathbf{x},"/></p>
+</div><p>where <img class="math" src="_images/math/8d22b7ab692b52bf6adabb91b858f933f44631e2.png" alt="\mathbf{L}_{22}'"/> is the lower <img class="math" src="_images/math/b14bc3643f1284db09548c8934785923dfebaad2.png" alt="m\times m"/>
+component of <img class="math" src="_images/math/f6d9219edb72c449662c33f3c779d39c4314d956.png" alt="\mathbf{L}'"/> and <img class="math" src="_images/math/c7d2d81b508eb22a5994597780ea9615d74146ba.png" alt="\mathbf{L}_{21}'"/> is the
+<img class="math" src="_images/math/520df6c71065c91174d0ed0d562ebd3c5980267f.png" alt="m\times n"/> bottom left component of <img class="math" src="_images/math/f6d9219edb72c449662c33f3c779d39c4314d956.png" alt="\mathbf{L}'"/>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>1D or 2D numpy array</em>) &#8211; The solution of the first Cholesky system.</li>
+<li><strong>L_new</strong> (<em>2D numpy array</em>) &#8211; The new Cholesky factor (see <a class="reference internal" href="#best.linalg.update_cholesky" title="best.linalg.update_cholesky"><tt class="xref py py-func docutils literal"><span class="pre">best.linalg.update_cholesky()</span></tt></a>)</li>
+<li><strong>z</strong> (<em>numpy array of the same type as x</em>) &#8211; The new part of <img class="math" src="_images/math/6c382eeb0dad017400c2bb6e32c2d5bdf4002c3e.png" alt="\mathbf{y}"/>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The solution of the linear system.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy array of the same type as x</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="reference.html"
+                        title="previous chapter">Reference Guide</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/linalg.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="reference.html" title="Reference Guide"
+             >previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" >Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Ilias Bilionis, Nicholas Zabaras.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
