@@ -27,16 +27,27 @@ scipy but are extremely useful in various Bayesian problems.
     :param x: The vector you want to multiply the matrix with.
     :type x: numpy 1D or 2D array.
     :return: The product.
-    :rtype: A numpy array of the same type as x.
+    :rtype: A 2D numpy array. If x was 1D, then it represents a columnt\
+            matrix (i.e., a vector).
 
     Here is an example:
 
-    >>> import best
+    >>> import numpy as np
+    >>> import best.linalg
     >>> A1 = np.array([[2, -1, 0], [-1, 2, -1], [0, -1, 2]])
     >>> A2 = A1
     >>> A = (A1, A2)
-    >>> x = np.ones(A1.shape[1] * A2.shape[1])
+    >>> x = np.random.randn(A1.shape[1] * A2.shape[1])
     >>> y = best.linalg.kron_prod(A, x)
+
+    You should compare the result with:
+
+    >>> ...
+    >>> z = np.dot(np.kron(A1, A2), x)
+
+    The last ones forms the Kronecker product explicitly and uses much more
+    memory.
+
 
 .. function:: best.linalg.kron_solve(A, y)
 
@@ -58,11 +69,21 @@ scipy but are extremely useful in various Bayesian problems.
 
     Here is an example:
 
+    >>> import numpy as np
+    >>> import best.linalg
     >>> A1 = np.array([[2, -1, 0], [-1, 2, -1], [0, -1, 2]])
     >>> A2 = A1
     >>> A = (A1, A2)
     >>> y = np.random.randn(A1.shape[1] * A2.shape[1])
     >>> x = best.linalg.kron_solve(A, y)
+
+    Compare this with:
+
+    >>> ...
+    >>> z = np.linalg.solve(np.kron(A1, A2), y)
+
+    which actually builds the Kronecker product.
+
 
 .. function:: best.linalg.update_cholesky(L, B, C)
 

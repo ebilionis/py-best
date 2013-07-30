@@ -1,9 +1,7 @@
-"""
+"""Matrix multiplication with Kronekcer products.
 
-.. module: best.linalg.kron_prod
-   :synopsis: Matrix multiplication with Kronecker products.
-
-.. moduleauthor: Ilias Bilionis <ebilionis@gmail.com>
+Author:
+    Ilias Bilionis
 
 """
 
@@ -11,29 +9,27 @@
 import numpy as np
 
 
-def kron_prod(A, x):
+def kron_prod(A, x, x_is_1d=False):
     """Matrix multiplication with Kronecker products.
 
-    The routine computes the product:
-        .. math::
-            \mathbf{y} = (\otimes_{i=1}^s \mathbf{A}_i) \mathbf{x},
-            
-    where :math:`\mathbf{A}_i` are suitable matrices.
-    The characteristic of the routine is that it does not form the
-    Kronecker product explicitly. Also, :math:`\mathbf{x}` can be a
-    matrix of appropriate dimensions.
+    Note:
+        The formula we use is recursive and it is not necessarily the
+        most memory efficient way to do this product for non-square
+        matrices. However, it is very simple.
 
-    :param A: A collection of matrices whose Kronecker product is assumed.
-    :param x: A vector or a matrix.
-    :returns: A numpy array containing the result of the computation.
+    Arguments:
+        A   ---    A single matrix or a collection of matrices representing
+                   Kronecker product.
+        x   ---    A 1D or 2D numpy array to multiply with A.
 
-    Here is an example:
+    Keyword Arguments:
+        x_is_1d     ---     This is for internal use. Do not play with it
+                            because it will mess up the shape of the output.
 
-    >>> A1 = np.array([[2, -1, 0], [-1, 2, -1], [0, -1, 2]])
-    >>> A2 = A1
-    >>> A = (A1, A2)
-    >>> x = np.ones(A1.shape[1] * A2.shape[1])
-    >>> y = best.linalg.kron_prod(A, x)
+    Return:
+        The product of the Kronecker product matrix represented by A and
+        the numpy array x. Notice that if x is 1D array, then y will be
+        a 2D numpy array (column matrix).
     """
     m = A[-1].shape[0]
     n = A[-1].shape[1]
@@ -47,7 +43,7 @@ def kron_prod(A, x):
     else:
         s = np.vsplit(Z.T, q)
         st = np.hstack(s)
-        r = kron_prod(A[:-1], st)
+        r = kron_prod(A[:-1], st, x_is_1d=x_is_1d)
         s = np.vsplit(r.T, q)
         j = np.hstack(s)
         y = j.reshape((np.prod(j.shape) / q, q), order='F')

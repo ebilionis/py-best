@@ -1,1 +1,7 @@
 *.pyc
+*.html
+*.pickle
+*.inv
+*.js
+*.png
+*doctree*
