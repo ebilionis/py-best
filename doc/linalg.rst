@@ -4,7 +4,7 @@ Linear Algebra
 .. module: best.linalg
     :synopsis: Some linear algebra routines.
 
-The linear module (:mod:`best.linalg`)
+The linear algebra module (:mod:`best.linalg`)
 defines several functions that cannot be found in numpy or
 scipy but are extremely useful in various Bayesian problems.
 

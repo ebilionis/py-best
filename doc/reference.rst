@@ -18,3 +18,4 @@ The BEST package is split in several submodules:
    :maxdepth: 2
 
    linalg
+   maps

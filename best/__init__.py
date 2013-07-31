@@ -27,6 +27,7 @@ BEST is split in several (mostly) independent submodules:
 
 
 import linalg
+import maps
 #from solver import Solver
 #from binary_tree import BinaryTree
 #from random_element import RandomElement

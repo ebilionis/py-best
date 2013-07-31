@@ -13,7 +13,11 @@ import numpy as np
 
 class Function(object):
 
-    """A class representing an arbitrary function."""
+    """A class representing an arbitrary multi-input/output function.
+
+    Everything in Best that can be thought of as a function should be
+    a child of this class.
+    """
 
     # A name for this function
     _name = None
@@ -137,12 +141,12 @@ class Function(object):
             func = Function(self.num_input, self.num_output, f_wrapped=func)
         f = FunctionMultiplication((self, func))
         return f
-    
+
     def compose(self, func):
         """Compose two functions."""
         f = FunctionComposition((self, func))
         return f
-    
+
     def _to_string(self, pad):
         """Return a padded string representation."""
         s = pad + self.name + ':R^' + str(self.num_input) + ' --> '
@@ -150,30 +154,30 @@ class Function(object):
         if self.is_function_wrapper:
             s += ' (function wrapper)'
         return s
-    
+
     def __str__(self):
         """Return a string representation of this object."""
         return self._to_string('')
 
 
 class _FunctionCollection(Function):
-    
+
     """A collection of functions."""
-    
+
     # The functions (a tuple)
     _functions = None
-    
+
     @property
     def functions(self):
         """Get the functions involved in the summation."""
         return self._functions
-    
+
     def __init__(self, functions, name='Function Collection'):
         """Initialize the object.
-        
+
         Aruguments:
             functions   ---     A tuple of functions.
-        
+
         """
         if not isinstance(functions, tuple):
             raise TypeError('functions must be a tuple')
@@ -189,7 +193,7 @@ class _FunctionCollection(Function):
                     'All functions must have the same dimensions.')
         self._functions = functions
         super(_FunctionCollection, self).__init__(num_input, num_output, name=name)
-    
+
     def _to_string(self, pad):
         """Return a string representation with padding."""
         s = super(_FunctionCollection, self)._to_string(pad)
@@ -199,13 +203,13 @@ class _FunctionCollection(Function):
 
 
 class FunctionSum(_FunctionCollection):
-    
+
     """Define the sum of functions."""
-    
+
     def __init__(self, functions, name='Function Sum'):
         """Initialize the object."""
         super(FunctionSum, self).__init__(functions, name=name)
-    
+
     def __call__(self, x, y=None):
         """Evaluate the function."""
         return_y = False
@@ -216,16 +220,16 @@ class FunctionSum(_FunctionCollection):
             y += f(x)
         if return_y:
             return y
-    
+
 
 class FunctionMultiplication(_FunctionCollection):
-    
+
     """Define the multiplication of functions (element wise)"""
-    
+
     def __init__(self, functions, name='Function Multiplication'):
         """Initialize the object."""
         super(FunctionMultiplication, self).__init__(functions, name=name)
-    
+
     def __call__(self, x, y=None):
         """Evaluate the function."""
         return_y = False
@@ -239,17 +243,17 @@ class FunctionMultiplication(_FunctionCollection):
 
 
 class ConstantFunction(Function):
-    
+
     """Define a constant function."""
-    
+
     # The constant
     _const = None
-    
+
     @property
     def const(self):
         """Get the constant."""
         return self._const
-    
+
     def __init__(self, num_input, const, name='Constant Function'):
         """Initialize the object.
 
@@ -289,10 +293,10 @@ class FunctionComposition(Function):
     def functions(self):
         """Get the functions."""
         return self._functions
-    
+
     def __init__(self, functions, name='Function composition'):
         """Initialize the object.
-        
+
         Arguments:
             functions   ---     Function to be composed.
         """
@@ -306,7 +310,7 @@ class FunctionComposition(Function):
                                  + str(functions[i]) + ' do not agree.')
         self._functions = functions
         super(FunctionComposition, self).__init__(num_input, num_output, name=name)
-    
+
     def __call__(self, x, y=None):
         """Evaluate the function at x."""
         z = x
@@ -316,7 +320,7 @@ class FunctionComposition(Function):
             return z
         else:
             y[:] = z
-    
+
     def _to_string(self, pad):
         """Return a string representation of the object."""
         s = super(FunctionComposition, self)._to_string(pad)
@@ -325,28 +329,28 @@ class FunctionComposition(Function):
         return s
 
 class FunctionPower(Function):
-    
+
     """Raise a function to a given power."""
-    
+
     # The underlying function object.
     _function = None
-    
+
     # The exponent
     _exponent = None
-    
+
     @property
     def function(self):
         """Get the funciton object."""
         return self._function
-    
+
     @property
     def exponent(self):
         """Get the exponent."""
         return self._exponent
-    
+
     def __init__(self, f, exponent, name='Function Power'):
         """Initialize the object.
-        
+
         Arguments:
             f       ---     The underlying function.
             exponent---     The exponent to which you want to raise it.
@@ -358,7 +362,7 @@ class FunctionPower(Function):
             raise TypeError('The exponent must be an scalar.')
         self._exponent = exponent
         super(FunctionPower, self).__init__(f.num_input, f.num_output, name=name)
-    
+
     def __call__(self, x, y=None):
         """Evaluate the function at x."""
         if y is None:
