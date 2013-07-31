@@ -79,7 +79,6 @@ scipy but are extremely useful in various Bayesian problems.
 
     Compare this with:
 
-    >>> ...
     >>> z = np.linalg.solve(np.kron(A1, A2), y)
 
     which actually builds the Kronecker product.
@@ -131,7 +130,7 @@ scipy but are extremely useful in various Bayesian problems.
     >>> import best.linalg
     >>> A = np.array([[2, -1, 0], [-1, 2, -1], [0, -1, 2]])
     >>> A_new = np.array([[2, -1, 0, 0], [-1, 2, -1, 0], [0, -1, 2, -1],\
-                         [0, 0, -1, 2]])
+    ...                   [0, 0, -1, 2]])
     >>> L = np.linalg.cholesky(A)
     >>> B = A_new[:3, 3:]
     >>> C = A_new[3:, 3:]
@@ -139,7 +138,6 @@ scipy but are extremely useful in various Bayesian problems.
 
     to be compared with:
 
-    >>> ...
     >>> L_new = np.linalg.cholesky(A_new)
 
 
@@ -184,3 +182,22 @@ scipy but are extremely useful in various Bayesian problems.
     :type z: numpy array of the same type as x
     :returns: The solution of the linear system.
     :rtype: numpy array of the same type as x
+
+    Here is an example:
+
+    >>> A = np.array([[2, -1, 0], [-1, 2, -1], [0, -1, 2]])
+    >>> A_new = np.array([[2, -1, 0, 0], [-1, 2, -1, 0], [0, -1, 2, -1],
+    ...                  [0, 0, -1, 2]])
+    >>> L = np.linalg.cholesky(A)
+    >>> B = A_new[:3, 3:]
+    >>> C = A_new[3:, 3:]
+    >>> L_new = best.linalg.update_cholesky(L, B, C)
+    >>> L_new_real = np.linalg.cholesky(A_new)
+    >>> y = np.random.randn(3)
+    >>> x = np.linalg.solve(L, y)
+    >>> z = np.random.randn(1)
+    >>> x_new = best.linalg.update_cholesky_linear_system(x, L_new, z)
+
+    and compare it with:
+
+    >>> x_new_real = np.linalg.solve(L_new_real, np.hstack([y, z]))

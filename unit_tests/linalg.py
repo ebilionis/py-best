@@ -72,6 +72,28 @@ class BestLinAlgTest(unittest.TestCase):
         print 'with np.linalg.cholesky(A_new):'
         print np.linalg.cholesky(A_new)
 
+    def test_update_cholesky_linear_system(self):
+        print '---------------------------------------------------'
+        print 'Testing best.linalg.update_cholesky_linear_system()'
+        print '---------------------------------------------------'
+        A = np.array([[2, -1, 0], [-1, 2, -1], [0, -1, 2]])
+        A_new = np.array([[2, -1, 0, 0], [-1, 2, -1, 0], [0, -1, 2, -1],
+                      [0, 0, -1, 2]])
+        L = np.linalg.cholesky(A)
+        B = A_new[:3, 3:]
+        C = A_new[3:, 3:]
+        L_new = best.linalg.update_cholesky(L, B, C)
+        L_new_real = np.linalg.cholesky(A_new)
+        y = np.random.randn(3)
+        x = np.linalg.solve(L, y)
+        z = np.random.randn(1)
+        x_new = best.linalg.update_cholesky_linear_system(x, L_new, z)
+        print 'Compare best.linalg.update_cholesky_linear_system(x, L_new, z):'
+        print x_new
+        print 'with np.linalg.solve(L_real_new, np.hstack([x, z]):'
+        print np.linalg.solve(L_new_real, np.hstack([y, z]))
+
+
 
 if __name__ == '__main__':
     unittest.main()

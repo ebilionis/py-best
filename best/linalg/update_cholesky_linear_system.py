@@ -33,6 +33,9 @@ def update_cholesky_linear_system(x, L_new, z):
                         matrix.
         L_new   ---     The new lower Cholesky factor.
         z       ---     The new right hand side as described above.
+
+    Return:
+        The solution of the new linear system.
     """
     assert isinstance(x, np.ndarray)
     assert x.ndim <= 2
