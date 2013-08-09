@@ -14,6 +14,7 @@ Contents:
    intro
    installation
    reference
+   examples
 
 Indices and tables
 ==================

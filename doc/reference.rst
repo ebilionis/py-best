@@ -17,5 +17,10 @@ The BEST package is split in several submodules:
 .. toctree::
    :maxdepth: 2
 
+   core
    linalg
    maps
+   random
+   gpc
+   gp
+   inverse
