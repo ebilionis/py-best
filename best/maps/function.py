@@ -70,7 +70,7 @@ class Function(object):
         if value < 0:
             raise ValueError(name + ' must be non-negative.')
 
-    def __init__(self, num_input, num_output, name="function",
+    def __init__(self, num_input, num_output, name='function',
                  f_wrapped=None):
         """Initializes the object
 
@@ -370,3 +370,109 @@ class FunctionPower(Function):
         else:
             self.function(x, y=y)
             y **= self.exponent
+
+
+class FunctionScreened(Function):
+
+    """Create a function with screened inputs/outputs."""
+
+    # The screened function
+    _screened_func = None
+
+    # Input indices
+    _in_idx = None
+
+    # Default inputs
+    _default_inputs = None
+
+    # Output indices
+    _out_idx = None
+
+    @property
+    def screened_func(self):
+        return self._screened_func
+
+    @property
+    def in_idx(self):
+        return self._in_idx
+
+    @property
+    def default_inputs(self):
+        return self._default_inputs
+
+    @property
+    def out_idx(self):
+        return self._out_idx
+
+    def __init__(self, screened_func, in_idx=None, default_inputs=None,
+                 out_idx=None, name='Screened Function'):
+        """Initialize the object.
+
+        Create a function with screened inputs and/or outputs.
+
+        Arguments:
+            screenedf_func ---  The function to be screened.
+
+        Keyword Arguments:
+            in_idx      ---     The input indices that are not screened.
+                                It must be a valid container.
+                                If None, then no inputs are screened. If
+                                a non-empty list is suplied, then the
+                                argument default_inputs must be suplied.
+            default_inputs ---  If in_idx is not None, then this can be
+                                suplied. It is a default set of inputs
+                                of the same size as the original input
+                                of the screened_func. If it is not
+                                given, then it is automatically set to
+                                zero. These values will be used to fill
+                                in the missing values of the screened
+                                inputs.
+            out_idx     ---     The output indices that are not screened.
+                                If None, then no output is screened.
+            name        ---     A name for the function.
+        """
+        if not isinstance(screened_func, Function):
+            raise TypeError('The screened_func must be a Function.')
+        self._screened_func = screened_func
+        if in_idx is None:
+            in_idx = range(self.screened_func.num_input)
+        elif not (isinstance(in_idx, tuple) or isinstance(in_idx, list)):
+            raise TypeError('in_idx must be a tuple or a list.')
+        self._in_idx = in_idx
+        if default_inputs is None:
+            default_inputs = np.zeros(self.screened_func.num_input)
+        elif not isinstance(default_inputs, np.ndarray):
+            raise TypeError('default_inputs must be a numpy array.')
+        if not len(default_inputs.shape) == 1:
+            raise TypeError('default_inputs must be 1D.')
+        elif not default_inputs.shape[0] == self.screened_func.num_input:
+            raise TypeError('default_inputs must have the same number of '
+                            + 'dimensions as screened_func.')
+        self._default_inputs = default_inputs
+        if out_idx is None:
+            out_idx = range(self.screened_func.num_output)
+        elif not (isinstance(out_idx, tuple) or isinstance(out_idx, list)):
+            raise TypeError('out_idx must be a tuple or a list.')
+        self._out_idx = out_idx
+        num_input = len(self.in_idx)
+        num_output = len(self.out_idx)
+        super(FunctionScreened, self).__init__(num_input, num_output,
+                                               name=name)
+
+    def __call__(self, x):
+        """Evaluate the function."""
+        x_full = self.default_inputs.copy()
+        x_full[self.in_idx] = x
+        print 'x: ', x
+        print 'x_full: ', x_full
+        y_full = self.screened_func(x_full)
+        return y_full[self.out_idx]
+
+    def _to_string(self, pad):
+        """Return a padded string representation."""
+        s = super(FunctionScreened, self)._to_string(pad) + '\n'
+        s += self.screened_func._to_string(pad + ' ') + '\n'
+        s += pad + ' in_idx: ' + str(self.in_idx) + '\n'
+        s += pad + ' default_inputs: ' + str(self.default_inputs) + '\n'
+        s += pad + ' out_idx: ' + str(self.out_idx)
+        return s

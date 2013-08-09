@@ -9,7 +9,8 @@ Maps
 The purpose of the :mod:`best.maps` module is to define generic manner the
 concept of a multi-input/output function. Our goal is to have function
 objects that can be combined easily in arbitrary ways to create new
-functions.
+functions. The complete details of the implementation can be found in the
+docstrings.
 
 The basic concepts
 ------------------
@@ -58,8 +59,8 @@ a simple example what is the functionality it actually provides.
     Everything in Best that can be though as such a function should be a
     child of this class.
 
-    .. method:: __init__(num_input, num_output, [name="function", \
-                        [f_wrapped=None]])
+    .. method:: __init__(num_input, num_output[, name="function"[, \
+                         f_wrapped=None]])
         Initializes the object.
 
         You do not have to overload this method. However, if you choose
@@ -168,3 +169,129 @@ a simple example what is the functionality it actually provides.
         Return a string representation of the object with padding.
 
         This may be reimplemented by children classes.
+
+
+Some Examples
+-------------
+The first example we consider is creating a :class:`best.maps.Function`
+wrapper of a regular multi-input/output function::
+
+        import best.maps
+
+        def f(x):
+            return x + x
+
+        ff = best.maps.Function(10, 10, name='foo', f_wrapped=f)
+        print str(ff)
+        x = np.random.randn(10)
+        print 'Eval at', x
+        print ff(x)
+
+If you wish, you may create a new class that inherits
+:class:`best.maps.Function`. You are required to overload
+:func:`best.maps.Function.__call__()`::
+
+    from best.maps import Function
+
+    class MyFunction(Function):
+
+        def __call__(self, x):
+            return x ** 2
+
+Now, assume that we have two functions with the same number of inputs
+and outputs :math:`f(\cdot)` and :math:`g(\cdot)`. Let also :math:`c`
+be any floating point number. You may now define several functions:
+
+    * Sum of functions :math:`h(\cdot) = f(\cdot) + g(\cdot)`::
+
+        h = f + g
+
+    * Sum of function with a constant :math:`h(\cdot) = f(\cdot) + c`::
+
+        h = f + c
+
+      :Note: The constant must always be on the right side of the operator.
+
+    * Product of functions :math:`h(\cdot) = f(\cdot)g(\cdot)`::
+
+        h = f * g
+
+    * Product of function with a constant :math:`h(\cdot) = f(\cdot)c`::
+
+        h = f * c
+
+      :Note: The constant must always be on the right side of the operator.
+
+Assume that the two functions have compatible dimensions so
+that they can be composed (e.g., the number of outputs of
+:math:`g(\cdot)` is the same as the number of inputs of :math:`f(\cdot)`.
+Then, you can define :math:`h(\cdot) = f(g(\cdot)` by::
+
+    from best.maps import FunctionComposition
+    h = FunctionComposition((f, g))
+
+It is also possible to raise a function to a particular power.
+For example, the following code defines :math:`h(\cdot) = f(\cdot)^2`::
+
+    from best.maps import FunctionPower
+    h = FunctionPower(f, 2.)
+
+
+Screened Function
+-----------------
+A very useful class is the :class:`best.maps.FunctionScreened`. It
+implements a screened version of another class. We give a brief
+discreption of its functionality.
+
+.. class:: best.maps.FunctionScreened
+    A function that serves as a screened version of another function.
+
+    It is useful in applications when you want to fix certain inputs
+    to given values and play with the rest and/or if you want to screen
+    certain outputs. It is one of the basic building blocks for
+    representing the High-Dimensional Representation (HDMR) of a function.
+
+    .. method:: __init__(screened_function[, in_idx=None[, default_inputs=None[, \
+                             out_idx=None[, name='Screened Function']]]])
+        Initialize the object.
+
+        :param screened_func: The function to be screened.
+        :type screened_func: :class:`best.maps.Function`
+        :param in_idx: The input indices that are not screened.
+                       It must be a valid container.
+                       If None, then no inputs are screened. If
+                       a non-empty list is suplied, then the
+                       argument default_inputs must be suplied.
+        :type in_idx: tuple, list or NoneType
+        :param default_inputs: If in_idx is not None, then this can be
+                               suplied. It is a default set of inputs
+                               of the same size as the original input
+                               of the screened_func. If it is not
+                               given, then it is automatically set to
+                               zero. These values will be used to fill
+                               in the missing values of the screened
+                               inputs.
+        :type default_inputs: 1D numpy array
+        :param out_idx: The output indices that are not screened.
+                        If None, then no output is screened.
+        :type out_idx: tuple, list or NoneType
+        :param name: A name for the function.
+        :type name: str
+
+Let us give a simple example of how it is to be used. Suppose that you
+have a function :math:`f(\cdot)` that takes 10 inputs and responds with
+10 outputs. Assume that you wish to fix all the inputs to 0.5 with the
+exception of the first one and the fifth one and that you only want to
+look at the fourth and the sixth outputs. Here is how you can achieve
+this using the :class:`best.maps.FunctionScreened`::
+
+    from best.maps import FunctionScreened
+    h = FunctionScreened(f, in_idx=[0, 4],
+                         default_inputs=np.ones(f.num_input) * .5,
+                         out_idx=[[3, 5]])
+    print 'Evaluate h at x = [0.3, -1.]:'
+    print h(np.array([0.3, -1.]))
+    print 'It should be equivalent to evaluating: '
+    x_full = np.ones(f.num_input) * .5
+    x_full[[0, 4]] = np.array([0.3, -1.])
+    print f(x_full)[[3, 5]]

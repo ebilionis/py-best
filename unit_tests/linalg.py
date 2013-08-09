@@ -17,12 +17,6 @@ import unittest
 import numpy as np
 import best.linalg
 
-print '================================'
-print 'Running Linear Algebra Unit Test'
-print '================================'
-print ''
-print ''
-
 
 class BestLinAlgTest(unittest.TestCase):
 
@@ -71,11 +65,6 @@ class BestLinAlgTest(unittest.TestCase):
         print L_new
         print 'with np.linalg.cholesky(A_new):'
         print np.linalg.cholesky(A_new)
-
-    def test_update_cholesky_linear_system(self):
-        print '---------------------------------------------------'
-        print 'Testing best.linalg.update_cholesky_linear_system()'
-        print '---------------------------------------------------'
         A = np.array([[2, -1, 0], [-1, 2, -1], [0, -1, 2]])
         A_new = np.array([[2, -1, 0, 0], [-1, 2, -1, 0], [0, -1, 2, -1],
                       [0, 0, -1, 2]])
@@ -92,6 +81,12 @@ class BestLinAlgTest(unittest.TestCase):
         print x_new
         print 'with np.linalg.solve(L_real_new, np.hstack([x, z]):'
         print np.linalg.solve(L_new_real, np.hstack([y, z]))
+
+    def test_update_cholesky_linear_system(self):
+        print '---------------------------------------------------'
+        print 'Testing best.linalg.update_cholesky_linear_system()'
+        print '---------------------------------------------------'
+
 
 
 

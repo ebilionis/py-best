@@ -12,11 +12,6 @@ Date:
 """
 
 
-from function import Function
-#from function import FunctionSum
-#from function import FunctionMultiplication
-#from function import FunctionComposition
-#from function import ConstantFunction
-#from function import FunctionPower
+from function import *
 #from create_1D_upscaling_map import *
 #from create_2D_upscaling_map import *
