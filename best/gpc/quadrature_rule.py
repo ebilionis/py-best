@@ -43,7 +43,7 @@ def tr(t):
 
 
 def fejer(n):
-    """Generates the n-point Fejer quadrature rule."""
+    """Generate the n-point Fejer quadrature rule."""
     x = np.zeros(n)
     w = np.zeros(n)
     nh = n / 2
@@ -66,47 +66,67 @@ def fejer(n):
             s += c0 / (4. * m * m - 1)
         w[k - 1] = 2. * (1. - 2. * s) / fn
         w[n - k] = w[k - 1]
+    return x, w
 
 
 class QuadratureRule(object):
+
+    """An object representing a quadrature rule."""
+
     # The quadrature points (N x D)
     _x = None
-    
+
     # The quadrature weights (N x 1)
     _w = None
-    
+
     @property
     def x(self):
         return self._x
-    
+
     @property
     def w(self):
         return self._w
-    
+
     @property
     def num_quad(self):
         return self._x.shape[0]
-    
-    def __init__(self, x, w):
-        """Initialize the object."""
-        assert x.shape[0] == w.shape[0]
-        self._x = x
-        self._w = w
-   
+
+    def __init__(self, left=-1, right=1, wf=lambda(x): 1., ncap=500):
+        """Construct a quadrature rule.
+
+        Keyword Arguments
+            left    ---     The left end of the interval.
+            right   ---     The right end of the interval.
+            wf      ---     The weight function. The default is the identity.
+            ncap    ---     The number of quadrature points.
+        """
+        x, w = fejer(ncap)
+        if wf is None:
+            wf = lambda(x): np.ones(x.shape)
+        if math.isinf(left) and math.isinf(right):
+            phi, dphi = symtr(x)
+            self._x = phi
+        elif math.isinf(right):
+            phi, dphi = tr(x)
+            self._x = left + phi
+        elif math.isinf(left):
+            phi, dphi = tr(-x)
+            self._x = right - phi
+        else:
+            self._x = 0.5 * ((right - left) * x + right + left)
+            dphi = 0.5 * (right - left)
+        self._w = w * wf(self.x) * dphi
+
     def integrate(self, f):
         """Integrate the function f.
-        
+
         When evaluating f(x) with x an N x D matrix,
         then f(x) should be an N x Q matrix.
         """
-        return np.dot(f(self.x).T, w) # Q x 1
+        return np.dot(f(self.x).T, self.w) # Q x 1
 
-
-if __name__ == '__main__':
-    import matplotlib.pyplot as plt
-    
-    # Test the map from [-1, 1] to [-Inf, Inf]
-    x = np.linspace(-.99, .99, 100)
-    phi, dphi = symtr(x)
-    plt.plot(x, phi)
-    plt.show()
+    def __str__(self):
+        """Return a string representation of the rule."""
+        s = 'x: ' + str(self.x) + '\n'
+        s += 'w: ' + str(self.w) + '\n'
+        return s

@@ -14,4 +14,5 @@ if __name__ == '__main__':
     import fix_path
     from linalg import *
     from maps import *
+    from gpc import *
     unittest.main()

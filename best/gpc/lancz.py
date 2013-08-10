@@ -11,6 +11,11 @@ import numpy as np
 
 
 def lancz(x, w, n, p0=None, p1=None):
+    """The Lanczos procedure for constructing the recurcive formula
+    for orthogonal polynomials.
+
+    Reimplemented from Fortran (ORTHPOL).
+    """
     ncap = x.shape[0]
     assert w.shape[0] == ncap
     if p0 == None:
@@ -57,4 +62,3 @@ if __name__ == '__main__':
     alpha, beta = lancz(x, w, 10)
     print alpha
     print beta
-    

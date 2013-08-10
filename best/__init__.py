@@ -25,7 +25,7 @@ BEST is split in several (mostly) independent submodules:
 
 """
 
-
+from domain import *
 import linalg
 import maps
 #from solver import Solver
