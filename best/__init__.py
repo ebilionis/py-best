@@ -26,8 +26,10 @@ BEST is split in several (mostly) independent submodules:
 """
 
 from domain import *
+import misc
 import linalg
 import maps
+import random
 #from solver import Solver
 #from binary_tree import BinaryTree
 #from random_element import RandomElement
