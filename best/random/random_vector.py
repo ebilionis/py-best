@@ -10,7 +10,7 @@ Date:
 import numpy as np
 import math
 import itertools
-import scipy.stats as stats
+import scipy.stats
 import best
 
 
@@ -68,32 +68,30 @@ class RandomVector(object):
         s += str(self.support)
         return s
 
-    def rvs(self, num_samples=1):
-        """Return a sample of the random vector."""
+    def _pdf(self, x):
+        """Return the pdf at x.
+
+        Assume that x is already in the domain.
+        """
         raise NotImplementedError()
 
     def pdf(self, x):
-        """Return the value of the pdf of the random vector at x."""
-        return np.exp(self.logpdf(x))
+        x = np.atleast_2d(x)
+        assert len(x) == 2
+        assert x.shape[1] == self.num_dim
+        res = np.ndarray(x.shape[0])
+        for i in range(x.shape[0]):
+            if self.domain.is_in(x[i, :]):
+                res[i] = self._pdf(x[i, :])
+            else:
+                res[i] = 0.
+        if res.shape[0] == 1:
+            return res[0]
+        else:
+            return res
 
-    def cdf(self, x):
-        """Return the value of the cdf of the random vector at x."""
-        return np.exp(self.logcdf(x))
-
-    def sf(self, x):
-        """Survival function."""
-        return np.exp(self.logsf(x))
-
-    def logsf(self, x):
-        """Log of the survival function."""
-        raise NotImplementedError()
-
-    def logpdf(self, x):
-        """Return the log of the pdf."""
-        raise NotImplementedError()
-
-    def logcdf(self, x):
-        """Return the log of the cdf."""
+    def rvs(self, num_samples=1):
+        """Return a sample of the random vector."""
         raise NotImplementedError()
 
     def moment(self, n):
@@ -155,133 +153,14 @@ class RandomVectorIndependent(RandomVector):
         s = super(RandomVectorIndependent, self).__str__() + '\n'
         return s
 
-    def rvs(self, num_samples=1):
+    def rvs(self, size=1):
         """Take random samples."""
-        x = []
-        for rv in self.component:
-            x.append(rv.rvs(num_samples))
-        return np.vstack(x).T
+        x = [rv.rvs(size=size) for rv in self.component]
+        return np.hstack(x)
 
-    def logpdf(self, x):
-        """Return the logarithm of the pdf."""
-        x = np.atleast_2d(x)
-        tmp = np.ndarray(x.shape)
-        for rv, i in itertools.izip(self.component, range(self.num_dim)):
-            tmp[:, i] = np.log(rv.pdf(x[:, i]))
-        res = tmp.sum(axis=1)
-        if res.shape[0] == 1:
-            return res[0]
-        else:
-            return res
-
-    def logcdf(self, x):
-        """Return the logarithm of the cdf."""
-        x = np.atleast_2d(x)
-        tmp = np.ndarray(x.shape)
-        for rv, i in itertools.izip(self.component, range(self.num_dim)):
-            tmp[:, i] = math.log(rv.cdf(x[:, i]))
-        res = tmp.sum(axis=1)
-        if res.shape[0] == 1:
-            return res[0]
-        else:
-            return res
-
-    def logsf(self, x):
-        """Return the logartihm of the survival function."""
-        x = np.atleast_2d(x)
-        tmp = np.ndarray(x.shape)
-        for rv, i in itertools.izip(self.component, range(self.num_dim)):
-            tmp[:, i] = math.log(rv.sf(x[:, i]))
-        res = tmp.sum(axis=1)
-        if res.shape[0] == 1:
-            return res[0]
-        else:
-            return res
-
-
-class RandomVariableConditional(object):
-
-    """A random variable conditioned to live in a subinterval."""
-
-    # The original random variable
-    _random_variable = None
-
-    # The sub interval (tuple)
-    _subinterval = None
-
-    # The log of the probability of the sub interval
-    _log_pdf_subinterval = None
-
-    @property
-    def random_variable(self):
-        return self._random_variable
-
-    @property
-    def subinterval(self):
-        return self._subinterval
-
-    @property
-    def log_pdf_subinterval(self):
-        return self._log_pdf_subinterval
-
-    def _compute_log_pdf_subinterval(self):
-        """Compute the log of the pdf of the subinterval."""
-        return math.log(self.random_variable.cdf(self.subinterval[1])
-                        - self.random_variable.cdf(self.subinterval[0]))
-
-    def __init__(self, random_variable, subinterval,
-                name='Conditioned Random Variable'):
-        """Initialize the object.
-
-        Argument:
-            random_variable --- The underlying random variable.
-            sub_interval    --- The sub interval.
-
-        Keyword Arguments
-            name            --- A name for the random variable.
-        """
-        self._random_variable = random_variable
-        self._subinterval = subinterval
-        self._log_pdf_subinterval = self._compute_log_pdf_subinterval()
-        assert isinstance(name, str)
-        self._name = name
-
-    def interval(self, prob):
-        """Return the interval up to probability prob."""
-        tmp = self.random_variable.interval(prob)
-        res = ()
-        if tmp[0] <= self.subinterval[0]:
-            res += (self.subinterval[0], )
-        else:
-            res += (tmp[0], )
-        if tmp[1] >= self.subinterval[1]:
-            res += (self.subinterval[1], )
-        else:
-            res += (tmp[1], )
-        return res
-
-    def __str__(self):
-        """Return a string representation of the object."""
-        s = 'Conditioned Random Variable: ' + self.name + '\n'
-        s += 'Original interval: ' + str(self.random_variable.interval(1)) + '\n'
-        s += 'Subinterval: ' + str(self.subinterval)
-        return s
-
-    def pdf(self, x):
-        """Return the pdf at x."""
-        return np.exp(self.logpdf(x))
-
-    def logpdf(self, x):
-        """Return the log of the pdf at x."""
-        return self.random_variable.logpdf(x) - self.log_pdf_subinterval
-
-    def cdf(self, x):
-        """Return the cdf at x."""
-        return np.exp(self.logcdf(x))
-
-    def logcdf(self, x):
-        """Return the log of the cdf at x."""
-        return self.random_variable.logcdf(x) - self.log_pdf_subinterval
+    def _pdf(self, x):
+        """Evaluate the pdf at x."""
+        return best.misc.logsumexp([math.log(rv.pdf(xx)) for xx in x])
 
 
 class RandomVectorConditional(RandomVectorIndependent):

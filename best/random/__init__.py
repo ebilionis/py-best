@@ -8,6 +8,7 @@ Date:
 
 """
 
+from random_variable import *
 from random_vector import *
 #from lhs import *
 #from resample import multinomial_resample
