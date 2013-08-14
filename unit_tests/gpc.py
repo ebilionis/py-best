@@ -17,6 +17,7 @@ import unittest
 import numpy as np
 import math
 import best.gpc
+import scipy.stats as stats
 import matplotlib.pyplot as plt
 
 
@@ -93,14 +94,54 @@ class GpcTest(unittest.TestCase):
         plt.show()
 
     def test_beta(self):
+        return
         import scipy.stats
         a = 0.3
         b = 0.8
         rv = scipy.stats.beta(a, b)
         p = best.gpc.OrthogonalPolynomial(6, left=0, right=1, wf=rv.pdf)
-        x = np.linspace(1e-4, 0.99, 100)
+        print 'At a single point: ', p(0.5)
+        print p.d(0.5)
+        print p([0.5, 0.3])
+        print p.d([0.5, 0.3])
+        quit()
+        x = np.linspace(1e-4, 0.99, 10)
+        print p(x)
+        quit()
+        #plt.plot(x, p(x))
+        #plt.show()
+        p = best.gpc.OrthogonalPolynomial(6, rv=rv)
+        #plt.plot(x, p(x))
+        #plt.show()
+        rv = scipy.stats.expon()
+        rv_cond = best.random.RandomVariableConditional(rv, (1, 2))
+        print str(rv_cond)
+        p = best.gpc.OrthogonalPolynomial(6, rv=rv_cond)
+        x = np.linspace(1, 2, 100)
         plt.plot(x, p(x))
         plt.show()
+
+    def test_product_basis(self):
+        comp = (stats.beta(0.5, 0.5), stats.beta(0.5, 0.5))
+        rv = best.random.RandomVectorIndependent(comp)
+        print str(rv)
+        prod = best.gpc.ProductBasis(degree=10, rv=rv)
+        print str(prod)
+        x = rv.rvs(size=10)
+        print x
+        print prod(x)
+        x1 = np.linspace(1e-4, 0.99, 64)
+        x2 = np.linspace(1e-4, 0.99, 64)
+        X1, X2 = np.meshgrid(x1, x2)
+        xx = np.vstack([X1.flatten(), X2.flatten()]).T
+        z = rv.pdf(xx)
+        Z = z.reshape((64, 64))
+        #plt.contourf(X1, X2, np.log(Z).T)
+        #plt.show()
+        phi = prod(xx)
+        for j in range(phi.shape[1]):
+            plt.contourf(X1, X2, phi[:, j].reshape((64, 64)))
+            plt.show()
 
 
 if __name__ == '__main__':

@@ -52,9 +52,9 @@ which is described below.
     The number of outputs is essentially equal to the number of
     polynomials represented by the class.
 
-    .. method:: __init__(degree[, left=-1[, right=1[, wf=lambda(x): 1.[, \
+    .. method:: __init__(degree[, rv=None[, left=-1[, right=1[, wf=lambda(x): 1.[, \
                  ncap=50[, quad=QuadratureRule[, \
-                 name='Orthogonal Polynomial']]]]]])
+                 name='Orthogonal Polynomial']]]]]]])
 
         Initialize the object.
 
@@ -68,6 +68,11 @@ which is described below.
 
         :param degree: The degree of the polynomial.
         :type degree: int
+        :param rv: A 1D random variable. It can be anything that inherits \
+                   from ``scipy.stats.rv_continuous``. If this is \
+                   specified, the rest of the keyword arguments are \
+                   ignored.
+        :type rv: ``scipy.stats.rv_continuous``
         :param left: The left side of the interval over which the \
                      polynomial is defined. :math:`-\infty` may be
                      specified by ``-float('inf')``.
@@ -102,25 +107,6 @@ which is described below.
 
         The :math:`\gamma_n` coefficients of the recursive relation.
 
-    .. method:: __call__(x)
-
-        Evaluate the polynomials at a particular point.
-
-        :param x: The evaluation point or an array of many evaluation points.
-        :type x: float or 1D numpy array
-        :returns: The value of all the polynomials at all points in ``x``.
-        :rtype: 2D numpy array
-
-    .. method:: d(x)
-
-        Evaluate the derivative of the polynomials at a particular point.
-
-        :param x: The evaluation point or an array of many evaluation points.
-        :type x: float or 1D numpy array
-        :returns: The value of the derivatives of all the polynomials at \
-                  all points in ``x``.
-        :rtype: 2D numpy array
-
     .. is_normalized()
 
         Return ``True`` if the polynomials have unit norm and ``False`` \
@@ -132,6 +118,95 @@ which is described below.
     .. normalize()
 
         Normalize the polynomials so that they have unit norm.
+
+    .. method:: _eval(x):
+
+        Evaluate the function at ``x`` assuming that ``x`` has the
+        right dimensions.
+
+        .. note:: Overloaded version of :func:`best.maps.Function._eval()`
+
+        :param x: The evaluation point.
+        :type x: 1D numpy array of the right dimensions
+        :returns: The result.
+        :rtype: 1D numpy array of the right dimensions or just a float
+
+    .. method:: _d_eval(x):
+
+        Evaluate the Jacobian of the function at ``x``. The dimensions
+        of the Jacobian are ``num_output x num_input``.
+
+        .. note:: Overloaded version of :func:`best.maps.Function._d_eval()`
+
+        :param x: The evaluation point.
+        :type x: 1D numpy array of the right dimensions
+        :returns: The Jacobian at x.
+        :rtype: 2D numpy array of the right dimensions
+
+Product Basis
+-------------
+
+1D polynomials can be combined to create multi-input polynomials.
+The class :class:`best.gpc.ProductBasis` constructs multi-input
+orthogonal polynomials up to a given degree by combining 1D orthogonal
+polynomials. Here is its definition:
+
+.. class:: best.gpc.ProductBasis
+
+    A multi-input orthogonal polynomial basis.
+
+    It inherits from :class:`best.maps.Function`.
+
+    .. method:: __init__([rv=None[, degree=1[, polynomials=None[, \
+                ncap=50[, quad=None[, name='Product Basis']]]]]])
+
+        Initialize the object.
+
+        :param rv: A random vector of independent random variables. If \
+                   not ``None``, then the keyword argument
+                   ``polynomials`` is ignored.
+        :type rv: :class:`best.random.RandomVectorIndependent`
+        :param degree: The total degree of the basis. Each one of the \
+                       1D polynomials will have this degree. It is \
+                       ignored if ``rv`` is ``None``.
+        :type degree: int
+        :param polynomials: We only look at this if ``rv`` is ``None``. \
+                            It is a collection of 1D orthogonal polynomials.
+        :type polynomials: tuple or list of :class:`best.gpc.OrthogonalPolynomial`
+        :param ncap: The number of quadrature points for each dimension.
+        :type ncap: int
+        :param quad: The quadrature rule you might want to use.
+        :param name: A name for the basis.
+        :type name: str
+
+    .. attribute:: degree
+
+        The total order of the basis.
+
+    .. attribute:: polynomials
+
+        The container of 1D polynomials.
+
+    .. attribute:: terms
+
+        An array representing the basis terms.
+
+    .. attribute:: num_terms
+
+        The number of of terms up to each order
+
+    .. method:: _eval(x):
+
+        Evaluate the function at ``x`` assuming that ``x`` has the
+        right dimensions.
+
+        .. note:: Overloaded version of :func:`best.maps.Function._eval()`
+
+        :param x: The evaluation point.
+        :type x: 1D numpy array of the right dimensions
+        :returns: The result.
+        :rtype: 1D numpy array of the right dimensions or just a float
+
 
 Constructing Polynomials
 ------------------------
@@ -229,7 +304,7 @@ Here is how they look:
 
 
 Exploiting :mod:`scipy.stats`
-++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++
 
 It is also possible to use functionality from scipy to define the
 probability density. For example, you may construct the Laguerre
@@ -238,7 +313,7 @@ polynomials by::
     import scipy.stats
     # Define the random variable
     rv = scipy.stats.expon()
-    p = OrthogonalPolynomial(degree, left=0, right=infty, wf=pdf)
+    p = OrthogonalPolynomial(degree, rv=rv)
 
 This is a nice trick, because you can immediately construct any
 orthogonal polynomial you wish making use of the probability
@@ -264,7 +339,7 @@ with :math:`a, b>0` and :math:`x \in (0, 1)`::
         a = 0.3
         b = 0.8
         rv = scipy.stats.beta(a, b)
-        p = best.gpc.OrthogonalPolynomial(6, left=0, right=1, wf=rv.pdf)
+        p = best.gpc.OrthogonalPolynomial(6, rv=rv)
 
 Here are the first six:
 
@@ -273,3 +348,142 @@ Here are the first six:
 
         The first six orthogonal polynomials with respect to the Beta \
         distribution with :math:`a = 0.3, b = 0.8`.
+
+
+Exploiting :mod:`best.random`
+++++++++++++++++++++++++++++
+
+Let us take the Exponential random variable of the previous example,
+condition it to live in a small interval (say :math:`(1, 2)`) and
+construct some orthogonal polynomials there. Here is how::
+
+    import scipy.stats
+    from best.random import RandomVariableConditional
+    # Define the random variable
+    rv = scipy.stats.expon()
+    # The conditioned random variable
+    rv_cond = RandomVariableConditional(rv, (1, 2))
+    p = OrthogonalPolynomial(degree, rv=rv_cond)
+
+This produces the following figure:
+
+    .. figure:: images/expon_conditioned.png
+        :align: center
+
+        The first six orthogonal polynomials with respect to an
+        Exponential distribution restricted to live on :math:`(1, 2)`.
+
+Constructing Product Basis
+++++++++++++++++++++++++++
+
+Let's construct now a product basis of degree six based on a random
+vector of independent random variables. This can be achieved by::
+
+    import scipy.stats
+    from best.random import RandomVectorIndependent
+    from best.gpc import ProductBasis
+    # Construct the random vector (exponential, beta and normal)
+    rv = RandomVectorIndependent((scipy.stats.expon(),
+                                  scipy.stats.beta(0.4, 0.7),
+                                  scipy.stats.norm()))
+    # Construct the product basis
+    p = ProductBasis(rv=rv, degree=6)
+    print str(p)
+
+The output is as follows::
+
+    Product basis:R^3 --> R^84
+    sz = 84
+    0: 0 0 0
+    1: 1 0 0
+    2: 0 1 0
+    3: 0 0 1
+    4: 2 0 0
+    5: 1 1 0
+    6: 1 0 1
+    7: 0 2 0
+    8: 0 1 1
+    9: 0 0 2
+    10: 3 0 0
+    11: 2 1 0
+    12: 2 0 1
+    13: 1 2 0
+    14: 1 1 1
+    15: 1 0 2
+    16: 0 3 0
+    17: 0 2 1
+    18: 0 1 2
+    19: 0 0 3
+    20: 4 0 0
+    21: 3 1 0
+    22: 3 0 1
+    23: 2 2 0
+    24: 2 1 1
+    25: 2 0 2
+    26: 1 3 0
+    27: 1 2 1
+    28: 1 1 2
+    29: 1 0 3
+    30: 0 4 0
+    31: 0 3 1
+    32: 0 2 2
+    33: 0 1 3
+    34: 0 0 4
+    35: 5 0 0
+    36: 4 1 0
+    37: 4 0 1
+    38: 3 2 0
+    39: 3 1 1
+    40: 3 0 2
+    41: 2 3 0
+    42: 2 2 1
+    43: 2 1 2
+    44: 2 0 3
+    45: 1 4 0
+    46: 1 3 1
+    47: 1 2 2
+    48: 1 1 3
+    49: 1 0 4
+    50: 0 5 0
+    51: 0 4 1
+    52: 0 3 2
+    53: 0 2 3
+    54: 0 1 4
+    55: 0 0 5
+    56: 6 0 0
+    57: 5 1 0
+    58: 5 0 1
+    59: 4 2 0
+    60: 4 1 1
+    61: 4 0 2
+    62: 3 3 0
+    63: 3 2 1
+    64: 3 1 2
+    65: 3 0 3
+    66: 2 4 0
+    67: 2 3 1
+    68: 2 2 2
+    69: 2 1 3
+    70: 2 0 4
+    71: 1 5 0
+    72: 1 4 1
+    73: 1 3 2
+    74: 1 2 3
+    75: 1 1 4
+    76: 1 0 5
+    77: 0 6 0
+    78: 0 5 1
+    79: 0 4 2
+    80: 0 3 3
+    81: 0 2 4
+    82: 0 1 5
+    83: 0 0 6
+    num_terms = 1 4 10 20 35 56 84
+
+Let's evaluate the basis at a few points::
+
+    x = rv.rvs(size=10)
+    phi = p(x)
+    print phi.shape
+
+where ``phi`` is the design matrix.

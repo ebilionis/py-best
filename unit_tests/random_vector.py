@@ -24,6 +24,7 @@ import best.gpc
 class RandomTest(unittest.TestCase):
 
     def test_conditional_rv(self):
+        return
         px = stats.expon()
         py = best.random.RandomVariableConditional(px, (1, 2),
                                                    name='Conditioned Exponential')
@@ -52,15 +53,39 @@ class RandomTest(unittest.TestCase):
 
 
     def test_random_vector(self):
-        return
         comp = (stats.expon(), stats.beta(0.4, 0.8), stats.norm())
         rv = best.random.RandomVectorIndependent(comp)
         print str(rv)
-        x = rv.rvs(num_samples=10)
+        x = rv.rvs()
+        print 'One sample: ', x
+        print 'pdf:', rv.pdf(x)
+        x = rv.rvs(size=10)
+        print '10 samples: ', x
+        print 'pdf: ', rv.pdf(x)
+        print rv.mean()
+        print rv.var()
+        print rv.std()
+        print rv.stats()
+        # Split it in two:
+        rv1, rv2 = rv.split(0)
+        print str(rv1)
+        x = rv1.rvs(size=5)
         print x
-        print rv.pdf(x)
-        print rv.logcdf([100., 1., 100.])
-        print rv[0].pdf(0.5)
+        print rv1.pdf(x)
+        print rv2.pdf(x)
+        print str(rv2)
+        print x
+        x = rv2.rvs(size=5)
+        print rv2.pdf(x)
+        rv3, rv4 = rv1.split(0)
+        print str(rv3)
+        print str(rv4)
+        rv5, rv6 = rv3.split(1)
+        print str(rv5)
+        print str(rv6)
+        rv7, rv8 = rv5.split(2)
+        print str(rv7)
+        print str(rv8)
 
     def test_random_vector_poly(self):
         return
@@ -74,6 +99,7 @@ class RandomTest(unittest.TestCase):
         print prod(x)
 
     def test_random_vector_independent(self):
+        return
         comp = (stats.expon(), stats.beta(0.4, 0.8), stats.norm())
         rv = best.random.RandomVectorIndependent(comp)
         subdomain = [[0.1, 4.], [0.1, 0.8], [-1., 1.]]

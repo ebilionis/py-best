@@ -86,42 +86,32 @@ class OrthogonalPolynomial(best.maps.Function):
         self.normalize()
         super(OrthogonalPolynomial, self).__init__(1, self.degree + 1, name=name)
 
-    def __call__(self, x):
+    def _eval(self, x):
         """Evaluate the polynomial basis at x."""
-        if not isinstance(x, np.ndarray):
-            x = np.array([float(x)])
-        phi = np.zeros((x.shape[0], self.degree + 1)) # N x (P + 1)
-        phi[:, 0] = 1. / self.gamma[0]
+        phi = np.zeros(self.num_output)
+        phi[0] = 1. / self.gamma[0]
         if self.degree >= 1:
-            phi[:, 1] = (x - self.alpha[0]) * (phi[:, 0] / self.gamma[1])
+            phi[1] = (x - self.alpha[0]) * (phi[0] / self.gamma[1])
         for i in range(2, self.degree + 1):
-            phi[:, i] = ((x - self.alpha[i - 1]) * phi[:, i - 1] -
-                self.beta[i - 1] * phi[:, i - 2]) / self.gamma[i]
+            phi[i] = ((x - self.alpha[i - 1]) * phi[i - 1] -
+                self.beta[i - 1] * phi[i - 2]) / self.gamma[i]
         return phi
 
-    def d(self, x, return_eval=False):
+    def _d_eval(self, x):
         """Evaluate the derivative of the polynomial.
 
         Arguments:
             x   ---     The input point(s).
-
-        Keyword Arguments:
-            return_eval --- If set to True, then return also the
-                            polynomials themselves.
         """
-        if not isinstance(x, np.ndarray):
-            x = np.array([float(x)])
-        phi = self(x)
-        dphi = np.zeros((x.shape[0], self.degree + 1))
+        phi = self._eval(x)
+        dphi = np.zeros((self.num_output, 1))
         if self.degree >= 1:
-            dphi[:, 1] = phi[:, 0] / self.gamma[1]
+            dphi[1, 0] = phi[0] / self.gamma[1]
         for i in range(2, self.degree + 1):
-            dphi[:, i] = ((phi[:, i - 1] +
-                           (x - self.alpha[i - 1]) * dphi[:, i - 1] -
-                           self.beta[i - 1] * dphi[:, i - 2]
+            dphi[i, 0] = ((phi[i - 1] +
+                           (x - self.alpha[i - 1]) * dphi[i - 1, 0] -
+                           self.beta[i - 1] * dphi[i - 2, 0]
                           ) / self.gamma[i])
-        if return_eval:
-            return phi, dphi
         return dphi
 
     def _evaluate_square_norms(self):
@@ -215,7 +205,6 @@ class ProductBasis(best.maps.Function):
         self._polynomials = polynomials
         # Find the total order of the basis
         self._degree = max([p.degree for p in polynomials])
-        print 'degree: ', self.degree
         # The number of inputs
         num_input = len(polynomials)
         # Compute the basis terms
@@ -330,15 +319,14 @@ class ProductBasis(best.maps.Function):
             s += str(self.num_terms[i]) + ' '
         return s
 
-    def __call__(self, x):
+    def _eval(self, x):
         """Evaluate the polynomials at x."""
-        x = np.atleast_2d(x)
-        phi = np.ndarray((x.shape[0], self.num_output))
+        phi = np.ndarray(self.num_output)
         basis_eval_tmp = [[] for j in range(self.num_input)]
         for j in range(self.num_input):
-            basis_eval_tmp[j] = self.polynomials[j](x[:, j])
+            basis_eval_tmp[j] = self.polynomials[j](x[j])
         for k in range(self.num_output):
-            phi[:, k] = np.ones(x.shape[0])
+            phi[k] = 1.
             for j in range(self.num_input):
-                phi[:, k] *= basis_eval_tmp[j][:, self.terms[k][j]]
+                phi[k] *= basis_eval_tmp[j][self.terms[k][j]]
         return phi

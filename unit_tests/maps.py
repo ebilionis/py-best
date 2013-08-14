@@ -18,6 +18,7 @@ import best.maps
 class MapsTest(unittest.TestCase):
 
     def test_wrapper_function(self):
+        return
         def f(x):
             return x + x
         ff = best.maps.Function(10, 10, name='foo', f_wrapped=f)
@@ -25,6 +26,9 @@ class MapsTest(unittest.TestCase):
         x = np.random.randn(10)
         print 'Eval at', x
         print ff(x)
+        x = np.random.randn(50, 20, 10)
+        y = ff(x)
+        print y.shape
 
     def test_sum_function(self):
         def f(x):

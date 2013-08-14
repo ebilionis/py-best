@@ -54,6 +54,7 @@ that should/could be overloaded by its children and then demonstrate by
 a simple example what is the functionality it actually provides.
 
 .. class:: best.maps.Function
+
     A class representing an arbitrary multi-input/output function.
 
     Everything in Best that can be though as such a function should be a
@@ -61,6 +62,7 @@ a simple example what is the functionality it actually provides.
 
     .. method:: __init__(num_input, num_output[, name="function"[, \
                          f_wrapped=None]])
+
         Initializes the object.
 
         You do not have to overload this method. However, if you choose
@@ -98,41 +100,88 @@ a simple example what is the functionality it actually provides.
         array with 10 dimensions and response with one with 20.
 
     .. attribute:: num_input
+
         Get the number of input dimensions.
 
         It cannot be changed directly.
 
     .. attribute:: num_output
+
         Get the number of output dimensions.
 
         It cannot be changed directly.
 
     .. attribute:: name
+
         Get the name of the function.
 
         It cannot be changed directly.
 
     .. attribute:: f_wrapped
+
         Get the wrapped function (if any).
 
         It cannot be changed directly.
 
     .. attribute:: is_function_wrapper
+
         True if the object is a function wrapper, False otherwise.
 
-    .. method:: __call__(x):
-        Evaluate the function.
+    .. method:: _eval(x):
 
-        .. note::
-            This method has to be reimplemented by all children.
+        Evaluate the function at ``x`` assuming that ``x`` has the
+        right dimensions.
 
-        :param x: The input.
-        :type x: 1D numpy array.
-        :param y: The output.
-        :type y: 1D numpy array.
+        .. note:: This must be re-implemented by children.
+
+        :param x: The evaluation point.
+        :type x: 1D numpy array of the right dimensions
+        :returns: The result.
+        :rtype: 1D numpy array of the right dimensions or just a float
         :etype: NotImplementedError
 
+    .. method:: __call__(x):
+
+        Evaluate the function ``x``.
+
+        .. note:: This calls :func:`best.maps.Function._eval()`.
+
+        :param x: The evaluation point(s).
+        :type x: Can be a multi-dimensional numpy array whose last
+                 dimension corresponds to the number of inputs while
+                 the rest simply correspond to different evaluation
+                 points.
+        :returns y: The result.
+        :rtype: a numpy array of the right dimensions.
+
+    .. method:: _d_eval(x):
+
+        Evaluate the Jacobian of the function at ``x``. The dimensions
+        of the Jacobian are ``num_output x num_input``.
+
+        .. note:: This must be re-implemented by children.
+
+        :param x: The evaluation point.
+        :type x: 1D numpy array of the right dimensions
+        :returns: The Jacobian at x.
+        :rtype: 2D numpy array of the right dimensions
+
+    .. method:: d(x)
+
+        Evaluate the Jacobian of the function at ``x``.
+
+        .. note:: This calls :func:`best.maps.Function._d_eval()`.
+
+        :param x: The evaluation point(s).
+        :type x: Can be a multi-dimensional numpy array whose last
+                 dimension corresponds to the number of inputs while
+                 the rest simply correspond to different evaluation
+                 points.
+        :returns y: The result.
+        :rtype: a numpy array of the right dimensions.
+
     .. method:: __add__(g):
+
         Add two functions.
 
         :param g: A function to be added to the current object.
@@ -143,6 +192,7 @@ a simple example what is the functionality it actually provides.
         :rtype: :class:`best.maps.Function`
 
     .. method:: __mul__(g):
+
         Multiply two functions.
 
         :param g: A function to be multiplied with the current object.
@@ -153,6 +203,7 @@ a simple example what is the functionality it actually provides.
         :rtype: :class:`best.maps.Function`
 
     .. method:: compose(g):
+
         Compose two functions.
 
         :param g: A function whose output has the same dimensions as the \
@@ -163,9 +214,11 @@ a simple example what is the functionality it actually provides.
         :rtype: :class:`best.maps.Function`
 
     .. method:: __str__():
+
         Return a string representation of the object.
 
     .. method:: _to_string(pad):
+
         Return a string representation of the object with padding.
 
         This may be reimplemented by children classes.
@@ -253,6 +306,7 @@ discreption of its functionality.
 
     .. method:: __init__(screened_function[, in_idx=None[, default_inputs=None[, \
                              out_idx=None[, name='Screened Function']]]])
+
         Initialize the object.
 
         :param screened_func: The function to be screened.

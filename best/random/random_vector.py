@@ -12,6 +12,7 @@ import math
 import itertools
 import scipy.stats
 import best
+from random_variable import RandomVariableConditional
 
 
 class RandomVector(object):
@@ -77,42 +78,84 @@ class RandomVector(object):
 
     def pdf(self, x):
         x = np.atleast_2d(x)
-        assert len(x) == 2
-        assert x.shape[1] == self.num_dim
-        res = np.ndarray(x.shape[0])
-        for i in range(x.shape[0]):
-            if self.domain.is_in(x[i, :]):
+        size = x.shape[:-1]
+        num_samples = np.prod(size)
+        num_dim = x.shape[-1]
+        assert num_dim == self.num_dim
+        res = np.ndarray(num_samples)
+        x = x.reshape((num_samples, num_dim))
+        for i in range(num_samples):
+            if self.support.is_in(x[i, :]):
                 res[i] = self._pdf(x[i, :])
             else:
                 res[i] = 0.
-        if res.shape[0] == 1:
+        if num_samples == 1:
             return res[0]
         else:
-            return res
+            return res.reshape(size)
 
-    def rvs(self, num_samples=1):
-        """Return a sample of the random vector."""
+    def _rvs(self):
+        """Return a sample of the random variable."""
         raise NotImplementedError()
+
+    def rvs(self, size=1):
+        """Return a sample of the random vector."""
+        if isinstance(size, int):
+            size = (size, )
+        else:
+            size = tuple(size)
+        num_samples = np.prod(size)
+        x = np.ndarray((num_samples, self.num_dim))
+        for i in range(num_samples):
+            x[i, :] = self._rvs()
+        if num_samples == 1:
+            return x[0, :]
+        return x.reshape(size + (self.num_dim, ))
 
     def moment(self, n):
-        """Non-central n-th moment."""
-        raise NotImplementedError()
-
-    def entropy(self):
-        """The entropy of the distribution."""
+        """Return non-centered n-th moment of the random variable."""
         raise NotImplementedError()
 
     def mean(self):
-        """Return the mean of the distribution."""
-        raise NotImplementedError()
+        """Return the mean of the random variable."""
+        if self._computed_mean is None:
+            self._computed_mean = self.moment(1)
+        return self._computed_mean
 
     def var(self):
-        """Return the variance of the distribution."""
-        raise NotImplementedError()
+        """Return the variance of the random variable."""
+        if self._computed_variance is None:
+            m = self.mean()
+            m2 = self.moment(2)
+            self._computed_variance = m2 - m ** 2
+        return self._computed_variance
 
     def std(self):
-        """Return the standard deviation of the distribution."""
+        """Return the standard deviation of the random variable."""
+        return np.sqrt(self.var())
+
+    def expect(self, func=None, args=()):
+        """Expected value of a function with respect to the distribution.
+
+        Keyword Arguments:
+            func        ---     The function.
+            args        ---     Arguments to the function.
+        """
         raise NotImplementedError()
+
+    def stats(self):
+        """Return mean, variance, skewness and kurtosis."""
+        m1 = self.moment(1)
+        m2 = self.moment(2) - m1 ** 2
+        m3 = self.moment(3)
+        m4 = self.moment(4) - m2 ** 2
+        m = m1
+        v = m2
+        s = np.sqrt(v)
+        sk = (m3 - 3. * m * s **2 - m ** 3) / (s ** 3)
+        # 4-th centered moment
+        k = m4 / (m2 ** 2)
+        return m, v, sk, k
 
 
 class RandomVectorIndependent(RandomVector):
@@ -122,9 +165,22 @@ class RandomVectorIndependent(RandomVector):
     # A list of random variables
     _component = None
 
+    # The mean (if computed already)
+    _computed_mean = None
+
+    # The variance (if computed already)
+    _computed_variance = None
+
+    # Probability density in the original domain
+    _pdf_domain = None
+
     @property
     def component(self):
         return self._component
+
+    @property
+    def pdf_domain(self):
+        return self._pdf_domain
 
     def __getitem__(self, i):
         """Get one of the random variables."""
@@ -147,74 +203,44 @@ class RandomVectorIndependent(RandomVector):
         self._component = components
         support = best.DomainRectangle(box)
         super(RandomVectorIndependent, self).__init__(support, name=name)
+        self._pdf_domain = 1.
+        for i in range(self.num_dim):
+            if isinstance(self.component[i], RandomVariableConditional):
+                self._pdf_domain *= self.component[i].pdf_subinterval
 
     def __str__(self):
         """Return a string representation of the object."""
         s = super(RandomVectorIndependent, self).__str__() + '\n'
+        s += 'pdf of domain: ' + str(self.pdf_domain)
         return s
-
-    def rvs(self, size=1):
-        """Take random samples."""
-        x = [rv.rvs(size=size) for rv in self.component]
-        return np.hstack(x)
 
     def _pdf(self, x):
         """Evaluate the pdf at x."""
-        return best.misc.logsumexp([math.log(rv.pdf(xx)) for xx in x])
+        return np.prod([rv.pdf(x[i])
+                        for rv, i in itertools.izip(self.component,
+                                                    range(self.num_dim))])
 
+    def _rvs(self):
+        """Take a sample from the random variable."""
+        return np.array([rv.rvs() for rv in self.component])
 
-class RandomVectorConditional(RandomVectorIndependent):
+    def moment(self, n):
+        """Return the n-th non-centered moment of the random variable."""
+        return np.array([rv.moment(n) for rv in self.component])
 
-    """A random vector of independent variables living in a subdomain."""
-
-    # The underlying random vector
-    _random_vector = None
-
-    # The log of the probability of the subdomain
-    _log_pdf_subdomain = None
-
-    @property
-    def random_vector(self):
-        return self._random_vector
-
-    @property
-    def log_pdf_subdomain(self):
-        return self._log_pdf_subdomain
-
-    def _compute_log_pdf_subdomain(self):
-        """Compute the log of the pdf of the subdomain."""
-        res = 0.
-        for rv in self.component:
-            res += rv.log_pdf_subinterval
-        return res
-
-    def __init__(self, random_vector, subdomain, name='Name'):
-        """Initialize the object.
+    def split(self, dim, pt=None):
+        """Split the random vector along dimension dim at point pt.
 
         Arguments:
-            random_vector       ---     The random vector to be conditioned.
-            subdomain           ---     The subdomain.
+            dim     ---     The splitting dimension.
 
-        Keyword Arguments
-            name                ---     A name of the random vector.
+        Keyword Arguments:
+            pt      ---     The splitting point. If None, then the median
+                            of that dimension is used.
         """
-        if isinstance(random_vector, RandomVectorConditional):
-            random_vector = random_vector.random_vector
-        assert isinstance(random_vector, RandomVectorIndependent)
-        self._random_vector = random_vector
-        subdomain = np.array(subdomain)
-        # Construct independent components
-        comp = []
-        for i in range(self.random_vector.num_dim):
-            comp.append(RandomVariableConditional(self.random_vector[i],
-                                                  subdomain[i, :]))
-        super(RandomVectorConditional, self).__init__(comp, name=name)
-        self._log_pdf_subdomain = self._compute_log_pdf_subdomain()
-
-    def __str__(self):
-        """Return a string representation of the object."""
-        s = super(RandomVectorConditional, self).__str__() + '\n'
-        s += 'Original:\n'
-        s += str(self.random_vector)
-        s += 'Prob of subdomain: ' + str(math.exp(self.log_pdf_subdomain))
-        return s
+        comp1 = list(self.component)
+        comp2 = list(self.component)
+        tmp_rv = RandomVariableConditional(self.component[dim],
+                                           self.component[dim].interval(1.))
+        comp1[dim], comp2[dim] = tmp_rv.split(pt=pt)
+        return RandomVectorIndependent(comp1), RandomVectorIndependent(comp2)

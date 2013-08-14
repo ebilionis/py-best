@@ -70,6 +70,16 @@ class Function(object):
         if value < 0:
             raise ValueError(name + ' must be non-negative.')
 
+    def _fix_x(self, x):
+        """Fix x."""
+        x = np.array(x)
+        if (self.num_input == 1 and isinstance(x, np.ndarray)
+            and len(x.shape) == 1):
+                x = np.atleast_2d(x).T
+        else:
+            x = np.atleast_2d(x)
+        return x
+
     def __init__(self, num_input, num_output, name='function',
                  f_wrapped=None):
         """Initializes the object
@@ -93,7 +103,7 @@ class Function(object):
                 raise TypeError('f_wrapped must be a proper function.')
             self._f_wrapped = f_wrapped
 
-    def __call__(self, x, y=None):
+    def __call__(self, x):
         """Call the object.
 
         If y is provided, then the Function should write the output
@@ -102,19 +112,58 @@ class Function(object):
         Arguments:
             x       ---     The input variables.
 
-        Keyword Arguments
-            y       ---     The output variables.
-
         """
+        x = self._fix_x(x)
+        size = x.shape[:-1]
+        num_dim = x.shape[-1]
+        assert num_dim == self.num_input
+        num_pt = np.prod(size)
+        x = x.reshape((num_pt, num_dim))
+        res = np.ndarray((num_pt, self.num_output, ))
+        for i in range(num_pt):
+            res[i, :] = self._eval(x[i, :])
+        if num_pt == 1:
+            if self.num_output == 1:
+                return res[0, 0]
+            return res[0, :]
+        return res.reshape(size + (self.num_output, ))
+
+    def _eval(self, x):
+        """Evaluate the function assume x has the right dimensions."""
         if self.is_function_wrapper:
-            z = self.f_wrapped(x)
-            if y is None:
-                return z
-            else:
-                y[:] = z
+            return self.f_wrapped(x)
         else:
-            raise NotImplementedError(
-                'The Function must be implemented by the deriving classes!')
+            raise NotImplementedError()
+
+    def d(self, x):
+        """Evaluate the derivative of the function at x."""
+        x = self._fix_x(x)
+        size = x.shape[:-1]
+        num_dim = x.shape[-1]
+        assert num_dim == self.num_input
+        num_pt = np.prod(size)
+        x = x.reshape((num_pt, num_dim))
+        res = np.ndarray((num_pt, self.num_output, self.num_input))
+        for i in range(num_pt):
+            res[i, :, :] = self._d_eval(x[i, :])
+        if num_pt == 1:
+            if self.num_output == 1:
+                if self.num_input == 1:
+                    return res[0, 0, 0]
+                return res[0, 0, :]
+            if self.num_input == 1:
+                return res[0, :, 0]
+            return res[0, :, :]
+        return res.reshape(size + (self.num_output, self.num_input))
+
+    def _d_eval(self, x):
+        """Evaluate the derivative of the function at x.
+
+        It should return a 2D numpy array of dimensions
+        num_output x num_input. That is, it should return
+        the Jacobian at x.
+        """
+        raise NotImplementedError()
 
     def __add__(self, func):
         """Add this function with another one."""
@@ -210,16 +259,12 @@ class FunctionSum(_FunctionCollection):
         """Initialize the object."""
         super(FunctionSum, self).__init__(functions, name=name)
 
-    def __call__(self, x, y=None):
+    def _eval(self, x):
         """Evaluate the function."""
-        return_y = False
-        if y is None:
-            return_y = True
         y = np.zeros(self.num_output)
         for f in self.functions:
             y += f(x)
-        if return_y:
-            return y
+        return y
 
 
 class FunctionMultiplication(_FunctionCollection):
@@ -230,16 +275,12 @@ class FunctionMultiplication(_FunctionCollection):
         """Initialize the object."""
         super(FunctionMultiplication, self).__init__(functions, name=name)
 
-    def __call__(self, x, y=None):
-        """Evaluate the function."""
-        return_y = False
-        if y is None:
-            return_y = True
+    def _eval(self, x):
+        """Evaluate the function at x."""
         y = np.ones(self.num_output)
         for f in self.functions:
             y *= f(x)
-        if return_y:
-            return y
+        return y
 
 
 class ConstantFunction(Function):
@@ -274,12 +315,9 @@ class ConstantFunction(Function):
         super(ConstantFunction, self).__init__(num_input, num_output, name=name)
         self._const = const
 
-    def __call__(self, x, y=None):
+    def _eval(self, x):
         """Evaluate the function at x."""
-        if y is None:
-            return self.const
-        else:
-            y[:] = self.const
+        return self.const
 
 
 class FunctionComposition(Function):
@@ -311,15 +349,12 @@ class FunctionComposition(Function):
         self._functions = functions
         super(FunctionComposition, self).__init__(num_input, num_output, name=name)
 
-    def __call__(self, x, y=None):
+    def _eval(self, x):
         """Evaluate the function at x."""
         z = x
         for f in self.functions:
             z = f(z)
-        if y is None:
-            return z
-        else:
-            y[:] = z
+        return z
 
     def _to_string(self, pad):
         """Return a string representation of the object."""
@@ -327,6 +362,7 @@ class FunctionComposition(Function):
         for f in self.functions:
             s += '\n' + f._to_string(pad + ' ')
         return s
+
 
 class FunctionPower(Function):
 
@@ -363,13 +399,9 @@ class FunctionPower(Function):
         self._exponent = exponent
         super(FunctionPower, self).__init__(f.num_input, f.num_output, name=name)
 
-    def __call__(self, x, y=None):
+    def _eval(self, x):
         """Evaluate the function at x."""
-        if y is None:
-            return self.function(x) ** self.exponent
-        else:
-            self.function(x, y=y)
-            y **= self.exponent
+        return self.function._eval(x) ** self.exponent
 
 
 class FunctionScreened(Function):
@@ -459,8 +491,8 @@ class FunctionScreened(Function):
         super(FunctionScreened, self).__init__(num_input, num_output,
                                                name=name)
 
-    def __call__(self, x):
-        """Evaluate the function."""
+    def _eval(self, x):
+        """Evaluate the function at x."""
         x_full = self.default_inputs.copy()
         x_full[self.in_idx] = x
         print 'x: ', x
