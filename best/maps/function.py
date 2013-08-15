@@ -72,12 +72,9 @@ class Function(object):
 
     def _fix_x(self, x):
         """Fix x."""
-        x = np.array(x)
-        if (self.num_input == 1 and isinstance(x, np.ndarray)
-            and len(x.shape) == 1):
-                x = np.atleast_2d(x).T
-        else:
-            x = np.atleast_2d(x)
+        x = np.atleast_2d(x)
+        if self.num_input == 1 and not x.shape[1] == 1:
+            x = x.T
         return x
 
     def __init__(self, num_input, num_output, name='function',
@@ -103,6 +100,21 @@ class Function(object):
                 raise TypeError('f_wrapped must be a proper function.')
             self._f_wrapped = f_wrapped
 
+    def _gen_eval(self, x, func):
+        """Evaluate either the function or its derivative."""
+        x = self._fix_x(x)
+        size = x.shape[:-1]
+        num_dim = x.shape[-1]
+        assert num_dim == self.num_input
+        num_pt = np.prod(size)
+        x = x.reshape((num_pt, num_dim))
+        res = np.concatenate([func(x[i, :]) for i in range(num_pt)],
+                             axis=0)
+        shape = size + (self.num_output, )
+        if len(res.shape) == 3:
+            shape += (self.num_input, )
+        return res.reshape(shape)
+
     def __call__(self, x):
         """Call the object.
 
@@ -113,20 +125,7 @@ class Function(object):
             x       ---     The input variables.
 
         """
-        x = self._fix_x(x)
-        size = x.shape[:-1]
-        num_dim = x.shape[-1]
-        assert num_dim == self.num_input
-        num_pt = np.prod(size)
-        x = x.reshape((num_pt, num_dim))
-        res = np.ndarray((num_pt, self.num_output, ))
-        for i in range(num_pt):
-            res[i, :] = self._eval(x[i, :])
-        if num_pt == 1:
-            if self.num_output == 1:
-                return res[0, 0]
-            return res[0, :]
-        return res.reshape(size + (self.num_output, ))
+        return self._gen_eval(x, self._eval)
 
     def _eval(self, x):
         """Evaluate the function assume x has the right dimensions."""
@@ -137,24 +136,7 @@ class Function(object):
 
     def d(self, x):
         """Evaluate the derivative of the function at x."""
-        x = self._fix_x(x)
-        size = x.shape[:-1]
-        num_dim = x.shape[-1]
-        assert num_dim == self.num_input
-        num_pt = np.prod(size)
-        x = x.reshape((num_pt, num_dim))
-        res = np.ndarray((num_pt, self.num_output, self.num_input))
-        for i in range(num_pt):
-            res[i, :, :] = self._d_eval(x[i, :])
-        if num_pt == 1:
-            if self.num_output == 1:
-                if self.num_input == 1:
-                    return res[0, 0, 0]
-                return res[0, 0, :]
-            if self.num_input == 1:
-                return res[0, :, 0]
-            return res[0, :, :]
-        return res.reshape(size + (self.num_output, self.num_input))
+        return self._gen_eval(x, self._d_eval)
 
     def _d_eval(self, x):
         """Evaluate the derivative of the function at x.
@@ -165,30 +147,38 @@ class Function(object):
         """
         raise NotImplementedError()
 
+    def _to_func(self, obj):
+        """Take func and return a proper function if it is a float."""
+        if isinstance(obj, float) or isinstance(obj, int):
+            obj = np.ones(self.num_output) * obj
+        if isinstance(obj, np.ndarray):
+            obj = ConstantFunction(self.num_input, obj)
+        if not isinstance(obj, Function) and hasattr(obj, '__call__'):
+            obj = Function(self.num_input, self.num_output, f_wrapped=obj)
+        return obj
+
     def __add__(self, func):
         """Add this function with another one."""
-        if isinstance(func, float) or isinstance(func, int):
-            func = np.ones(self.num_output) * func
-        if isinstance(func, np.ndarray):
-            func = ConstantFunction(self.num_input, func)
+        func = self._to_func(func)
         if self is func:
             return self * 2
-        if not isinstance(func, Function) and hasattr(func, '__call__'):
-            func = Function(self.num_input, self.num_output, f_wrapped=func)
-        f = FunctionSum((self, func))
+        functions = ()
+        if isinstance(self, FunctionSum):
+            functions = self.functions
+        functions += (func, )
+        f = FunctionSum(functions)
         return f
 
     def __mul__(self, func):
         """Multiply two functions."""
-        if isinstance(func, float) or isinstance(func, int):
-            func = np.ones(self.num_output) * func
-        if isinstance(func, np.ndarray):
-            func = ConstantFunction(self.num_input, func)
+        func = self._to_func(func)
         if self is func:
             return FunctionPower(self, 2.)
-        if not isinstance(func, Function) and hasattr(func, '__call__'):
-            func = Function(self.num_input, self.num_output, f_wrapped=func)
-        f = FunctionMultiplication((self, func))
+        functions = ()
+        if isinstance(self, FunctionMultiplication):
+            functions = self.functions
+        functions += (func, )
+        f = FunctionMultiplication(functions)
         return f
 
     def compose(self, func):
@@ -250,6 +240,10 @@ class _FunctionCollection(Function):
             s += '\n' + f._to_string(pad + ' ')
         return s
 
+    def _eval_all(self, x, func):
+        """Evaluate func for all the functions in the container."""
+        return [getattr(f, func)(x) for f in self.functions]
+
 
 class FunctionSum(_FunctionCollection):
 
@@ -259,12 +253,13 @@ class FunctionSum(_FunctionCollection):
         """Initialize the object."""
         super(FunctionSum, self).__init__(functions, name=name)
 
-    def _eval(self, x):
+    def __call__(self, x):
         """Evaluate the function."""
-        y = np.zeros(self.num_output)
-        for f in self.functions:
-            y += f(x)
-        return y
+        return np.sum(self._eval_all(x, '__call__'), axis=0)
+
+    def d(self, x):
+        """Evaluate the derivative of the function."""
+        return np.sum(self._eval_all(x, 'd'), axis=0)
 
 
 class FunctionMultiplication(_FunctionCollection):
@@ -275,12 +270,20 @@ class FunctionMultiplication(_FunctionCollection):
         """Initialize the object."""
         super(FunctionMultiplication, self).__init__(functions, name=name)
 
-    def _eval(self, x):
+    def __call__(self, x):
         """Evaluate the function at x."""
-        y = np.ones(self.num_output)
-        for f in self.functions:
-            y *= f(x)
-        return y
+        return np.prod(self._eval_all(x, '__call__'), axis=0)
+
+    def d(self, x):
+        """Evaluate the derivative of the function."""
+        val = self._eval_all(x, '__call__')
+        d_val = self._eval_all(x, 'd')
+        res = np.zeros(d_val[0].shape)
+        for i in range(len(self.functions)):
+            for k in range(self.num_input):
+                res[:, :, k] += np.prod((val[:i], val[(i + 1):],
+                                         d_val[i][:, :, k]), axis=0)
+        return res
 
 
 class ConstantFunction(Function):
@@ -319,6 +322,10 @@ class ConstantFunction(Function):
         """Evaluate the function at x."""
         return self.const
 
+    def _d_eval(self, x):
+        """Evaluate the derivative of the function at x."""
+        return np.zeros(self.const.shape)
+
 
 class FunctionComposition(Function):
 
@@ -349,12 +356,18 @@ class FunctionComposition(Function):
         self._functions = functions
         super(FunctionComposition, self).__init__(num_input, num_output, name=name)
 
-    def _eval(self, x):
+    def __call__(self, x):
         """Evaluate the function at x."""
         z = x
-        for f in self.functions:
+        for f in self.functions[-1::-1]:
             z = f(z)
         return z
+
+    def d(self, x):
+        """Evaluate the derivative at x."""
+        dg = self.functions[-1].d(x)
+        df = self.functions[-2].d(dg)
+        dh = np.einsum('ijk, ikm->ijm', df, dg)
 
     def _to_string(self, pad):
         """Return a string representation of the object."""

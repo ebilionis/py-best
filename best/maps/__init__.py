@@ -13,5 +13,7 @@ Date:
 
 
 from function import *
+from generalized_linear_model import *
+from radial_basis_function import *
 #from create_1D_upscaling_map import *
 #from create_2D_upscaling_map import *
