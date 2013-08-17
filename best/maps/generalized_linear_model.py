@@ -33,8 +33,10 @@ class GeneralizedLinearModel(Function):
     @weights.setter
     def weights(self, w):
         assert isinstance(w, np.ndarray)
-        assert self.weights.shape == w.shape
-        self._weights[:] = w
+        w = np.atleast_2d(w)
+        if self.num_output == 1 and not w.shape[0] == 1:
+            w = w.T
+        self._weights = w
 
     def __init__(self, basis, weights=None, num_output=1,
                  name='Generalized Linear Model'):
@@ -57,21 +59,21 @@ class GeneralizedLinearModel(Function):
                                 not None, then it is ignored.
             name        ---     A name for the model.
         """
-        assert isinstance(basis, best.maps.Function)
+        assert isinstance(basis, Function)
         self._basis = basis
         if weights is None:
             if num_output == 1:
                 weights = np.zeros(basis.num_output)
             else:
                 weights = np.zeros((num_output, basis.num_output))
-        self.weights = weights
         super(GeneralizedLinearModel, self).__init__(self.basis.num_input,
-                                                     self.weights.shape[0],
+                                                     num_output,
                                                      name=name)
+        self.weights = weights
 
     def _eval(self, x):
         """Evaluate the model at x."""
-        return np.dot(self.weigths, self.basis._eval(x))
+        return np.dot(self.weights, self.basis._eval(x))
 
     def _d_eval(self, x):
         """Evaluate the derivative at x."""

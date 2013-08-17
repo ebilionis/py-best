@@ -111,8 +111,6 @@ class Function(object):
         res = np.concatenate([func(x[i, :]) for i in range(num_pt)],
                              axis=0)
         shape = size + (self.num_output, )
-        if len(res.shape) == 3:
-            shape += (self.num_input, )
         return res.reshape(shape)
 
     def __call__(self, x):

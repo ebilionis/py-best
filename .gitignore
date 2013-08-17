@@ -6,3 +6,4 @@
 *.js
 *.png
 *doctree*
+*.so
