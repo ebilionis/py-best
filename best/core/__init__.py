@@ -9,8 +9,8 @@ Date:
     31/1/2013   (Added incomplete Cholesky wrapper pstrf and zero_tri_part)
 """
 
-
-from ggsvd import *
+from _lhs import *
+from _ggsvd import ggsvd
 # This is needed for loading the mkl library
 #import sys
 #import ctypes

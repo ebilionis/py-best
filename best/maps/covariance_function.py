@@ -1,4 +1,4 @@
-"""A class representing a radial basis function.
+"""A class representing a covariance function.
 
 Author:
     Ilias Bilionis
@@ -14,9 +14,9 @@ import itertools
 from function import Function
 
 
-class RadialBasisFunction(object):
+class CovarianceFunction(object):
 
-    """A class representing a radial basis function."""
+    """A class representing a covariance function."""
 
     # Number of inputs
     _num_input = None
@@ -27,7 +27,7 @@ class RadialBasisFunction(object):
     # A wrapped function
     _k_wrapped = None
 
-    # Parameters for the radial basis function (1D numpy array)
+    # Parameters for the covariance function (1D numpy array)
     _num_hyp = None
 
     # Stored parameters (if any)
@@ -73,7 +73,8 @@ class RadialBasisFunction(object):
         return len(hyp.shape) == 1 and hyp.shape[0] == self.num_hyp
 
     def __init__(self, num_input, num_hyp=0, hyp=None,
-                 name='Radial Basis Function'):
+                 k_wrapped=None,
+                 name='Covariance Function'):
         """Initialize the object.
 
         Arguments:
@@ -83,7 +84,9 @@ class RadialBasisFunction(object):
             num_hyp         ---     The number of hidden parameters.
                                     It is ignored if hyp is already set.
             hyp             ---     A vector for the hyper-parameters.
-            name            ---     A name for the radial basis function.
+            k_wrapped       ---     A common function around which,
+                                    the covariance function is wrapped.
+            name            ---     A name for the covariance function.
         """
         assert isinstance(num_input, int)
         assert num_input >= 1
@@ -95,6 +98,8 @@ class RadialBasisFunction(object):
             self._num_hyp = num_hyp
         assert isinstance(name, str)
         self._name = name
+        if not k_wrapped is None:
+            self._k_wrapped = k_wrapped
 
     def _gen_eval(self, x, y, func, num_out=1, hyp=None):
         # Check the hidden parameters
@@ -127,23 +132,23 @@ class RadialBasisFunction(object):
             for i in range(x.shape[0]):
                 for j in range(y.shape[0]):
                     A[i, j, :] = func(x[i, :], y[j, :], hyp)
-        if x.shape[0] == 1:
-            if y.shape[0] == 1:
-                return A[0, 0, :]
-            return A[0, :, :]
-        if y.shape[0] == 1:
-            return A[:, 0, :]
+        #if x.shape[0] == 1:
+        #    if y.shape[0] == 1:
+        #        return A[0, 0, :]
+        #    return A[0, :, :]
+        #if y.shape[0] == 1:
+        #    return A[:, 0, :]
         return A
 
     def __call__(self, x, y, hyp=None):
-        """Evaluate the radial basis function at x and y.
+        """Evaluate the covariance function at x and y.
 
         Arguments:
             x       ---     Input points.
             y       ---     Input points.
 
         Keyword Arguments:
-            hyp     ---     The hidden parameter of the radial basis
+            hyp     ---     The hidden parameter of the covariance
                             function. If None, then we look at the
                             parameters stored locally. If the local
                             hidden parameters are not set, then it is
@@ -153,18 +158,18 @@ class RadialBasisFunction(object):
         return A.reshape(A.shape[:-1])
 
     def _eval(self, x, y, hyp):
-        """Evaluate the radial basis function at x and y given hyp."""
+        """Evaluate the covariance function at x and y given hyp."""
         if self.is_wrapped:
             return self.k_wrapped(x, y, hyp)
         else:
             raise NotImplementedError()
 
     def d(self, x, y, hyp=None):
-        """Evaluate the Jacobian of the radial basis function given hyp."""
+        """Evaluate the Jacobian of the covariance function given hyp."""
         return self._gen_eval(x, y, self._d_eval, self.num_input, hyp=hyp)
 
     def _d_eval(self, x, y, hyp):
-        """Evaluate the Jacobian of the radial basis function given hyp.
+        """Evaluate the Jacobian of the covariance function given hyp.
 
         The Jacobian is with respect to y.
         """
@@ -179,83 +184,90 @@ class RadialBasisFunction(object):
 
     def __str__(self):
         """Return a string representation of the object."""
-        s = 'Radial Basis Function: ' + self.name + '\n'
+        s = 'covariance Function: ' + self.name + '\n'
         s += 'num_input: ' + str(self.num_input) + '\n'
         s += 'num_hyp: ' + str(self.num_hyp)
         if self.is_hyp_set:
             s += '\nhyp:\n' + str(self.hyp)
         return s
 
-    def __add__(self, rbf):
-        """Add two radial basis functions."""
-        return RadialBasisFunctionSum((self, rbf))
+    def __add__(self, cov):
+        """Add two covariance functions."""
+        return CovarianceFunctionSum((self, cov))
 
-    def __mul__(self, rbf):
-        """Multiply two radial basis functions."""
-        return RadialBasisFunctionProduct((self, rbf))
+    def __mul__(self, cov):
+        """Multiply two covariance functions."""
+        return CovarianceFunctionProduct((self, cov))
+
+    def to_basis(self, X, hyp=None, name='Covariance Function Basis'):
+        """Construct a basis object from the cov.
+
+        Arguments as in the constructor of CovarianceFunctionBasis.
+        """
+        return CovarianceFunctionBasis(self, X, hyp=hyp, name=name)
 
 
-class _RadialBasisFunctionContainer(RadialBasisFunction):
+class _CovarianceFunctionContainer(CovarianceFunction):
 
-    """A container for radial basis functions."""
+    """A container for covariance functions."""
 
-    # The radial basis functions
-    _rbf = None
+    # The covariance functions
+    _cov = None
 
     # Store indices that let us identify the starting point
-    # of the hyper-parameters for each rbf in the global hyp array
+    # of the hyper-parameters for each cov in the global hyp array
     _start_hyp = None
 
     @property
-    def rbf(self):
-        return self._rbf
+    def cov(self):
+        return self._cov
 
     @property
     def start_hyp(self):
         return self._start_hyp
 
-    def __init__(self, rbf, hyp=None,
-                 name='Radial Basis Function Container'):
+    def __init__(self, cov, hyp=None,
+                 name='covariance Function Container'):
         """Initialize the object.
 
         Arguments:
-            rbf     ---     A collection of RBFs.
+            cov     ---     A collection of RBFs.
 
         Keyword Argument
             hyp     ---     The hyper-parameters.
             name    ---     A name.
         """
-        assert isinstance(rbf, tuple) or isinstance(rbf, list)
-        assert len(rbf) >= 1
-        num_input = rbf[0].num_input
+        assert isinstance(cov, tuple) or isinstance(cov, list)
+        assert len(cov) >= 1
+        num_input = cov[0].num_input
         num_hyp = 0
         start_hyp = [0]
-        for k in rbf:
-            assert isinstance(k, RadialBasisFunction)
+        for k in cov:
+            assert isinstance(k, CovarianceFunction)
             assert num_input == k.num_input
             num_hyp += k.num_hyp
             start_hyp += [start_hyp[-1] + k.num_hyp]
-        self._rbf = rbf
+        self._cov = cov
         self._start_hyp = start_hyp[:-1]
-        super(_RadialBasisFunctionContainer, self).__init__(num_input,
+        super(_CovarianceFunctionContainer, self).__init__(num_input,
                                                             num_hyp=num_hyp,
                                                             hyp=hyp,
                                                             name=name)
 
     def __str__(self):
         """Get a string representation of the object."""
-        s = super(_RadialBasisFunctionContainer, self).__str__() + '\n'
+        s = super(_CovarianceFunctionContainer, self).__str__() + '\n'
         s += 'Contents:'
-        for k in self.rbf:
+        for k in self.cov:
             s += '\n' + str(k)
         return s
 
     def _get_hyp_of(self, i, hyp):
-        """Return the hyper-parameters pertaining to the i-th rbf."""
-        return hyp[self.start_hyp[i]: self.start_hyp[i] + self.rbf[i].num_hyp]
+        """Return the hyper-parameters pertaining to the i-th cov."""
+        return hyp[self.start_hyp[i]: self.start_hyp[i] + self.cov[i].num_hyp]
 
     def _eval_all(self, x, y, func, hyp):
-        """Evaluate func for all the rbfs in the container."""
+        """Evaluate func for all the covs in the container."""
         if hyp is None:
             hyp = self.hyp
         if hyp is None:
@@ -263,23 +275,23 @@ class _RadialBasisFunctionContainer(RadialBasisFunction):
         if not self._check_hyp(hyp):
             raise ValueError('Wrong number of parameters.')
         return [getattr(k, func)(x, y, hyp=self._get_hyp_of(i, hyp))
-                for k, i in itertools.izip(self.rbf, range(len(self.rbf)))]
+                for k, i in itertools.izip(self.cov, range(len(self.cov)))]
 
 
-class RadialBasisFunctionSum(_RadialBasisFunctionContainer):
+class CovarianceFunctionSum(_CovarianceFunctionContainer):
 
-    """A container representing the sum of radial basis functions."""
+    """A container representing the sum of covariance functions."""
 
-    def __init__(self, rbf, hyp=None, name='Sum of Radial Basis Functions'):
+    def __init__(self, cov, hyp=None, name='Sum of covariance Functions'):
         """Initialize the object."""
-        super(RadialBasisFunctionSum, self).__init__(rbf, hyp=hyp, name=name)
+        super(CovarianceFunctionSum, self).__init__(cov, hyp=hyp, name=name)
 
     def __call__(self, x, y, hyp=None):
-        """Evaluate the rbf."""
+        """Evaluate the cov."""
         return np.sum(self._eval_all(x, y, '__call__', hyp), axis=0)
 
     def d(self, x, y, hyp=None):
-        """Evaluate the derivative of the rbf."""
+        """Evaluate the derivative of the cov."""
         return np.sum(self._eval_all(x, y, 'd', hyp), axis=0)
 
     def d_hyp(self, x, y, hyp=None):
@@ -288,20 +300,20 @@ class RadialBasisFunctionSum(_RadialBasisFunctionContainer):
         return np.concatenate(tmp, axis=-1)
 
 
-class RadialBasisFunctionProduct(_RadialBasisFunctionContainer):
+class CovarianceFunctionProduct(_CovarianceFunctionContainer):
 
-    """A container representing the product of radial basis functions."""
+    """A container representing the product of covariance functions."""
 
-    def __init__(self, rbf, hyp=None, name='Product of Radial Basis Functions'):
+    def __init__(self, cov, hyp=None, name='Product of covariance Functions'):
         """Initialize the object."""
-        super(RadialBasisFunctionProduct, self).__init__(rbf, hyp=hyp, name=name)
+        super(CovarianceFunctionProduct, self).__init__(cov, hyp=hyp, name=name)
 
     def __call__(self, x, y, hyp=None):
-        """Evaluate the rbf."""
+        """Evaluate the cov."""
         return np.prod(self._eval_all(x, y, '__call__', hyp), axis=0)
 
     def d(self, x, y, hyp=None):
-        """Evaluate the derivative of the rbf."""
+        """Evaluate the derivative of the cov."""
         val = self._eval_all(x, y, '__call__', hyp)
         d_val = self._eval_all(x, y, 'd', hyp)
         res = np.zeros(d_val[0].shape)
@@ -316,13 +328,13 @@ class RadialBasisFunctionProduct(_RadialBasisFunctionContainer):
         return np.concatenate(tmp, axis=-1)
 
 
-class RadialBasisFunctionSE(RadialBasisFunction):
+class CovarianceFunctionSE(CovarianceFunction):
 
-    """A Square Exponential Radial Basis function."""
+    """A Square Exponential covariance function."""
 
-    def __init__(self, num_input, hyp=None, name='SE Radial Basis Function'):
+    def __init__(self, num_input, hyp=None, name='SE covariance Function'):
         """Initialize the object."""
-        super(RadialBasisFunctionSE, self).__init__(num_input, num_input,
+        super(CovarianceFunctionSE, self).__init__(num_input, num_input,
                                                     hyp=hyp, name=name)
 
     def _eval(self, x, y, hyp):
@@ -339,66 +351,75 @@ class RadialBasisFunctionSE(RadialBasisFunction):
         tmp = self._eval(x, y, hyp)
         return ((x - y) / hyp) ** 2 * tmp / hyp
 
-    def to_basis(self, X, hyp=None):
-        """Turn the radial basis function into a basis."""
-        if hyp is None:
-            hyp = self.hyp
-        return RadialBasisFunctionBasis(self, X)
 
+class CovarianceFunctionBasis(Function):
 
-class RadialBasisFunctionBasis(Function):
+    """A basis built out of covariance functions."""
 
-    """A basis built out of radial basis functions."""
-
-    # The radial basis function object
-    _rbf = None
+    # The covariance function object
+    _cov = None
 
     # The fixed points of the basis
     _X = None
 
+    # The hyper-parameters of the object.
+    _hyp = None
+
     @property
-    def rbf(self):
-        return self._rbf
+    def cov(self):
+        return self._cov
 
     @property
     def X(self):
         return self._X
 
-    def __init__(self, rbf, X, name='Radial Basis Function Basis'):
+    @property
+    def hyp(self):
+        return self._hyp
+
+    def __init__(self, cov, X, hyp=None,
+                 name='Covariance Function Basis'):
         """Initialize the object.
 
         Arguments:
-            rbf     ---     A RadialBasisFunction object with set
+            cov     ---     A CovarianceFunction object with set
                             hyper-parameters.
             X       ---     Input points for setting the first variable.
 
         Keyword Arguments
+            hyp     ---     The hyper-parameters you wish to use. If None,
+                            then we look at cov for them.
             name    ---     A name for the basis.
         """
-        assert isinstance(rbf, RadialBasisFunction)
-        assert rbf.is_hyp_set
-        self._rbf = rbf
+        assert isinstance(cov, CovarianceFunction)
+        assert cov.is_hyp_set or not hyp is None
+        self._cov = cov
+        if not hyp is None:
+            hyp = np.array(hyp)
+            self._hyp = hyp
+        else:
+            self._hyp = self.cov.hyp.copy()
         X = np.atleast_2d(X)
         assert isinstance(X, np.ndarray)
         assert len(X.shape) == 2
-        if rbf.num_input == 1 and not X.shape[1] == 1:
+        if cov.num_input == 1 and not X.shape[1] == 1:
             X = X.T
-        assert X.shape[1] == rbf.num_input
+        assert X.shape[1] == cov.num_input
         self._X = X
-        super(RadialBasisFunctionBasis, self).__init__(rbf.num_input,
+        super(CovarianceFunctionBasis, self).__init__(cov.num_input,
                                                        X.shape[0],
                                                        name=name)
 
     def _eval(self, x):
         """Evaluate the basis at x."""
-        return self.rbf(self.X, x)
+        return self.cov(self.X, x, hyp=self.hyp)
 
     def _d_eval(self, x):
         """Evaluate the Jacobian of the basis at x."""
-        return self.rbf.d(self.X, x)
+        return self.cov.d(self.X, x, hyp=self.hyp)
 
     def __str__(self):
         """Return a string representation of the object."""
-        s = super(RadialBasisFunctionBasis, self).__str__() + '\n'
-        s += str(self.rbf)
+        s = super(CovarianceFunctionBasis, self).__str__() + '\n'
+        s += str(self.cov)
         return s

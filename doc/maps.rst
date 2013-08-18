@@ -1,3 +1,5 @@
+.. _map:
+
 Maps
 ====
 
@@ -11,6 +13,9 @@ concept of a multi-input/output function. Our goal is to have function
 objects that can be combined easily in arbitrary ways to create new
 functions. The complete details of the implementation can be found in the
 docstrings.
+
+
+.. _map-basic:
 
 The basic concepts
 ------------------
@@ -163,7 +168,7 @@ a simple example what is the functionality it actually provides.
 
         :param x: The evaluation point.
         :type x: 1D numpy array of the right dimensions
-        :returns: The Jacobian at x.
+        :returns: The Jacobian at ``x``.
         :rtype: 2D numpy array of the right dimensions
 
     .. method:: d(x)
@@ -188,7 +193,7 @@ a simple example what is the functionality it actually provides.
         :type g: :class:`best.maps.Function` object, regular \
                  multi-input/output function or just a number.
         :returns: A function object that represents the addition of the
-                  current object and g.
+                  current object and ``g``.
         :rtype: :class:`best.maps.Function`
 
     .. method:: __mul__(g):
@@ -199,7 +204,7 @@ a simple example what is the functionality it actually provides.
         :type g: :class:`best.maps.Function` object, regular \
                  multi-input/output function or just a number.
         :returns: A function object that represents the multiplication of \
-                  the current object and g.
+                  the current object and ``g``.
         :rtype: :class:`best.maps.Function`
 
     .. method:: compose(g):
@@ -208,10 +213,30 @@ a simple example what is the functionality it actually provides.
 
         :param g: A function whose output has the same dimensions as the \
                   input of the current object.
-        :type g: :class:`best.maps.Function
+        :type g: :class:`best.maps.Function`
         :returns: A function object that represents the composition of \
-                  the current object and g.
+                  the current object and ``g``.
         :rtype: :class:`best.maps.Function`
+
+    .. method:: join(g):
+
+        Joins the outputs of two functions.
+
+        :param g: A function whose output has the same dimensions as the \
+                  input of the current object.
+        :type g: :class:`best.maps.Function`
+        :returns: A function object that represents jointly the outputs \
+                  of the current object and ``g`` (fist ``f`` then ``g``).
+        :rtype: :class:`best.maps.Function`
+
+    .. method:: screen([in_idx=None[, out_idx=None[, \
+                        default_inputs=None[, name='Screened Function']]]])
+
+        Creates a screened version of the function.
+
+        The parameters are
+        as in the constructor of :class:`best.maps.FunctionScreened`.
+        You may consult it for details.
 
     .. method:: __str__():
 
@@ -223,6 +248,8 @@ a simple example what is the functionality it actually provides.
 
         This may be reimplemented by children classes.
 
+
+.. _map-examples:
 
 Some Examples
 -------------
@@ -290,6 +317,8 @@ For example, the following code defines :math:`h(\cdot) = f(\cdot)^2`::
     h = FunctionPower(f, 2.)
 
 
+.. _map-screened:
+
 Screened Function
 -----------------
 A very useful class is the :class:`best.maps.FunctionScreened`. It
@@ -349,3 +378,45 @@ this using the :class:`best.maps.FunctionScreened`::
     x_full = np.ones(f.num_input) * .5
     x_full[[0, 4]] = np.array([0.3, -1.])
     print f(x_full)[[3, 5]]
+
+
+.. _map-basis:
+
+Basis
+-----
+
+A **basis** is simply a collection of multi-input functions
+:math:`\phi_i(\cdot)`. Therefore, it can be represented by a child of
+:class:`best.maps.Function`. We offer several basis functions.
+In particular, Orthogonal Polynomials can be constructed using the
+functionality of :mod:`best.gpc`. Furthermore, bases can be constructed
+from Radial Basis Functions using :func:`best.maps.RadialBasisFunction.to_basis()`.
+You should go through the corresponding documentation. Here, we will
+simply state a few examples that exploit the functionality of
+:mod:`best.maps`.
+
+
+.. _map-basis-join:
+
+Joining two bases
++++++++++++++++++
+
+Assume that we are given two bases, say ``phi`` and ``psi``.
+We can create a basis that contains the bases functions
+of ``phi`` and ``psi`` simultaneously by
+using the function :meth:`best.maps.Function.join()`::
+
+    phipsi = phi.join(psi)
+    print str(phipsi)
+
+
+.. _map-basis-sparse:
+
+Getting rid of some of the basis functions
+++++++++++++++++++++++++++++++++++++++++++
+Now, assume that we are given a basis ``phi`` and that we want to
+construct an other one that contains only the first and the fifth
+basis functions of ``phi``. We can do this as follows::
+
+    sparse_phi = phi.screen(out_idx=[0, 2])
+    print str(sparse_phi)

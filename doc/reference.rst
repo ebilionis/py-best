@@ -19,8 +19,12 @@ The BEST package is split in several submodules:
 
    core
    linalg
+   serialization
    maps
+   cov
    random
    gpc
+   glm
+   rvm
    gp
    inverse

@@ -12,7 +12,7 @@ import numpy as np
 import scipy.linalg
 import scipy.optimize
 import math
-import best.core
+import best.linalg
 import best.maps
 
 
@@ -196,7 +196,7 @@ class RelevanceVectorMachine(object):
         B = np.zeros((self.num_relevant, self.num_relevant))
         np.fill_diagonal(B, np.sqrt(self.alpha / self.beta))
         # Compute the gsvd
-        self._gsvd = best.core.GeneralizedSVD(A, B) # Do not do V
+        self._gsvd = best.linalg.GeneralizedSVD(A, B) # Do not do V
         self._R_lu = scipy.linalg.lu_factor(self.gsvd.R)
 
     def _finalize(self):
@@ -472,11 +472,11 @@ class RelevanceVectorMachine(object):
         Return:
             A generalized linear model.
         """
-        if isinstance(basis, best.maps.RadialBasisFunctionBasis):
-            sp_basis = best.maps.RadialBasisFunctionBasis(basis.rbf,
+        if isinstance(basis, best.maps.CovarianceFunctionBasis):
+            sp_basis = best.maps.CovarianceFunctionBasis(basis.cov,
                                                           basis.X[self.relevant, :])
         else:
-            sp_basis = best.maps.FunctionScreened(basis, out_idx=self.relevant)
+            sp_basis = basis.screen(out_idx=self.relevant)
         return best.maps.GeneralizedLinearModel(sp_basis, weights=self.weights,
                                                 sigma_sqrt=self.sigma_sqrt,
                                                 beta=self.beta)

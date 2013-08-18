@@ -1,3 +1,5 @@
+.. _linalg:
+
 Linear Algebra
 ==============
 
@@ -7,6 +9,16 @@ Linear Algebra
 The linear algebra module (:mod:`best.linalg`)
 defines several functions that cannot be found in numpy or
 scipy but are extremely useful in various Bayesian problems.
+
+
+.. _linalg-kron:
+
+Manipulating Kronecker Products
+-------------------------------
+
+Being able to avoid forming the Kronecker products in linear algebra
+can save lots of memory and time. Here are a few functions that we have
+put together. They should be slef-explanatory.
 
 .. function:: best.linalg.kron_prod(A, x)
 
@@ -201,3 +213,125 @@ scipy but are extremely useful in various Bayesian problems.
     and compare it with:
 
     >>> x_new_real = np.linalg.solve(L_new_real, np.hstack([y, z]))
+
+
+.. _linalg-gsvd:
+
+Generalized Singular Value Decomposition
+----------------------------------------
+
+Let :math:`A\in\mathbb{R}^{m\times n}` and :math:`B\in\mathbb{R}^{p\times n}`.
+The `Generalized Singular Value Decomposition \
+<http://en.wikipedia.org/wiki/Generalized_singular_value_decomposition>`_
+of :math:`[A B]` is such that
+
+    .. math::
+
+            U^T A Q = D_1 [0 R],\;\;V' B Q = D_2 [0 R],
+
+where :math:`U, V` and :math:`Q` are orthogonal matrices and
+:math:`Z^T` is the transpose of :math:`Z`.
+Let :math:`k + l` be the effective numerical rank of the matrix
+:math:`\left[A^T B^T\right]^T`, then :math:`R` is a
+:math:`(k + l)\times(k + l)` non-singular upper triangular matrix,
+:math:`D_1` and :math:`D_2` are :math:`m\times(k+l)`
+and :math:`p\times(k+l)` "diagonal" matrices.
+The particular structures of :math:`D_1` and :math:`D_2` depend
+on the sign of :math:`m - k - l`. Consult the theory for more details.
+This decomposition is extremely useful in computing the statistics
+required for :class:`best.rvm.RelevantVectorMachine`.
+Here is a class that interfaces LAPACK's
+`dggsvd <http://www.netlib.no/netlib/lapack/double/dggsvd.f>`_:
+
+.. class:: GeneralizedSVD
+
+    A class that represents the generalized svd decomposition of A and B.
+
+    .. method:: __init__(A, B[, do_U=True[, do_V=True[, do_Q=True]]])
+
+        Initialize the object and perform the decomposition.
+
+        A copy of ``A`` and ``B`` will be made.
+
+        :param A: A :math:`m\times n` matrix.
+        :type A: 2D numpy array
+        :param B: A :math:`p\times n` matrix.
+        :type B: 2D numpy array
+        :param do_U: Compute ``U`` if ``True``.
+        :type do_U: bool
+        :param do_V: Compute ``U`` if ``True``.
+        :type do_V: bool
+        :param do_Q: Compute ``U`` if ``True``.
+        :type do_Q: bool
+
+        .. warning::
+            Do not use the functionality that skips the computation
+            of ``U, V`` or ``Q``. It does not work at the moment.
+
+    .. attribute:: A
+
+        Get the final form of the copy of ``A``.
+
+    .. attribute:: B
+
+        Get the final form of the copy of ``B``.
+
+    .. attribute:: alpha
+
+        Get the vector of singular values of ``A``.
+
+    .. attribute:: beta
+
+        Get the vector of singular values of ``B``.
+
+    .. attribute:: U
+
+        Get the orthogonal matrix :math:`U`.
+
+    .. attribute:: V
+
+        Get the orthogonal matrix :math:`V`.
+
+    .. attribute:: Q
+
+        Get the orthogonal matrix :math:`Q`.
+
+    .. attribute:: m
+
+        Get the number of rows of :math:`A`.
+
+    .. attribute:: n
+
+        Get the number of columns of :math:`A`.
+
+    .. attribute:: p
+
+        Get the number of rows of :math:`B`.
+
+    .. attribute:: k
+
+        Get :math:`k`.
+
+    .. attribute:: l
+
+        Get :math:`l`.
+
+    .. attribute:: R
+
+        Get the non-singular, upper triangular matrix :math:`R`.
+
+    .. attribute:: C
+
+        Get the diagonal :math:`C` matrix. See doc of ``dggsvd``.
+
+    .. attribute:: S
+
+        Get the diagonal :math:`S` matrix. See doc of ``ggsvd``.
+
+    .. attribute:: D1
+
+        Get the "diagonal" :math:`D_1` matrix.
+
+    .. attribute:: D2
+
+        Get the "diagonal" :math:`D_2` matrix.

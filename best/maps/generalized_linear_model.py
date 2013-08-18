@@ -70,7 +70,7 @@ class GeneralizedLinearModel(Function):
     def __init__(self, basis, weights=None, sigma_sqrt=None,
                  beta=1e99,
                  num_output=1,
-                 name='Mean of Generalized Linear Model'):
+                 name='Generalized Linear Model'):
         """Initialize the object.
 
         Arguments:

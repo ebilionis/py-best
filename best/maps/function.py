@@ -209,6 +209,17 @@ class Function(object):
         functions += (func, )
         return FunctionJoinedOutputs(functions)
 
+    def screen(self, in_idx=None, out_idx=None, default_inputs=None,
+               name='Screened Function'):
+        """Construct a screened version of the function object.
+
+        Arguments:
+            As in the constructor of FunctionScreened.
+        """
+        return FunctionScreened(self, in_idx=in_idx, out_idx=out_idx,
+                                default_inputs=default_inputs,
+                                name=name)
+
 
 class _FunctionCollection(Function):
 

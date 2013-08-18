@@ -1,4 +1,4 @@
-"""Unit-tests for best.maps.RadialBasisFunction.
+"""Unit-tests for best.maps.CovarianceFunction.
 
 Author:
     Ilias Bilionis
@@ -22,12 +22,22 @@ import matplotlib.pyplot as plt
 
 class RBFTest(unittest.TestCase):
 
-    def test_rbf(self):
-        f = RadialBasisFunctionSE(1)
+    def test_cov(self):
+        f = CovarianceFunctionSE(1)
+        x = np.linspace(-5, 5, 100)
+        X = np.random.randn(10)
+        phi = f.to_basis(X, hyp=1.)
+        plt.plot(x, phi(x))
+        plt.plot(x, f(0, x, hyp=1.).T)
+        plt.show()
+        plt.plot(x, f.d(0, x, hyp=1.)[:, :, 0].T)
+        plt.show()
+        plt.plot(x, f.d(0, x, hyp=1.)[:, :, 0].T)
+        plt.show()
         x = np.random.randn(10)
         y = np.random.randn(20)
         f.hyp = 1.
-        g = RadialBasisFunctionSE(1)
+        g = CovarianceFunctionSE(1)
         h = f + g
         h.hyp = [1., 1.2]
         print str(h)
