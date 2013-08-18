@@ -13,6 +13,7 @@ import scipy.linalg
 import scipy.optimize
 import math
 import best.core
+import best.maps
 
 
 # Some Actions
@@ -53,8 +54,8 @@ class RelevanceVectorMachine(object):
     # The relevant weights
     _weights = None
 
-    # The covariance matrix
-    _sigma = None
+    # The square root of the inverse covariance matrix
+    _sigma_sqrt = None
 
     # The statistics
     _S = None
@@ -122,8 +123,8 @@ class RelevanceVectorMachine(object):
         return self._weights
 
     @property
-    def sigma(self):
-        return self._sigma
+    def sigma_sqrt(self):
+        return self._sigma_sqrt
 
     @property
     def S(self):
@@ -202,8 +203,8 @@ class RelevanceVectorMachine(object):
         """Finalize the algorithm."""
         self._weights = np.einsum('ij, i->ij', self.weights,
                                   1. / self.PHI_scales[self.relevant])
-        self._sigma = np.einsum('ij, i->ij', self.sigma,
-                                1. / self.PHI_scales[self.relevant] ** 2)
+        self._sigma_sqrt = np.einsum('ij, i->ij', self.sigma_sqrt,
+                                     1. / self.PHI_scales[self.relevant])
 
     def _compute_log_det_RRT(self):
         return 2. * np.log(np.fabs(np.diag(self._R_lu[0]))).sum()
@@ -213,9 +214,9 @@ class RelevanceVectorMachine(object):
 
         self._weights = np.dot(self.gsvd.Q, tmpm_mr_q)
 
-        tmp = scipy.linalg.lu_solve(self._R_lu, self.gsvd.Q.T,
-                                    trans=1)
-        self._sigma = np.dot(tmp.T, tmp) / self.beta
+        self._sigma_sqrt = (scipy.linalg.lu_solve(self._R_lu, self.gsvd.Q.T,
+                                                 trans=1) /
+                            math.sqrt(self.beta))
 
     def _compute_statistics(self):
         """Compute the statistics at the current alphas and beta."""
@@ -354,16 +355,25 @@ class RelevanceVectorMachine(object):
         self._beta = prev_beta
         return self.log_like
 
-    def _update_beta(self, tol=1e-6, max_it=1000,
-                     beta_l=1e-20, beta_r=1e20, beta_step=.01):
+    def _update_beta(self):
         """Update the current value of beta."""
+        self._compute_statistics()
+        prev_beta = self.beta
+        prev_log_like = self._log_like
         #print self.weights.shape
         #print self.PHIs[:, self.relevant].shape
         tmpm = self.Y - np.dot(self.PHIs[:, self.relevant], self.weights)
 
-        sum_a_Lambda = np.einsum('ii, i', self.sigma, self.alpha)
-        self._beta = ((self.num_samples - self.num_basis + sum_a_Lambda) /
+        sum_a_Lambda = np.einsum('ij, ij, i', self.sigma_sqrt,
+                                 self.sigma_sqrt, self.alpha)
+        self._beta = ((self.num_samples - self.num_relevant + sum_a_Lambda) /
                       (np.einsum('ij, ij', tmpm, tmpm) / self.num_output))
+        self._fix_relevant_gsvd()
+        self._compute_statistics()
+        if self.log_like < prev_log_like:
+            self._beta = prev_beta
+            self._fix_relevant_gsvd()
+            self._compute_statistics()
 
     def __init__(self):
         """Initialize the object.
@@ -381,12 +391,15 @@ class RelevanceVectorMachine(object):
         self._allocate_memory()
         self._scale_PHI()
 
-    def initialize(self, beta, relevant=None, alpha=None):
+    def initialize(self, beta=None, relevant=None, alpha=None):
         """Initialize the training algorithm.
 
         If no, parameters are specified then, they are found
         automatically.
         """
+        if beta is None:
+            # Use the variance of the data
+            beta = self.num_output / np.var(self.Y, axis=0).sum()
         beta = float(beta)
         assert beta > 0.
         if not relevant is None:
@@ -439,10 +452,8 @@ class RelevanceVectorMachine(object):
             if math.fabs(self.log_like - prev_log_like) < tol:
                 prev_log_like = self.log_like
                 prev_beta = self.beta
-                #self._compute_statistics()
-                #self._update_beta()
-                #self._fix_relevant_gsvd()
-                self._compute_statistics()
+                self._update_beta()
+
                 if verbose:
                     print '** New beta: ', self.beta
                 if math.fabs(self.log_like - prev_log_like) < tol:
@@ -450,3 +461,22 @@ class RelevanceVectorMachine(object):
                         print '*** Converged!'
                     break
         self._finalize()
+
+    def get_generalized_linear_model(self, basis):
+        """Construct a generalized linear model.
+
+        Arguments:
+            basis       ---     The basis you used to construct the
+                                design matrix.
+
+        Return:
+            A generalized linear model.
+        """
+        if isinstance(basis, best.maps.RadialBasisFunctionBasis):
+            sp_basis = best.maps.RadialBasisFunctionBasis(basis.rbf,
+                                                          basis.X[self.relevant, :])
+        else:
+            sp_basis = best.maps.FunctionScreened(basis, out_idx=self.relevant)
+        return best.maps.GeneralizedLinearModel(sp_basis, weights=self.weights,
+                                                sigma_sqrt=self.sigma_sqrt,
+                                                beta=self.beta)

@@ -110,6 +110,12 @@ class Function(object):
         x = x.reshape((num_pt, num_dim))
         res = np.concatenate([func(x[i, :]) for i in range(num_pt)],
                              axis=0)
+        if self.num_output == 1:
+            if num_pt == 1:
+                return res[0, 0]
+            return res[:, 0]
+        if num_pt == 1:
+            return res[0, :]
         shape = size + (self.num_output, )
         return res.reshape(shape)
 
@@ -160,24 +166,22 @@ class Function(object):
         func = self._to_func(func)
         if self is func:
             return self * 2
-        functions = ()
+        functions = (self, )
         if isinstance(self, FunctionSum):
             functions = self.functions
         functions += (func, )
-        f = FunctionSum(functions)
-        return f
+        return FunctionSum(functions)
 
     def __mul__(self, func):
         """Multiply two functions."""
         func = self._to_func(func)
         if self is func:
             return FunctionPower(self, 2.)
-        functions = ()
+        functions = (self, )
         if isinstance(self, FunctionMultiplication):
             functions = self.functions
         functions += (func, )
-        f = FunctionMultiplication(functions)
-        return f
+        return FunctionMultiplication(functions)
 
     def compose(self, func):
         """Compose two functions."""
@@ -195,6 +199,15 @@ class Function(object):
     def __str__(self):
         """Return a string representation of this object."""
         return self._to_string('')
+
+    def join(self, func):
+        """Join the outputs of two functions."""
+        func = self._to_func(func)
+        functions = (self, )
+        if isinstance(self, FunctionJoinedOutputs):
+            functions = self.functions
+        functions += (func, )
+        return FunctionJoinedOutputs(functions)
 
 
 class _FunctionCollection(Function):
@@ -258,6 +271,36 @@ class FunctionSum(_FunctionCollection):
     def d(self, x):
         """Evaluate the derivative of the function."""
         return np.sum(self._eval_all(x, 'd'), axis=0)
+
+
+class FunctionJoinedOutputs(_FunctionCollection):
+
+    """Define a function that joins the outputs of two functions."""
+
+    def __init__(self, functions, name='Function Joined Outputs'):
+        """Initialize the object."""
+        if not isinstance(functions, tuple):
+            raise TypeError('functions must be a tuple')
+        for f in functions:
+            if not isinstance(f, Function):
+                raise TypeError(
+                        'All members of functions must be Functions')
+        num_input = functions[0].num_input
+        num_output = functions[0].num_output
+        for f in functions[1:]:
+            if num_input != f.num_input:
+                raise ValueError(
+                    'All functions must have the same dimensions.')
+            num_output += f.num_output
+        self._functions = functions
+        super(_FunctionCollection, self).__init__(num_input, num_output,
+                                                  name=name)
+
+    def __call__(self, x):
+        return np.concatenate(self._eval_all(x, '__call__'), axis=-1)
+
+    def d(self, x):
+        return np.concatenate(self._eval_all(x, 'd'), axis=-1)
 
 
 class FunctionMultiplication(_FunctionCollection):
@@ -478,38 +521,48 @@ class FunctionScreened(Function):
             raise TypeError('The screened_func must be a Function.')
         self._screened_func = screened_func
         if in_idx is None:
-            in_idx = range(self.screened_func.num_input)
-        elif not (isinstance(in_idx, tuple) or isinstance(in_idx, list)):
-            raise TypeError('in_idx must be a tuple or a list.')
+            in_idx = np.arange(self.screened_func.num_input, dtype='i')
+        else:
+            in_idx = np.array(in_idx, dtype='i')
+            assert in_idx.ndim == 1
+            assert in_idx.shape[0] <= self.screened_func.num_input
         self._in_idx = in_idx
         if default_inputs is None:
             default_inputs = np.zeros(self.screened_func.num_input)
-        elif not isinstance(default_inputs, np.ndarray):
-            raise TypeError('default_inputs must be a numpy array.')
-        if not len(default_inputs.shape) == 1:
-            raise TypeError('default_inputs must be 1D.')
-        elif not default_inputs.shape[0] == self.screened_func.num_input:
-            raise TypeError('default_inputs must have the same number of '
-                            + 'dimensions as screened_func.')
+        else:
+            default_inputs = np.array(default_inputs)
+            assert default_inputs.ndim == 1
+            assert default_inputs.shape[0] == self.screened_func.num_input
         self._default_inputs = default_inputs
         if out_idx is None:
-            out_idx = range(self.screened_func.num_output)
-        elif not (isinstance(out_idx, tuple) or isinstance(out_idx, list)):
-            raise TypeError('out_idx must be a tuple or a list.')
+            out_idx = np.arange(self.screened_func.num_output, dtype='i')
+        else:
+            out_idx = np.array(out_idx, dtype='i')
+            assert out_idx.ndim == 1
+            assert out_idx.shape[0] <= self.screened_func.num_output
         self._out_idx = out_idx
-        num_input = len(self.in_idx)
-        num_output = len(self.out_idx)
+        num_input = in_idx.shape[0]
+        num_output = out_idx.shape[0]
         super(FunctionScreened, self).__init__(num_input, num_output,
                                                name=name)
 
-    def _eval(self, x):
+    def _get_eval(self, x, func):
+        """Evaluate func at x."""
+        x = self._fix_x(x)
+        x_full = np.array(x, copy=True)
+        x_full[:, self.in_idx] = x
+        y_full = func(x_full)
+        if x.shape[0] == 1:
+            return y_full[0, self.out_idx]
+        return y_full[:, self.out_idx]
+
+    def __call__(self, x):
         """Evaluate the function at x."""
-        x_full = self.default_inputs.copy()
-        x_full[self.in_idx] = x
-        print 'x: ', x
-        print 'x_full: ', x_full
-        y_full = self.screened_func(x_full)
-        return y_full[self.out_idx]
+        return self._get_eval(x, self.screened_func.__call__)
+
+    def d(self, x):
+        """Evaluate the derivative of the function at x."""
+        return self._get_eval(x, self.screened_func.d)
 
     def _to_string(self, pad):
         """Return a padded string representation."""
