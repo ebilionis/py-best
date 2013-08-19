@@ -8,19 +8,25 @@ Date:
 
 """
 
+
+__all__ = ['Function', 'FunctionSum', 'FunctionProduct',
+           'FunctionJoinedOutputs',
+           'ConstantFunction', 'FunctionScreened']
+
+
 import numpy as np
+import warnings
+import itertools
+from .. import Object
 
 
-class Function(object):
+class Function(Object):
 
     """A class representing an arbitrary multi-input/output function.
 
     Everything in Best that can be thought of as a function should be
     a child of this class.
     """
-
-    # A name for this function
-    _name = None
 
     # Number of input dimensions
     _num_input = None
@@ -30,6 +36,12 @@ class Function(object):
 
     # If this is a function wrapper
     _f_wrapped = None
+
+    # Parameters for the function
+    _hyp = None
+
+    # Number of parameters
+    _num_hyp = None
 
     @property
     def num_input(self):
@@ -42,18 +54,6 @@ class Function(object):
         return self._num_output
 
     @property
-    def name(self):
-        """Get the name of the function."""
-        return self._name
-
-    @name.setter
-    def name(self, value):
-        """Set the name of the function."""
-        if not isinstance(value, str):
-            raise TypeError('The name of the function must be a string.')
-        self._name = value
-
-    @property
     def f_wrapped(self):
         """Get the wrapped function (if any)."""
         return self._f_wrapped
@@ -62,6 +62,25 @@ class Function(object):
     def is_function_wrapper(self):
         """Is this simply a function wrapper."""
         return self.f_wrapped is not None
+
+    @property
+    def hyp(self):
+        """Get the hyper-parameters."""
+        return self._hyp
+
+    @hyp.setter
+    def hyp(self, val):
+        """Set the hyper-parameters."""
+        if not val is None:
+            val = np.array(val)
+            assert val.ndim == 1
+            assert val.shape[0] == self.num_hyp
+        self._hyp = val
+
+    @property
+    def num_hyp(self):
+        """Get the number of hyper-parameters"""
+        return self._num_hyp
 
     def _check_if_valid_dim(self, value, name):
         """Checks if value is a valid dimension."""
@@ -77,13 +96,14 @@ class Function(object):
             x = x.T
         return x
 
-    def __init__(self, num_input, num_output, name='function',
+    def __init__(self, num_input, num_output, num_hyp=0, name='function',
                  f_wrapped=None):
         """Initializes the object
 
         Arguments:
             num_input   ---     The number of input dimensions.
             num_output  ---     The number of output dimensions.
+            num_hyp     ---     The number of hyper-parameters.
 
         Keyword Arguments:
             name        ---     Provide a name for the function.
@@ -94,32 +114,56 @@ class Function(object):
         self._num_input = num_input
         self._check_if_valid_dim(num_output, 'num_output')
         self._num_output = num_output
-        self.name = name
+        num_hyp = int(num_hyp)
+        assert num_hyp >= 0
+        self._num_hyp = 0
         if f_wrapped is not None:
             if not hasattr(f_wrapped, '__call__'):
                 raise TypeError('f_wrapped must be a proper function.')
             self._f_wrapped = f_wrapped
+            if not hyp is None:
+                warnings.warn('The specified hyper-parameters will be '
+                              + 'ignored!')
+        super(Function, self).__init__(name=name)
 
-    def _gen_eval(self, x, func):
+    def _eval(self, x, hyp):
+        """Evaluate the function assume x has the right dimensions."""
+        if self.is_function_wrapper:
+            return self.f_wrapped(x)
+        else:
+            raise NotImplementedError()
+
+    def _d_eval(self, x, hyp):
+        """Evaluate the derivative of the function at x.
+
+        It should return a 2D numpy array of dimensions
+        num_output x num_input. That is, it should return
+        the Jacobian at x.
+        """
+        raise NotImplementedError()
+
+    def _d_hyp_evel(self, x, hyp):
+        """Evaluate the derivative of the function with respect to hyp.
+
+        It should return a 3D numpy array of dimensions
+        num_output x num_input x num_dim.
+        """
+        raise NotImplementedError()
+
+    def _gen_eval(self, x, func, hyp):
         """Evaluate either the function or its derivative."""
         x = self._fix_x(x)
-        size = x.shape[:-1]
-        num_dim = x.shape[-1]
+        num_dim = x.shape[1]
         assert num_dim == self.num_input
-        num_pt = np.prod(size)
-        x = x.reshape((num_pt, num_dim))
-        res = np.concatenate([func(x[i, :]) for i in range(num_pt)],
+        num_pt = x.shape[0]
+        res = np.concatenate([np.atleast_2d(func(x[i, :], hyp))
+                                            for i in range(num_pt)],
                              axis=0)
-        if self.num_output == 1:
-            if num_pt == 1:
-                return res[0, 0]
-            return res[:, 0]
         if num_pt == 1:
             return res[0, :]
-        shape = size + (self.num_output, )
-        return res.reshape(shape)
+        return res
 
-    def __call__(self, x):
+    def __call__(self, x, hyp=None):
         """Call the object.
 
         If y is provided, then the Function should write the output
@@ -129,27 +173,11 @@ class Function(object):
             x       ---     The input variables.
 
         """
-        return self._gen_eval(x, self._eval)
+        return self._gen_eval(x, self._eval, hyp)
 
-    def _eval(self, x):
-        """Evaluate the function assume x has the right dimensions."""
-        if self.is_function_wrapper:
-            return self.f_wrapped(x)
-        else:
-            raise NotImplementedError()
-
-    def d(self, x):
+    def d(self, x, hyp=None):
         """Evaluate the derivative of the function at x."""
-        return self._gen_eval(x, self._d_eval)
-
-    def _d_eval(self, x):
-        """Evaluate the derivative of the function at x.
-
-        It should return a 2D numpy array of dimensions
-        num_output x num_input. That is, it should return
-        the Jacobian at x.
-        """
-        raise NotImplementedError()
+        return self._gen_eval(x, self._d_eval, hyp)
 
     def _to_func(self, obj):
         """Take func and return a proper function if it is a float."""
@@ -178,10 +206,10 @@ class Function(object):
         if self is func:
             return FunctionPower(self, 2.)
         functions = (self, )
-        if isinstance(self, FunctionMultiplication):
+        if isinstance(self, FunctionProduct):
             functions = self.functions
         functions += (func, )
-        return FunctionMultiplication(functions)
+        return FunctionProduct(functions)
 
     def compose(self, func):
         """Compose two functions."""
@@ -190,15 +218,13 @@ class Function(object):
 
     def _to_string(self, pad):
         """Return a padded string representation."""
-        s = pad + self.name + ':R^' + str(self.num_input) + ' --> '
-        s += 'R^' + str(self.num_output)
+        s = super(Function, self)._to_string(pad) + '\n'
+        s += pad + ' f:R^' + str(self.num_input) + ' --> '
+        s += ' R^' + str(self.num_output) + '\n'
+        s += pad + ' num_hyp: ' + str(self.num_hyp)
         if self.is_function_wrapper:
-            s += ' (function wrapper)'
+            s += '\n' + pad + ' (function wrapper)'
         return s
-
-    def __str__(self):
-        """Return a string representation of this object."""
-        return self._to_string('')
 
     def join(self, func):
         """Join the outputs of two functions."""
@@ -221,19 +247,27 @@ class Function(object):
                                 name=name)
 
 
-class _FunctionCollection(Function):
+class _FunctionContainer(Function):
 
     """A collection of functions."""
 
     # The functions (a tuple)
     _functions = None
 
+    # Store indices that let us identify the starting point
+    # of the hyper-parameters for each cov in the global hyp array
+    _start_hyp = None
+
     @property
     def functions(self):
         """Get the functions involved in the summation."""
         return self._functions
 
-    def __init__(self, functions, name='Function Collection'):
+    @property
+    def start_hyp(self):
+        return self._start_hyp
+
+    def __init__(self, functions, name='Function Container'):
         """Initialize the object.
 
         Aruguments:
@@ -248,26 +282,40 @@ class _FunctionCollection(Function):
                         'All members of functions must be Functions')
         num_input = functions[0].num_input
         num_output = functions[0].num_output
+        num_hyp = functions[0].num_hyp
+        start_hyp = [0]
         for f in functions[1:]:
             if num_input != f.num_input or num_output != f.num_output:
                 raise ValueError(
                     'All functions must have the same dimensions.')
+            num_hyp += f.num_hyp
+            start_hyp += [start_hyp[-1] + f.num_hyp]
         self._functions = functions
-        super(_FunctionCollection, self).__init__(num_input, num_output, name=name)
+        self._start_hyp = start_hyp[:-1]
+        super(_FunctionContainer, self).__init__(num_input, num_output,
+                                                  num_hyp=num_hyp,
+                                                  name=name)
 
     def _to_string(self, pad):
         """Return a string representation with padding."""
-        s = super(_FunctionCollection, self)._to_string(pad)
+        s = super(_FunctionContainer, self)._to_string(pad)
+        s += pad + ' Contents:'
         for f in self.functions:
             s += '\n' + f._to_string(pad + ' ')
         return s
 
-    def _eval_all(self, x, func):
+    def _get_hyp_of(self, i, hyp):
+        """Return the hyper-parameters pertaining to the i-th cov."""
+        return hyp[self.start_hyp[i]: self.start_hyp[i] + self.cov[i].num_hyp]
+
+    def _eval_all(self, x, func, hyp):
         """Evaluate func for all the functions in the container."""
-        return [getattr(f, func)(x) for f in self.functions]
+        return [getattr(f, func)(x, self._get_hyp_of(i, hyp))
+                for f, i in itertools.izip(self.functions,
+                                           range(len(functions)))]
 
 
-class FunctionSum(_FunctionCollection):
+class FunctionSum(_FunctionContainer):
 
     """Define the sum of functions."""
 
@@ -275,16 +323,16 @@ class FunctionSum(_FunctionCollection):
         """Initialize the object."""
         super(FunctionSum, self).__init__(functions, name=name)
 
-    def __call__(self, x):
+    def __call__(self, x, hyp=None):
         """Evaluate the function."""
-        return np.sum(self._eval_all(x, '__call__'), axis=0)
+        return np.sum(self._eval_all(x, '__call__', hyp), axis=0)
 
-    def d(self, x):
+    def d(self, x, hyp=None):
         """Evaluate the derivative of the function."""
-        return np.sum(self._eval_all(x, 'd'), axis=0)
+        return np.sum(self._eval_all(x, 'd', hyp), axis=0)
 
 
-class FunctionJoinedOutputs(_FunctionCollection):
+class FunctionJoinedOutputs(_FunctionContainer):
 
     """Define a function that joins the outputs of two functions."""
 
@@ -298,37 +346,40 @@ class FunctionJoinedOutputs(_FunctionCollection):
                         'All members of functions must be Functions')
         num_input = functions[0].num_input
         num_output = functions[0].num_output
+        num_hyp = functions[0].num_hyp
         for f in functions[1:]:
             if num_input != f.num_input:
                 raise ValueError(
                     'All functions must have the same dimensions.')
             num_output += f.num_output
+            num_hyp += f.num_hyp
         self._functions = functions
-        super(_FunctionCollection, self).__init__(num_input, num_output,
+        super(_FunctionContainer, self).__init__(num_input, num_output,
+                                                  num_hyp=num_hyp,
                                                   name=name)
 
-    def __call__(self, x):
-        return np.concatenate(self._eval_all(x, '__call__'), axis=-1)
+    def __call__(self, x, hyp=None):
+        return np.concatenate(self._eval_all(x, '__call__', hyp), axis=-1)
 
-    def d(self, x):
-        return np.concatenate(self._eval_all(x, 'd'), axis=-1)
+    def d(self, x, hyp=None):
+        return np.concatenate(self._eval_all(x, 'd', hyp), axis=-1)
 
 
-class FunctionMultiplication(_FunctionCollection):
+class FunctionProduct(_FunctionContainer):
 
     """Define the multiplication of functions (element wise)"""
 
-    def __init__(self, functions, name='Function Multiplication'):
+    def __init__(self, functions, name='Function Product'):
         """Initialize the object."""
-        super(FunctionMultiplication, self).__init__(functions, name=name)
+        super(FunctionProduct, self).__init__(functions, name=name)
 
-    def __call__(self, x):
+    def __call__(self, x, hyp=None):
         """Evaluate the function at x."""
-        return np.prod(self._eval_all(x, '__call__'), axis=0)
+        return np.prod(self._eval_all(x, '__call__', hyp), axis=0)
 
-    def d(self, x):
+    def d(self, x, hyp=None):
         """Evaluate the derivative of the function."""
-        val = self._eval_all(x, '__call__')
+        val = self._eval_all(x, '__call__', hyp)
         d_val = self._eval_all(x, 'd')
         res = np.zeros(d_val[0].shape)
         for i in range(len(self.functions)):
@@ -370,11 +421,11 @@ class ConstantFunction(Function):
         super(ConstantFunction, self).__init__(num_input, num_output, name=name)
         self._const = const
 
-    def _eval(self, x):
+    def _eval(self, x, hyp):
         """Evaluate the function at x."""
         return self.const
 
-    def _d_eval(self, x):
+    def _d_eval(self, x, hyp):
         """Evaluate the derivative of the function at x."""
         return np.zeros(self.const.shape)
 
@@ -403,19 +454,21 @@ class FunctionComposition(Function):
             raise TypeError('The functions must be provided as a tuple.')
         for i in xrange(1, len(functions)):
             if not functions[i-1].num_input == functions[i].num_output:
-                raise ValueError('Dimensions of ' + str(functions[i-1]) + ' and '
+                raise ValueError('Dimensions of ' + str(functions[i-1]) +
+                                 ' and '
                                  + str(functions[i]) + ' do not agree.')
         self._functions = functions
-        super(FunctionComposition, self).__init__(num_input, num_output, name=name)
+        super(FunctionComposition, self).__init__(num_input, num_output,
+                                                  name=name)
 
-    def __call__(self, x):
+    def __call__(self, x, hyp=None):
         """Evaluate the function at x."""
         z = x
         for f in self.functions[-1::-1]:
             z = f(z)
         return z
 
-    def d(self, x):
+    def d(self, x, hyp=None):
         """Evaluate the derivative at x."""
         dg = self.functions[-1].d(x)
         df = self.functions[-2].d(dg)
@@ -462,11 +515,17 @@ class FunctionPower(Function):
         if not isinstance(exponent, float) and not isinstance(exponent, int):
             raise TypeError('The exponent must be an scalar.')
         self._exponent = exponent
-        super(FunctionPower, self).__init__(f.num_input, f.num_output, name=name)
+        super(FunctionPower, self).__init__(f.num_input, f.num_output,
+                                            num_hyp=f.num_hyp, name=name)
 
-    def _eval(self, x):
+    def __call__(self, x, hyp=None):
         """Evaluate the function at x."""
-        return self.function._eval(x) ** self.exponent
+        return self.function(x, hyp) ** self.exponent()
+
+    def d(self, x, hyp=None):
+        """Evaluate the function at x."""
+        raise NotImplementedError()
+        return self.function.d(x, hyp) ** (self.exponent() - 1.)
 
 
 class FunctionScreened(Function):

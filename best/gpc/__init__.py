@@ -8,5 +8,8 @@ Date:
 """
 
 
-from quadrature_rule import *
-from orthogonal_polynomial import *
+__all__ = ['OrthogonalPolynomial', 'ProductBasis', 'QuadratureRule']
+
+
+from ._quadrature_rule import *
+from ._orthogonal_polynomial import *

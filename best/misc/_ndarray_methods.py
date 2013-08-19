@@ -1,4 +1,4 @@
-"""Routines that do not fit anywhere else.
+"""Methods that are related to numpy arrays.
 
 Author:
     Ilias Bilionis
@@ -8,11 +8,15 @@ Date:
 """
 
 
+__all__ = ['logsumexp']
+
+
 import math
 import numpy as np
 
 
 def logsumexp(a):
+    print str(best)
     A = a.max()
     r = math.log(np.exp(a-A).sum())
     return A + r

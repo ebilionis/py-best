@@ -7,15 +7,21 @@ Date:
     8/11/2013
 """
 
+
+__all__ = ['RandomVector', 'RandomVectorIndependent']
+
+
 import numpy as np
 import math
 import itertools
 import scipy.stats
-import best
-from random_variable import RandomVariableConditional
+from .. import Object
+from ..domain import Domain
+from ..domain import Rectangle
+from ._random_variable import RandomVariableConditional
 
 
-class RandomVector(object):
+class RandomVector(Object):
 
     """A class representing a random vector.
 
@@ -27,9 +33,6 @@ class RandomVector(object):
     # The support of the random variable
     _support = None
 
-    # A name for the random vector
-    _name = None
-
     # The number of dimensions
     _num_dim = None
 
@@ -40,10 +43,6 @@ class RandomVector(object):
     @property
     def num_dim(self):
         return self.support.num_dim
-
-    @property
-    def name(self):
-        return self._name
 
     def __init__(self, support, name='Random Vector'):
         """Initialize the object.
@@ -57,16 +56,15 @@ class RandomVector(object):
         Keyword Arguments:
             name        ---     A name for the random vector.
         """
-        if not isinstance(support, best.Domain):
-            support = best.DomainRectangle(support)
+        if not isinstance(support, Domain):
+            support = Rectangle(support)
         self._support = support
-        assert isinstance(name, str)
-        self._name = name
+        super(RandomVector, self).__init__(name=name)
 
-    def __str__(self):
+    def _to_string(self, pad):
         """Return a string representation of the object."""
-        s = 'Random Vector: ' + self.name + '\n'
-        s += str(self.support)
+        s = super(RandomVector, self)._to_string(pad) + '\n'
+        s += pad + ' support:' + str(self.support)
         return s
 
     def _pdf(self, x):
@@ -201,17 +199,17 @@ class RandomVectorIndependent(RandomVector):
         for rv in components:
             box.append(rv.interval(1))
         self._component = components
-        support = best.DomainRectangle(box)
+        support = Rectangle(box)
         super(RandomVectorIndependent, self).__init__(support, name=name)
         self._pdf_domain = 1.
         for i in range(self.num_dim):
             if isinstance(self.component[i], RandomVariableConditional):
                 self._pdf_domain *= self.component[i].pdf_subinterval
 
-    def __str__(self):
+    def _to_string(self, pad):
         """Return a string representation of the object."""
-        s = super(RandomVectorIndependent, self).__str__() + '\n'
-        s += 'pdf of domain: ' + str(self.pdf_domain)
+        s = super(RandomVectorIndependent, self)._to_string(pad) + '\n'
+        s += pad + ' pdf of domain: ' + str(self.pdf_domain)
         return s
 
     def _pdf(self, x):

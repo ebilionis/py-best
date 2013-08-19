@@ -8,8 +8,11 @@ Date:
 """
 
 
+__all__ = ['GeneralizedLinearModel']
+
+
 import numpy as np
-from function import Function
+from ._function import Function
 
 
 class GeneralizedLinearModel(Function):
@@ -101,16 +104,18 @@ class GeneralizedLinearModel(Function):
             sigma_sqrt = np.zeros((basis.num_output, basis.num_output))
         self.sigma_sqrt = sigma_sqrt
         self.beta = beta
+        num_hyp = np.prod(weights.shape)
         super(GeneralizedLinearModel, self).__init__(self.basis.num_input,
                                                      num_output,
+                                                     num_hyp=0,
                                                      name=name)
         self.weights = weights
 
-    def __call__(self, x):
+    def __call__(self, x, hyp=None):
         """Evaluate the mean at x."""
         return np.dot(self.basis(x), self.weights)
 
-    def d(self, x):
+    def d(self, x, hyp=None):
         """Evaluate the derivative of the mean at x."""
         return np.dot(self.basis.d(x), self.weights)
 

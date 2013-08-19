@@ -25,11 +25,22 @@ BEST is split in several (mostly) independent submodules:
 
 """
 
-from domain import *
-import misc
-import linalg
-import maps
-import random
-#from solver import Solver
-#from binary_tree import BinaryTree
-#from random_element import RandomElement
+
+__all__ = ['Object', 'core', 'misc', 'domain', 'maps', 'linalg',
+           'random', 'rvm', 'gp', 'design', 'uq', 'inverse']
+
+
+from ._basic_objects import *
+
+from . import core
+from . import misc
+from . import domain
+from . import linalg
+from . import maps
+from . import random
+from . import gpc
+from . import rvm
+from . import gp
+from . import design
+from . import uq
+from . import inverse

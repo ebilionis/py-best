@@ -9,15 +9,19 @@ Date:
 """
 
 
+__all__ = ['OrthogonalPolynomial', 'ProductBasis']
+
+
 import numpy as np
 import math
 import itertools
-import best.maps
-from quadrature_rule import *
-from lancz import *
+from ..maps import Function
+from ..random import RandomVectorIndependent
+from ._quadrature_rule import *
+from ._lancz import *
 
 
-class OrthogonalPolynomial(best.maps.Function):
+class OrthogonalPolynomial(Function):
 
     """1D Orthogonal Polynomial via recursive relation.
 
@@ -86,7 +90,7 @@ class OrthogonalPolynomial(best.maps.Function):
         self.normalize()
         super(OrthogonalPolynomial, self).__init__(1, self.degree + 1, name=name)
 
-    def _eval(self, x):
+    def _eval(self, x, hyp=None):
         """Evaluate the polynomial basis at x."""
         phi = np.zeros(self.num_output)
         phi[0] = 1. / self.gamma[0]
@@ -97,13 +101,13 @@ class OrthogonalPolynomial(best.maps.Function):
                 self.beta[i - 1] * phi[i - 2]) / self.gamma[i]
         return phi
 
-    def _d_eval(self, x):
+    def _d_eval(self, x, hyp=None):
         """Evaluate the derivative of the polynomial.
 
         Arguments:
             x   ---     The input point(s).
         """
-        phi = self._eval(x)
+        phi = self._eval(x, hyp)
         dphi = np.zeros((self.num_output, 1))
         if self.degree >= 1:
             dphi[1, 0] = phi[0] / self.gamma[1]
@@ -141,7 +145,7 @@ class OrthogonalPolynomial(best.maps.Function):
         return s
 
 
-class ProductBasis(best.maps.Function):
+class ProductBasis(Function):
 
     """A multi-input orthogonal polynomial basis."""
 
@@ -195,7 +199,7 @@ class ProductBasis(best.maps.Function):
         assert isinstance(degree, int)
         assert degree >= 0
         if rv is not None:
-            assert isinstance(rv, best.random.RandomVectorIndependent)
+            assert isinstance(rv, RandomVectorIndependent)
             polynomials = [OrthogonalPolynomial(degree, rv=r, ncap=ncap,
                                                 quad=quad) for r in rv.component]
         assert (isinstance(polynomials, tuple) or
@@ -305,21 +309,21 @@ class ProductBasis(best.maps.Function):
                 self._terms.append(terms_order[k][j])
         return num_basis
 
-    def __str__(self):
+    def _to_string(self, pad):
         """Return a string representation of the object."""
-        s = super(ProductBasis, self).__str__() + '\n'
-        s += 'sz = ' + str(self.num_output) + '\n'
+        s = super(ProductBasis, self)._to_string(pad) + '\n'
+        s += pad + ' sz = ' + str(self.num_output) + '\n'
         for i in range(self.num_output):
-            s += str(i) + ': '
+            s += pad + ' ' + str(i) + ': '
             for j in range(self.num_input):
                 s += str(self.terms[i][j]) + ' '
             s += '\n'
-        s += 'num_terms = '
+        s += pad + ' num_terms = '
         for i in range(self.degree + 1):
             s += str(self.num_terms[i]) + ' '
         return s
 
-    def _eval(self, x):
+    def _eval(self, x, hyp):
         """Evaluate the polynomials at x."""
         phi = np.ndarray(self.num_output)
         basis_eval_tmp = [[] for j in range(self.num_input)]

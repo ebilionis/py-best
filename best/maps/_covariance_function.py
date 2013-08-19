@@ -8,21 +8,24 @@ Date:
 """
 
 
+__all__ = ['CovarianceFunction', 'CovarianceFunctionSum',
+           'CovarianceFunctionProduct', 'CovarianceFunctionSE',
+           'CovarianceFunctionBasis']
+
+
 import numpy as np
 import math
 import itertools
-from function import Function
+from .. import Object
+from ._function import Function
 
 
-class CovarianceFunction(object):
+class CovarianceFunction(Object):
 
     """A class representing a covariance function."""
 
     # Number of inputs
     _num_input = None
-
-    # A name
-    _name = None
 
     # A wrapped function
     _k_wrapped = None
@@ -36,10 +39,6 @@ class CovarianceFunction(object):
     @property
     def num_input(self):
         return self._num_input
-
-    @property
-    def name(self):
-        return self._name
 
     @property
     def k_wrapped(self):
@@ -96,10 +95,9 @@ class CovarianceFunction(object):
             self.hyp = hyp
         else:
             self._num_hyp = num_hyp
-        assert isinstance(name, str)
-        self._name = name
         if not k_wrapped is None:
             self._k_wrapped = k_wrapped
+        super(CovarianceFunction, self).__init__(name=name)
 
     def _gen_eval(self, x, y, func, num_out=1, hyp=None):
         # Check the hidden parameters
@@ -182,13 +180,14 @@ class CovarianceFunction(object):
         """Evaluate the derivative with respect to hyp."""
         raise NotImplementedError()
 
-    def __str__(self):
+    def _to_string(self, pad):
         """Return a string representation of the object."""
-        s = 'covariance Function: ' + self.name + '\n'
-        s += 'num_input: ' + str(self.num_input) + '\n'
-        s += 'num_hyp: ' + str(self.num_hyp)
+        s = super(CovarianceFunction, self).__to_string(pad) + '\n'
+        s += pad + ' Covariance Function\n'
+        s += pad + ' num_input: ' + str(self.num_input) + '\n'
+        s += pad + ' num_hyp: ' + str(self.num_hyp)
         if self.is_hyp_set:
-            s += '\nhyp:\n' + str(self.hyp)
+            s += '\n' + pad + ' hyp:\n' + pad + ' ' + str(self.hyp)
         return s
 
     def __add__(self, cov):
@@ -254,12 +253,12 @@ class _CovarianceFunctionContainer(CovarianceFunction):
                                                             hyp=hyp,
                                                             name=name)
 
-    def __str__(self):
+    def _to_string(self, pad):
         """Get a string representation of the object."""
-        s = super(_CovarianceFunctionContainer, self).__str__() + '\n'
-        s += 'Contents:'
+        s = super(_CovarianceFunctionContainer, self)._to_string(pad) + '\n'
+        s += pad + ' Contents:'
         for k in self.cov:
-            s += '\n' + str(k)
+            s += '\n' + k._to_string(pad + ' ')
         return s
 
     def _get_hyp_of(self, i, hyp):

@@ -8,6 +8,9 @@ Date:
 """
 
 
+__all__ = ['GeneralizedSVD']
+
+
 import numpy as np
 from best.core import ggsvd
 

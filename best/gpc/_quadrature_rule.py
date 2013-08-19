@@ -9,8 +9,12 @@ Date:
 """
 
 
+__all__ = ['QuadratureRule']
+
+
 import numpy as np
 import math
+from .. import Object
 
 
 def symtr(t):
@@ -69,7 +73,7 @@ def fejer(n):
     return x, w
 
 
-class QuadratureRule(object):
+class QuadratureRule(Object):
 
     """An object representing a quadrature rule."""
 
@@ -91,7 +95,8 @@ class QuadratureRule(object):
     def num_quad(self):
         return self._x.shape[0]
 
-    def __init__(self, left=-1, right=1, wf=lambda(x): 1., ncap=500):
+    def __init__(self, left=-1, right=1, wf=lambda(x): 1., ncap=500,
+                 name='Quadrature Rule'):
         """Construct a quadrature rule.
 
         Keyword Arguments
@@ -99,6 +104,7 @@ class QuadratureRule(object):
             right   ---     The right end of the interval.
             wf      ---     The weight function. The default is the identity.
             ncap    ---     The number of quadrature points.
+            name    ---     A name for the object.
         """
         x, w = fejer(ncap)
         if wf is None:
@@ -116,6 +122,7 @@ class QuadratureRule(object):
             self._x = 0.5 * ((right - left) * x + right + left)
             dphi = 0.5 * (right - left)
         self._w = w * wf(self.x) * dphi
+        super(QuadratureRule, self).__init__(name=name)
 
     def integrate(self, f):
         """Integrate the function f.
@@ -125,8 +132,9 @@ class QuadratureRule(object):
         """
         return np.dot(f(self.x).T, self.w) # Q x 1
 
-    def __str__(self):
-        """Return a string representation of the rule."""
-        s = 'x: ' + str(self.x) + '\n'
-        s += 'w: ' + str(self.w) + '\n'
+    def _to_string(self, pad):
+        """Return a string representation of the object."""
+        s = super(QuadratureRule, self)._to_string(pad) + '\n'
+        s += pad + ' x: ' + str(self.x) + '\n'
+        s += pad + ' w: ' + str(self.w) + '\n'
         return s

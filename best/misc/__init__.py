@@ -7,4 +7,8 @@ Date:
     8/11/2013
 """
 
-from misc import *
+
+__all__ = ['logsumexp']
+
+
+from ._ndarray_methods import *

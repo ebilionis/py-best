@@ -128,8 +128,7 @@ class GpcTest(unittest.TestCase):
         prod = best.gpc.ProductBasis(degree=10, rv=rv)
         print str(prod)
         x = rv.rvs(size=10)
-        print x
-        print prod(x)
+        print prod(x).shape
         x1 = np.linspace(1e-4, 0.99, 64)
         x2 = np.linspace(1e-4, 0.99, 64)
         X1, X2 = np.meshgrid(x1, x2)
@@ -139,6 +138,7 @@ class GpcTest(unittest.TestCase):
         #plt.contourf(X1, X2, np.log(Z).T)
         #plt.show()
         phi = prod(xx)
+        print phi.shape
         for j in range(phi.shape[1]):
             plt.contourf(X1, X2, phi[:, j].reshape((64, 64)))
             plt.show()

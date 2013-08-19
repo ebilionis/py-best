@@ -7,26 +7,24 @@ Date:
     8/11/2013
 """
 
+
+__all__ = ['Domain', 'Rectangle', 'UnitCube', 'AllSpace']
+
+
 import numpy as np
+import best
 
 
-class Domain(object):
+class Domain(best.Object):
 
     """A class that represents a domain of a Euclidean space."""
 
     # The number of dimensions
     _num_dim = None
 
-    # A name for the domain
-    _name = None
-
     @property
     def num_dim(self):
         return self._num_dim
-
-    @property
-    def name(self):
-        return self._name
 
     def __init__(self, num_dim, name='Domain'):
         """Initialize the object.
@@ -40,8 +38,7 @@ class Domain(object):
         assert isinstance(num_dim, int)
         assert num_dim >= 0
         self._num_dim = num_dim
-        assert isinstance(name, str)
-        self._name = name
+        super(Domain, self).__init__(name=name)
 
     def is_in(self, x):
         """Return True if x is in the domain.
@@ -50,12 +47,14 @@ class Domain(object):
         """
         raise NotImplementedError('Must be implemented by children.')
 
-    def __str__(self):
+    def _to_string(self, pad):
         """Return a string representation of the object."""
-        return 'Domain: ' + self.name + ' < R^' + str(self.num_dim)
+        s = super(Domain, self)._to_string(pad) + '\n'
+        s += pad + ' Subset of R^' + str(self.num_dim)
+        return s
 
 
-class DomainRectangle(Domain):
+class Rectangle(Domain):
 
     """Represents a rectangular domain."""
 
@@ -82,20 +81,21 @@ class DomainRectangle(Domain):
         assert (rectangle[:, 0] <= rectangle[:, 1]).all()
         self._rectangle = rectangle
         num_dim = rectangle.shape[0]
-        super(DomainRectangle, self).__init__(num_dim, name=name)
+        super(Rectangle, self).__init__(num_dim, name=name)
 
     def is_in(self, x):
         """Test if x is in the domain."""
         return ((self.rectangle[:, 0] <= x).all()
                 and (x <= self.rectangle[:, 1]).all())
 
-    def __str__(self):
-        s = super(DomainRectangle, self).__str__()
-        s += '\nRectangle: ' + str(self.rectangle)
+    def _to_string(self, pad):
+        """Return a string representation of the object."""
+        s = super(Rectangle, self)._to_string(pad) + '\n'
+        s += pad + ' box: ' + str(self.rectangle)
         return s
 
 
-class DomainUnitCube(DomainRectangle):
+class UnitCube(Rectangle):
 
     """A unit cube domain."""
 
@@ -112,10 +112,10 @@ class DomainUnitCube(DomainRectangle):
         assert num_dim >= 1
         rectangle = np.zeros((num_dim, 2))
         rectangle[:, 1] = 1.
-        super(DomainUnitCube, self).__init__(rectangle, name=name)
+        super(UnitCube, self).__init__(rectangle, name=name)
 
 
-class DomainAllSpace(DomainRectangle):
+class AllSpace(Rectangle):
 
     """A domain representing all space."""
 
@@ -133,11 +133,11 @@ class DomainAllSpace(DomainRectangle):
         rectangle = np.zeros((num_dim, 2))
         rectangle[:, 0] = -float('inf')
         rectangle[:, 1] = float('inf')
-        super(DomainAllSpace, self).__init__(rectangle, name=name)
+        super(AllSpace, self).__init__(rectangle, name=name)
 
 
 if __name__ == '__main__':
-    d = DomainUnitCube(5)
+    d = UnitCube(5)
     print str(d)
     x = np.ones(5) * 1.4
     print d.is_in(x)

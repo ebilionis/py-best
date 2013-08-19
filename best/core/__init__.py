@@ -9,16 +9,9 @@ Date:
     31/1/2013   (Added incomplete Cholesky wrapper pstrf and zero_tri_part)
 """
 
-from _lhs import *
-from _ggsvd import ggsvd
-# This is needed for loading the mkl library
-#import sys
-#import ctypes
-#_old_rtld = sys.getdlopenflags()
-#sys.setdlopenflags(_old_rtld | ctypes.RTLD_GLOBAL)
-##from _kron import *
-##del sys
-#del ctypes
-#from _lhs import *
-#from _dpstrf import pstrf
-#from _dpstrf import zero_tri_part
+
+__all__ = ['lhs', 'ggsvd']
+
+
+from ._lhs import *
+from ._ggsvd import *

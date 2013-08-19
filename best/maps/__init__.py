@@ -12,8 +12,16 @@ Date:
 """
 
 
-from function import *
-from generalized_linear_model import *
-from covariance_function import *
-#from create_1D_upscaling_map import *
-#from create_2D_upscaling_map import *
+__all__ = ['Function', 'FunctionSum', 'FunctionMultiplication',
+           'FunctionJoinedOutputs',
+           'ConstantFunction', 'FunctionScreened',
+           'GeneralizedLinearModel',
+           'CovarianceFunction', 'CovarianceFunctionSum',
+           'CovarianceFunctionProduct', 'CovarianceFunctionSE',
+           'CovarianceFunctionBasis']
+
+
+
+from ._function import *
+from ._generalized_linear_model import *
+from ._covariance_function import *
