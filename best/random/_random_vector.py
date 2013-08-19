@@ -15,13 +15,13 @@ import numpy as np
 import math
 import itertools
 import scipy.stats
-from .. import Object
+from ..maps import Function
 from ..domain import Domain
 from ..domain import Rectangle
 from ._random_variable import RandomVariableConditional
 
 
-class RandomVector(Object):
+class RandomVector(Function):
 
     """A class representing a random vector.
 
@@ -44,7 +44,8 @@ class RandomVector(Object):
     def num_dim(self):
         return self.support.num_dim
 
-    def __init__(self, support, name='Random Vector'):
+    def __init__(self, support, num_input=None,
+                 num_hyp=0, hyp=None, name='Random Vector'):
         """Initialize the object.
 
         Arguments:
@@ -54,12 +55,23 @@ class RandomVector(Object):
                                 None, then it is assume to be all space.
 
         Keyword Arguments:
+            num_input   ---     The number of inputs (if it is to be
+                                also used as a function).
+            num_hyp     ---     The number of hyper-parameters.
+            hyp         ---     Some hyper-parameters for the object.
             name        ---     A name for the random vector.
         """
         if not isinstance(support, Domain):
             support = Rectangle(support)
         self._support = support
-        super(RandomVector, self).__init__(name=name)
+        if num_input is None:
+            num_input = self.support.num_dim
+        num_output = self.support.num_dim
+        super(RandomVector, self).__init__(num_input,
+                                           num_output,
+                                           num_hyp=num_hyp,
+                                           hyp=hyp,
+                                           name=name)
 
     def _to_string(self, pad):
         """Return a string representation of the object."""
@@ -111,7 +123,7 @@ class RandomVector(Object):
         return x.reshape(size + (self.num_dim, ))
 
     def moment(self, n):
-        """Return non-centered n-th moment of the random variable."""
+        """Return the non-centered n-th moment of the random variable."""
         raise NotImplementedError()
 
     def mean(self):

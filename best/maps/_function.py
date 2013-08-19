@@ -96,7 +96,8 @@ class Function(Object):
             x = x.T
         return x
 
-    def __init__(self, num_input, num_output, num_hyp=0, name='function',
+    def __init__(self, num_input, num_output, num_hyp=0,
+                 hyp=None, name='function',
                  f_wrapped=None):
         """Initializes the object
 
@@ -107,6 +108,7 @@ class Function(Object):
 
         Keyword Arguments:
             name        ---     Provide a name for the function.
+            hyp         ---     A hyper-parameter for the object.
             f_wrapped   ---     If specified, then this function is simply
                                 a wapper of f_wrapped.
         """

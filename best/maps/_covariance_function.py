@@ -91,6 +91,7 @@ class CovarianceFunction(Object):
         assert num_input >= 1
         self._num_input = num_input
         if not hyp is None:
+            hyp = np.array(hyp)
             self._num_hyp = hyp.shape[0]
             self.hyp = hyp
         else:
