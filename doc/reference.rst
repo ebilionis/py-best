@@ -1,3 +1,5 @@
+.. _ref:
+
 Reference Guide
 ===============
 
@@ -27,4 +29,5 @@ The BEST package is split in several submodules:
    glm
    rvm
    gp
+   design
    inverse

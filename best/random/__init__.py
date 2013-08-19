@@ -10,13 +10,11 @@ Date:
 
 
 __all__ = ['RandomVariableConditional', 'RandomVector',
-           'RandomVectorIndependent',
-           'lhs_seed', 'lhs']
+           'RandomVectorIndependent']
 
 
 from ._random_variable import *
 from ._random_vector import *
-from ._latin_hyper_cube import *
 #from resample import multinomial_resample
 #from discrete_karhunen_loeve_expansion import *
 #from discrete_karhunen_loeve_expansion_factory import *

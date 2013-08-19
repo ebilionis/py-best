@@ -8,4 +8,7 @@ Date:
 """
 
 
-__all__ = []
+__all__ = ['lhs_seed', 'lhs']
+
+
+from ._latin_hyper_cube import *
