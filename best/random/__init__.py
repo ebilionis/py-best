@@ -15,7 +15,6 @@ __all__ = ['RandomVariableConditional', 'RandomVector',
 
 from ._random_variable import *
 from ._random_vector import *
-#from resample import multinomial_resample
 #from discrete_karhunen_loeve_expansion import *
 #from discrete_karhunen_loeve_expansion_factory import *
 #from markov_chain import MarkovChain

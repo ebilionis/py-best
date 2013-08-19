@@ -8,7 +8,8 @@ Date:
 """
 
 
-__all__ = ['logsumexp']
+__all__ = ['logsumexp', 'multinomial_resample']
 
 
 from ._ndarray_methods import *
+from ._resample import *

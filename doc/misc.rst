@@ -25,3 +25,26 @@ anywhere else in :mod:`best`.
     :type a: 1D numpy array.
     :returns: :math:`M` as defined above.
     :rtype: float
+
+
+.. function:: multinomial_resample(p)
+
+    This functions accepts a probability distribution :math:`p_i` over
+    :math:`{0, 1, \dots, n}`.
+    This function returns the result of sampling :math:`n` times from
+    this distribution.
+
+    :param p: An array of positive numbers.
+    :type p: 1D numpy array
+    :returns: An array of integers tween 0 and ``p.shape[0] - 1``.
+    :rtype: 1D numpy array of ``int``.
+
+    Here is a small example::
+
+        from best.misc import multinomial_resample
+        p = [0.25, 0.25, 0.25, 0.25]
+        multinomial_resample(p)
+
+    This should print something like::
+
+        array([0, 2, 2, 3], dtype=int32)
