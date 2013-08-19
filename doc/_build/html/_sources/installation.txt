@@ -1,3 +1,5 @@
+.. _install:
+
 Installation
 ===========
 
@@ -5,6 +7,8 @@ BEST is mostly written in Python, but there are some parts that written
 in C/C++ and we also interface some Fortran codes. There is a small
 part that needs to be compiled.
 
+
+.. _depend:
 
 Dependences
 -----------
@@ -27,6 +31,8 @@ functionality of BEST:
 These need to be installed before attempting to isntall BEST itself.
 
 
+.. _compile:
+
 Compiling
 ---------
 
@@ -45,6 +51,8 @@ Once, everything is set all you have to do is::
     $ cd py-best/src
     $ ./build.sh
 
+
+.. _configure:
 
 Configuring your Python Environment
 -----------------------------------

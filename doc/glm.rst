@@ -9,25 +9,25 @@ parametrization of a subspace of the functions
 :math:`\mathbf{f}:\mathbb{R}^d\rightarrow \mathbb{R}^q`:
 
     .. math::
-
         \mathbf{f}(\mathbf{x}; \mathbf{W}) =
         \boldsymbol{\phi}(\mathbf{x})^T\mathbf{W},
+        :label: glm
 
 where :math:`\mathbf{W}\in\mathbb{R}^{m\times q}` is the weight matrix,
 and
 
     .. math::
-
         \boldsymbol{\phi}(\mathbf{x}) =
         \left(\phi_1(\mathbf{x}), \dots, \phi_m(\mathbf{x})\right).
+        :label: basis
 
 Usually, the weights :math:`\mathbf{W}` are not fixed, but its column
 is has a multi-variate Gaussian distribution:
 
     .. math::
-
         \mathbf{W}_j \sim \mathcal{N}_m\left(\mathbf{W}_j |
         \mathbf{M}_j, \boldsymbol{\Sigma}\right),
+        :label: post-weights
 
 for :math:`j=1,\dots,q`, where :math:`\mathbf{A}_j` is the :math:`j`-th
 column of the matrix :math:`\mathbf{A}`, :math:`\mathbf{M}_j` is the mean
@@ -51,21 +51,21 @@ distribution for the output :math:`\mathbf{y}` at the input point
 :math:`\mathbf{x}` is given by:
 
     .. math::
-
         p(\mathbf{y} | \mathbf{x}) =
         \mathcal{N}_q\left(\mathbf{y} | \mathbf{m}(\mathbf{x}),
         \boldsymbol{\sigma}^2(\mathbf{x})\mathbf{I}_q\right),
+        :label: pred-y
 
 where :math:`\mathbf{I}_q` is the :math:`q`-dimensional unit matrix,
 while the mean and the variance at :math:`\mathbf{x}` are given by:
 
     .. math::
-
         \mathbf{m}(\mathbf{x}) = \boldsymbol{\phi}(\mathbf{x})^T
         \mathbf{W},\;\;
         \boldsymbol{\sigma}^2(\mathbf{x}) = \beta^{-1} +
         \boldsymbol{\phi}(\mathbf{x})^T\boldsymbol{\Sigma}
         \boldsymbol{\phi}(\mathbf{x}),
+        :label: pred-mean-var
 
 with :math:`\beta` being the noise precision (i.e., the inverse variance).
 

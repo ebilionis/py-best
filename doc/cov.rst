@@ -1,3 +1,5 @@
+.. _cov:
+
 Covariance Functions
 ====================
 
@@ -211,8 +213,12 @@ All covariance functions must inherit from :class:`best.maps.CovarianceFunction`
         See the documentation there for more details.
 
 
+.. _cov-example:
+
 Examples of Covariance Functions
 --------------------------------
+
+.. _cov-se:
 
 Squared Exponential Covariance
 ++++++++++++++++++++++++++++++
@@ -262,6 +268,8 @@ Here is how you can get the derivative with respect to the hyper-parameters::
 
     E = k.d_hyp(0, x, hyp=1.)
 
+
+.. _cov-basis:
 
 Constructing Basis from Covariance Functions
 --------------------------------------------

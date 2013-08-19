@@ -427,7 +427,7 @@ class RelevanceVectorMachine(object):
         self._fix_relevant_gsvd()
         self._log_like = -1e99
 
-    def train(self, max_it=10000, tol=1e-6, verbose=False):
+    def train(self, max_it=10000, tol=1e-4, verbose=False):
         """Train the model.
 
         Keyword Arguments:
@@ -474,9 +474,20 @@ class RelevanceVectorMachine(object):
         """
         if isinstance(basis, best.maps.CovarianceFunctionBasis):
             sp_basis = best.maps.CovarianceFunctionBasis(basis.cov,
-                                                          basis.X[self.relevant, :])
+                                                          basis.X[self.relevant, :],
+                                                          hyp=basis.hyp)
         else:
             sp_basis = basis.screen(out_idx=self.relevant)
         return best.maps.GeneralizedLinearModel(sp_basis, weights=self.weights,
                                                 sigma_sqrt=self.sigma_sqrt,
                                                 beta=self.beta)
+
+    def __str__(self):
+        """Return a string representation of the object."""
+        s = 'Relevant Vector Machine\n'
+        s += 'Y shape: ' + str(self.Y.shape) + '\n'
+        s += 'PHI shape: ' + str(self.PHI.shape) + '\n'
+        s += 'Relevant: ' + str(self.relevant) + '\n'
+        s += 'Alpha: ' + str(self.alpha) + '\n'
+        s += 'Beta: ' + str(self.beta)
+        return s

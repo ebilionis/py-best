@@ -1,3 +1,5 @@
+.. _gpc:
+
 Generalized Polynomial Chaos
 ============================
 
