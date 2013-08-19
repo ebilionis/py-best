@@ -204,16 +204,35 @@ Here is a basic reference for the class:
 
 .. class:: best.random.RandomVector
 
-    .. method:: __init__(support[, name='Random Vector'])
+    .. method:: __init__(support[, num_input=None[, hyp=None[, \
+                         name='Random Vector']]])
 
         Initialize the object.
 
+        The class inherits from :class:`best.maps.Function`. The
+        motivation for this choice is that the mathematical
+        definition of a
+        `random variable <http://en.wikipedia.org/wiki/Random_variable>`_
+        which states that it is a measurable function.
+        Now, the inputs of a :class:`best.random.RandomVector` can
+        be thought thought as an other random vector given which
+        this random vector has a given value. This becomes useful
+        in classes that inherit from this one, e.g.
+        :class:`best.random.KarhuneLoeveExpansion`.
+
         The ``support`` is an object representing the support
-        of the random vector. It has to be a :class:`best.Domain` or
-        a rectangle represented by lists, tuples or numpy arrays.
+        of the random vector. It has to be a :class:`best.domain.Domain`
+        or a rectangle represented by lists, tuples or numpy arrays.
 
         :param support: The support of the random variable.
-        :type support: :class:`best.Domain` or a rectangle
+        :type support: :class:`best.domain.Domain` or a rectangle
+        :param num_input: The number of inputs. If `None`, then it is
+                          set equal to ``support.num_dim``.
+        :type num_input: int
+        :param num_hyp: The number of hyper-paramers (zero by default).
+        :type num_hyp: int
+        :param hyp: The hyper-parameters.
+        :type hyp: 1D numpy array or ``None``
         :param name: A name for the random vector.
         :type name: str
 
@@ -444,3 +463,146 @@ This prints::
      [  3.89403608e-01   3.05662039e-02   9.24004739e-01]
      [  4.48582217e-01   1.74794018e-04   1.16001176e+00]]
      [ 2.47788783  0.073047    4.95662696  0.16646329  0.09860328]
+
+
+.. _kle:
+
+Karhunen-Loeve Expansion
+------------------------
+
+`Karhunen-Loeve Expansion <http://en.wikipedia.org/wiki/Karhunen%E2%80%93Lo%C3%A8ve_theorem>`_
+(KLE) is a way to represent random fields with a discrete set of
+random variables. It can be thought of as a discrete representation
+of a random field, or a low dimensional representation of a
+high-dimensional random vector.
+It is implemented via the class
+:class:`best.random.KarhunenLoeveExpansion`.
+
+.. class:: best.random.KarhuneLoeveExpansion
+
+    :inherits: :class:`best.random.RandomVector`
+    Define a Discrete Karhunen-Loeve Expansion.
+    It can also be thought of a as a random vector.
+
+    .. attribute:: PHI
+
+        Get the set of eigenvectors of the covariance matrix.
+
+    .. attribute:: lam
+
+        Get the set of eigenvalues of the covariance matrix.
+
+    .. attribute:: sigma
+
+        Get the signal strength of the model.
+
+    .. method:: __init__(PHI, lam[, mean=None[, sigma=None[, \
+                         name='Karhunen-Loeve Expansion']]])
+
+        Initialize the object.
+
+        :param PHI: The eigenvector matrix.
+        :type PHI: 2D numpy array
+        :param lam: The eigen velues.
+        :type lam: 1D numpy array
+        :param mean: The mean of the model.
+        :type mean: 1D numpy array
+
+        :precondition: ``PHI.shape[1] == lam.shape[1]``.
+
+    .. method:: _eval(theta, hyp)
+
+        Evaluate the expansion at ``theta``.
+
+        :note: Do not use this directly. Use
+               :func:`best.random.KarhunenLoeveExpansion.__call__()`
+               which is directly inherited from
+               :class:`best.maps.Function`.
+
+        :param theta: The weights of the expansion.
+        :type theta: 1D array
+        :param hyp: Ignored.
+        :overloads: :func:`best.maps.Function._eval()`
+
+    .. method:: project(y)
+
+        Project ``y`` to the space of the KLE weights.
+        It is essentially the inverse of
+        :func:`best.random.KarhunenLoeveExpansion.__call__()`.
+
+        :param y: A sample from the output.
+        :type y: 1D numpy array
+        :returns: The weights corresponding to ``y``.
+        :rtype: 1D numpy array
+
+    .. _rvs(self)
+
+        Return a sample of the random vector.
+
+        :note: Do not use this directly. Use
+               :func:`best.random.KarhuneLoeveExpansion.rvs()`
+               which is directly inherited from
+               :class:`best.random.RandomVector`.
+
+        :returns: A sample of the random vector.
+        :rtype: 1D numpy array
+        :overloads: :func:`best.random.RandomVector._rvs()`
+
+    .. method:: _pdf(self, y)
+
+        Evaluate the pdf of the random vector at ``y``.
+
+        :note: Do not use this directly. Use
+               :func:`best.random.KarhuneLoeveExpansion.pdf()`
+               which is directly inherited from
+               :class:`best.random.RandomVector`.
+
+        :returns: The pdf at ``y``.
+        :rtype: ``float``
+        :overloads: :func:`best.random.RandomVector._pdf()`
+
+    .. method:: create_from_covariance_matrix(A[, mean=None[ \
+                                              energy=0.95[, \
+                                              k_max=None]]])
+
+        Create a :class:`best.random.KarhuneLoeveExpansion` object
+        from a covariance matrix ``A``.
+
+        This is a static method.
+
+        :param A: The covariance matrix
+        :type A: 2D numpy array
+        :param mean: The mean of the model. If ``None`` then all zeros.
+        :type mean: 1D numpy array or ``None``
+        :param energy: The energy of the field you wish to retain.
+        :type energy: ``float``
+        :param k_max: The maximum number of eigenvalues to be computed. \
+                      If ``None``, then we compute all of them.
+        :type k_max: ``int``
+        :returns: A KLE based on ``A``.
+        :rtype: :class:`best.random.KarhunenLoeveExpansion`.
+
+Let's now look at a simple 1D example::
+
+    import numpy as np
+    import matplolib.pyplot as plt
+    from best.maps import CovarianceFunctionSE
+    from best.random import KarhunenLoeveExpansion
+    # Construct a 1D covariance function
+    k = CovarianceFunctionSE(1)
+    # We are going to discretize the field at:
+    x = np.linspace(0, 1, 50)
+    # The covariance matrix is:
+    A = k(x, x, hyp=0.1)
+    kle = KarhuneLoeveExpansion.create_from_covariance_matrix(A)
+    # Let's plot 10 samples
+    plt.plot(x, kle.rvs(size=10).T)
+    plt.show()
+
+You should see something like the following figure:
+
+    .. figure:: images/kle_1d.png
+        :align: center
+
+        Samples from a 1D Gaussian random field with zero mean and
+        a :ref:`cov-se` using the :ref:`kle`.
