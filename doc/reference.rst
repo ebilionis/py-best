@@ -20,6 +20,7 @@ The BEST package is split in several submodules:
    :maxdepth: 2
 
    core
+   misc
    linalg
    serialization
    maps
