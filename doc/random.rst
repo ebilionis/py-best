@@ -594,7 +594,7 @@ Let's now look at a simple 1D example::
     x = np.linspace(0, 1, 50)
     # The covariance matrix is:
     A = k(x, x, hyp=0.1)
-    kle = KarhuneLoeveExpansion.create_from_covariance_matrix(A)
+    kle = KarhunenLoeveExpansion.create_from_covariance_matrix(A)
     # Let's plot 10 samples
     plt.plot(x, kle.rvs(size=10).T)
     plt.show()
