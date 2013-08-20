@@ -60,13 +60,16 @@ a simple example what is the functionality it actually provides.
 
 .. class:: best.maps.Function
 
+    :inherits: :class:`best.Object`
+
     A class representing an arbitrary multi-input/output function.
 
     Everything in Best that can be though as such a function should be a
     child of this class.
 
-    .. method:: __init__(num_input, num_output[, name="function"[, \
-                         f_wrapped=None]])
+    .. method:: __init__(num_input, num_output[, num_hyp=0[, \
+                         hyp=None[, name="function"[, \
+                         f_wrapped=None]]]])
 
         Initializes the object.
 
@@ -83,11 +86,18 @@ a simple example what is the functionality it actually provides.
                     super(MyName, self).__init__(10, 24, name='Super Function')
 
         :param num_input: The number of input dimensions.
-        :type num_input: integer
+        :type num_input: ``int``
         :param num_output: The number of output dimensions.
-        :type num_output: integer
+        :type num_output: ``int``
+        :param num_hyp: The number of hyper-parameters of the function. \
+                        Zero by default.
+        :type num_hyp: ``int``
+        :param hyp: The hyper-parameters of the function. If ``None`` \
+                    they are left unspecified and must be provided \
+                    when calling it.
+        :type hyp: 1D numpy array
         :param name: A name for the function you create.
-        :type name: string
+        :type name: ``str``
         :param f_wrapped: If specified, then this function is simply a \
                           f_wrapped.
         :type f_wrapped: A normal python function that is a \
@@ -116,11 +126,13 @@ a simple example what is the functionality it actually provides.
 
         It cannot be changed directly.
 
-    .. attribute:: name
+    .. attribute:: num_hyp
 
-        Get the name of the function.
+        The number of hyper-parameters.
 
-        It cannot be changed directly.
+    .. attribute:: hyp
+
+        Get/Set the hyper-parameters.
 
     .. attribute:: f_wrapped
 
@@ -132,7 +144,7 @@ a simple example what is the functionality it actually provides.
 
         True if the object is a function wrapper, False otherwise.
 
-    .. method:: _eval(x):
+    .. method:: _eval(x, hyp):
 
         Evaluate the function at ``x`` assuming that ``x`` has the
         right dimensions.
@@ -141,11 +153,14 @@ a simple example what is the functionality it actually provides.
 
         :param x: The evaluation point.
         :type x: 1D numpy array of the right dimensions
+        :param hyp: The hyper-parameters. Ignore it if your function \
+                    does not have any.
+        :type hyp: 1D numpy array.
         :returns: The result.
         :rtype: 1D numpy array of the right dimensions or just a float
         :etype: NotImplementedError
 
-    .. method:: __call__(x):
+    .. method:: __call__(x[, hyp=None]):
 
         Evaluate the function ``x``.
 
@@ -156,10 +171,13 @@ a simple example what is the functionality it actually provides.
                  dimension corresponds to the number of inputs while
                  the rest simply correspond to different evaluation
                  points.
+        :param hyp: The hyper-parameters. Ignore it if your function \
+                    does not have any.
+        :type hyp: 1D numpy array.
         :returns y: The result.
         :rtype: a numpy array of the right dimensions.
 
-    .. method:: _d_eval(x):
+    .. method:: _d_eval(x, hyp):
 
         Evaluate the Jacobian of the function at ``x``. The dimensions
         of the Jacobian are ``num_output x num_input``.
@@ -168,10 +186,13 @@ a simple example what is the functionality it actually provides.
 
         :param x: The evaluation point.
         :type x: 1D numpy array of the right dimensions
+        :param hyp: The hyper-parameters. Ignore it if your function \
+                    does not have any.
+        :type hyp: 1D numpy array.
         :returns: The Jacobian at ``x``.
         :rtype: 2D numpy array of the right dimensions
 
-    .. method:: d(x)
+    .. method:: d(x[, hyp=None])
 
         Evaluate the Jacobian of the function at ``x``.
 
@@ -182,6 +203,27 @@ a simple example what is the functionality it actually provides.
                  dimension corresponds to the number of inputs while
                  the rest simply correspond to different evaluation
                  points.
+        :param hyp: The hyper-parameters. Ignore it if your function \
+                    does not have any.
+        :type hyp: 1D numpy array.
+        :returns y: The result.
+        :rtype: a numpy array of the right dimensions.
+
+    .. method:: d_hyp(x[, hyp=None])
+
+        Evaluate the Jacobian of the function at ``x`` with respect to
+        the hyper-parameters.
+
+        .. note:: This calls :func:`best.maps.Function._d_hyp_eval()`.
+
+        :param x: The evaluation point(s).
+        :type x: Can be a multi-dimensional numpy array whose last
+                 dimension corresponds to the number of inputs while
+                 the rest simply correspond to different evaluation
+                 points.
+        :param hyp: The hyper-parameters. Ignore it if your function \
+                    does not have any.
+        :type hyp: 1D numpy array.
         :returns y: The result.
         :rtype: a numpy array of the right dimensions.
 
@@ -238,15 +280,9 @@ a simple example what is the functionality it actually provides.
         as in the constructor of :class:`best.maps.FunctionScreened`.
         You may consult it for details.
 
-    .. method:: __str__():
-
-        Return a string representation of the object.
-
     .. method:: _to_string(pad):
 
-        Return a string representation of the object with padding.
-
-        This may be reimplemented by children classes.
+        :overloads: :func:`best.Object._to_string()`
 
 
 .. _map-examples:
@@ -326,6 +362,9 @@ implements a screened version of another class. We give a brief
 discreption of its functionality.
 
 .. class:: best.maps.FunctionScreened
+
+    :inherits: :class:`best.maps.Function`
+
     A function that serves as a screened version of another function.
 
     It is useful in applications when you want to fix certain inputs
@@ -360,6 +399,18 @@ discreption of its functionality.
         :type out_idx: tuple, list or NoneType
         :param name: A name for the function.
         :type name: str
+
+    .. method:: __call__(x[, hyp=None])
+
+        :overloads: :func:`best.maps.Function.__call__()`
+
+    .. method:: d(x[, hyp=None])
+
+        :overloads: :func:`best.maps.Function.d()`
+
+    .. method:: d_hyp(x[, hyp=None])
+
+        :overloads: :func:`best.maps.Function.d_hyp()`
 
 Let us give a simple example of how it is to be used. Suppose that you
 have a function :math:`f(\cdot)` that takes 10 inputs and responds with

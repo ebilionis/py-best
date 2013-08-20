@@ -10,7 +10,8 @@ Date:
 
 
 __all__ = ['Function', 'FunctionSum', 'FunctionProduct',
-           'FunctionJoinedOutputs',
+           'FunctionJoinedOutputs', 'FunctionPower',
+           'FunctionComposition',
            'ConstantFunction', 'FunctionScreened']
 
 
@@ -144,7 +145,7 @@ class Function(Object):
         """
         raise NotImplementedError()
 
-    def _d_hyp_evel(self, x, hyp):
+    def _d_hyp_eval(self, x, hyp):
         """Evaluate the derivative of the function with respect to hyp.
 
         It should return a 3D numpy array of dimensions
@@ -180,6 +181,10 @@ class Function(Object):
     def d(self, x, hyp=None):
         """Evaluate the derivative of the function at x."""
         return self._gen_eval(x, self._d_eval, hyp)
+
+    def d_hyp(self, x, hyp=None):
+        """Evaluate the derivative of the function with respect to hyp."""
+        return self._d_hyp_eval(x, self._d_hyp_eval, hyp)
 
     def _to_func(self, obj):
         """Take func and return a proper function if it is a float."""
@@ -308,13 +313,17 @@ class _FunctionContainer(Function):
 
     def _get_hyp_of(self, i, hyp):
         """Return the hyper-parameters pertaining to the i-th cov."""
-        return hyp[self.start_hyp[i]: self.start_hyp[i] + self.cov[i].num_hyp]
+        if not hyp is None:
+            return (hyp[self.start_hyp[i]: self.start_hyp[i]
+                        + self.functions[i].num_hyp])
+        else:
+            return None
 
     def _eval_all(self, x, func, hyp):
         """Evaluate func for all the functions in the container."""
         return [getattr(f, func)(x, self._get_hyp_of(i, hyp))
                 for f, i in itertools.izip(self.functions,
-                                           range(len(functions)))]
+                                           range(len(self.functions)))]
 
 
 class FunctionSum(_FunctionContainer):
@@ -332,6 +341,10 @@ class FunctionSum(_FunctionContainer):
     def d(self, x, hyp=None):
         """Evaluate the derivative of the function."""
         return np.sum(self._eval_all(x, 'd', hyp), axis=0)
+
+    def d_hyp(self, x, hyp=None):
+        """Evaluate the derivative of the function with respect to hyp."""
+        return np.sum(self._eval_all(x, 'd_hyp', hyp), axis=0)
 
 
 class FunctionJoinedOutputs(_FunctionContainer):
@@ -366,6 +379,9 @@ class FunctionJoinedOutputs(_FunctionContainer):
     def d(self, x, hyp=None):
         return np.concatenate(self._eval_all(x, 'd', hyp), axis=-1)
 
+    def d(self, x, hyp=None):
+        return np.concatenate(self._eval_all(x, 'd_hyp', hyp), axis=-1)
+
 
 class FunctionProduct(_FunctionContainer):
 
@@ -382,7 +398,7 @@ class FunctionProduct(_FunctionContainer):
     def d(self, x, hyp=None):
         """Evaluate the derivative of the function."""
         val = self._eval_all(x, '__call__', hyp)
-        d_val = self._eval_all(x, 'd')
+        d_val = self._eval_all(x, 'd', hyp)
         res = np.zeros(d_val[0].shape)
         for i in range(len(self.functions)):
             for k in range(self.num_input):
@@ -522,12 +538,7 @@ class FunctionPower(Function):
 
     def __call__(self, x, hyp=None):
         """Evaluate the function at x."""
-        return self.function(x, hyp) ** self.exponent()
-
-    def d(self, x, hyp=None):
-        """Evaluate the function at x."""
-        raise NotImplementedError()
-        return self.function.d(x, hyp) ** (self.exponent() - 1.)
+        return self.function(x, hyp) ** self.exponent
 
 
 class FunctionScreened(Function):
@@ -615,26 +626,34 @@ class FunctionScreened(Function):
         self._out_idx = out_idx
         num_input = in_idx.shape[0]
         num_output = out_idx.shape[0]
+        num_hyp = self.screened_func.num_hyp
+        hyp = self.screened_func.hyp
         super(FunctionScreened, self).__init__(num_input, num_output,
+                                               num_hyp=num_hyp,
+                                               hyp=hyp,
                                                name=name)
 
-    def _get_eval(self, x, func):
+    def _get_eval(self, x, func, hyp):
         """Evaluate func at x."""
         x = self._fix_x(x)
         x_full = np.array(x, copy=True)
         x_full[:, self.in_idx] = x
-        y_full = func(x_full)
+        y_full = func(x_full, hyp)
         if x.shape[0] == 1:
             return y_full[0, self.out_idx]
         return y_full[:, self.out_idx]
 
-    def __call__(self, x):
+    def __call__(self, x, hyp=None):
         """Evaluate the function at x."""
-        return self._get_eval(x, self.screened_func.__call__)
+        return self._get_eval(x, self.screened_func.__call__, hyp)
 
-    def d(self, x):
+    def d(self, x, hyp=None):
         """Evaluate the derivative of the function at x."""
-        return self._get_eval(x, self.screened_func.d)
+        return self._get_eval(x, self.screened_func.d, hyp)
+
+    def d_hyp(self, x, hyp=None):
+        """Evaluate the derivative of the function with respect to hyp."""
+        return self._get_eval(x, self.screened_func.d_hyp, hyp)
 
     def _to_string(self, pad):
         """Return a padded string representation."""

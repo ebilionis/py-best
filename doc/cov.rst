@@ -23,6 +23,8 @@ All covariance functions must inherit from :class:`best.maps.CovarianceFunction`
 
 .. class:: best.maps.CovarianceFunction
 
+    :inherits: :class:`best.Object`
+
     A class representing a covariance function. This is any
     funciton :math:`k(\mathbf{x}, \mathbf{x}'; \boldsymbol{\theta})`.
     The parameters :math:`\boldsymbol{\theta}` are parameters
@@ -58,10 +60,6 @@ All covariance functions must inherit from :class:`best.maps.CovarianceFunction`
     .. attribute:: num_input
 
         Get the dimensionality of the input.
-
-    .. attribute:: name
-
-        Get the name.
 
     .. attribute:: k_wrapped
 
@@ -184,10 +182,6 @@ All covariance functions must inherit from :class:`best.maps.CovarianceFunction`
         access to
         :func:`best.maps.CovarianceFunction.d_hyp()`.
 
-    .. method:: __str__()
-
-        Return a string representation of the object.
-
     .. method:: __mul__(g)
 
         Return a new covariance function that is the product of the
@@ -211,6 +205,10 @@ All covariance functions must inherit from :class:`best.maps.CovarianceFunction`
         The parameters are as in
         :class:`best.maps.CovarianceFunctionBasis`.
         See the documentation there for more details.
+
+    .. method:: _to_string(pad)
+
+        :overloads: :func:`best.Object._to_string()`
 
 
 .. _cov-example:
@@ -313,6 +311,8 @@ This functionality is offered via the following class:
 
 .. class:: best.maps.CovarianceFunctionBasis
 
+    :inherits: :class:`best.maps.Function`
+
     Represents a basis constructed from a covariance function.
     The class inherits (as every basis) from
     :class:`best.maps.Function`. So, there is no need to give here
@@ -343,3 +343,19 @@ This functionality is offered via the following class:
     .. attribute:: X
 
         Get the centers.
+
+    .. method:: _eval(x, hyp)
+
+        :overloads: :func:`best.maps.Function._eval()`
+
+    .. method:: _d_eval(x, hyp)
+
+        :overloads: :func:`best.maps.Function._d_eval()`
+
+    .. method:: _d_hyp_eval(x, hyp)
+
+        :overloads: :func:`best.maps.Function._d_hyp_eval()`
+
+    .. method:: _to_string(pad)
+
+        :overloads: :func:`best.maps.Function._to_string()`

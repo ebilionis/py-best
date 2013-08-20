@@ -13,8 +13,8 @@ Date:
 
 
 __all__ = ['Function', 'FunctionSum', 'FunctionMultiplication',
-           'FunctionJoinedOutputs',
-           'ConstantFunction', 'FunctionScreened',
+           'FunctionJoinedOutputs', 'FunctionPower',
+           'ConstantFunction', 'FunctionScreened', 'FunctionComposition',
            'GeneralizedLinearModel',
            'CovarianceFunction', 'CovarianceFunctionSum',
            'CovarianceFunctionProduct', 'CovarianceFunctionSE',

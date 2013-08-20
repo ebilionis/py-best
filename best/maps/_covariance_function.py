@@ -408,18 +408,24 @@ class CovarianceFunctionBasis(Function):
         self._X = X
         super(CovarianceFunctionBasis, self).__init__(cov.num_input,
                                                        X.shape[0],
+                                                       num_hyp=cov.num_hyp,
+                                                       hyp=cov.hyp,
                                                        name=name)
 
-    def _eval(self, x):
+    def _eval(self, x, hyp):
         """Evaluate the basis at x."""
-        return self.cov(self.X, x, hyp=self.hyp)
+        return self.cov(self.X, x, hyp)
 
-    def _d_eval(self, x):
+    def _d_eval(self, x, hyp):
         """Evaluate the Jacobian of the basis at x."""
-        return self.cov.d(self.X, x, hyp=self.hyp)
+        return self.cov.d(self.X, x, hyp)
 
-    def __str__(self):
+    def _d_hyp_eval(self, x, hyp):
+        """Evaluate the derivative with respect to hyp."""
+        return self.cov.d_hyp(self.X, x, hyp)
+
+    def _to_string(self, pad):
         """Return a string representation of the object."""
-        s = super(CovarianceFunctionBasis, self).__str__() + '\n'
-        s += str(self.cov)
+        s = super(CovarianceFunctionBasis, self)._to_string(pad) + '\n'
+        s += pad + ' covariance: ' + str(self.cov)
         return s

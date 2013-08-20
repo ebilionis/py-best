@@ -78,6 +78,8 @@ Here is the definition of :class:`best.maps.GeneralizedLinearModel`:
 
 .. class:: GeneralizedLinearModel
 
+    :inherits: :class:`best.maps.Function`
+
     A class that represents a Generalized Linear Model.
 
     .. method:: __init__(basis[, weights=None[, sigma_sqrt=None[, \
@@ -119,13 +121,17 @@ Here is the definition of :class:`best.maps.GeneralizedLinearModel`:
         :param name: A name for the object.
         :type name: str
 
-    .. method:: __call__(x)
+    .. method:: __call__(x[, hyp=None])
+
+        :overloads: :func:`best.maps.Function.__call__()`
 
         Evaluate the mean of the generalized model at ``x``.
 
         Essentially computed :math:`\mathbf{m}(\mathbf{x})`.
 
-    .. method:: d(x)
+    .. method:: d(x[, hyp=None])
+
+        :overloads: :func:`best.maps.Function.d()`
 
         Evaluate the Jacobian of the generalized model at ``x``.
 
