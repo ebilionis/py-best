@@ -73,7 +73,7 @@ class Function(Object):
     def hyp(self, val):
         """Set the hyper-parameters."""
         if not val is None:
-            val = np.array(val)
+            val = np.atleast_1d(val)
             assert val.ndim == 1
             assert val.shape[0] == self.num_hyp
         self._hyp = val
@@ -119,7 +119,7 @@ class Function(Object):
         self._num_output = num_output
         num_hyp = int(num_hyp)
         assert num_hyp >= 0
-        self._num_hyp = 0
+        self._num_hyp = num_hyp
         if f_wrapped is not None:
             if not hasattr(f_wrapped, '__call__'):
                 raise TypeError('f_wrapped must be a proper function.')
@@ -155,14 +155,20 @@ class Function(Object):
 
     def _gen_eval(self, x, func, hyp):
         """Evaluate either the function or its derivative."""
+        if hyp is None:
+            hyp = self.hyp
+        if hyp is None and not self.num_hyp == 0:
+            raise ValueError('You must specify the hyper-parameters.')
+        hyp = np.atleast_1d(hyp)
         x = self._fix_x(x)
         num_dim = x.shape[1]
         assert num_dim == self.num_input
         num_pt = x.shape[0]
-        res = np.concatenate([np.atleast_2d(func(x[i, :], hyp))
-                                            for i in range(num_pt)],
-                             axis=0)
+        res = np.array([np.atleast_2d(func(x[i, :], hyp))
+                                            for i in range(num_pt)])
         if num_pt == 1:
+            if res.shape[1] == 1:
+                return res[0, 0, :]
             return res[0, :]
         return res
 
@@ -184,7 +190,7 @@ class Function(Object):
 
     def d_hyp(self, x, hyp=None):
         """Evaluate the derivative of the function with respect to hyp."""
-        return self._d_hyp_eval(x, self._d_hyp_eval, hyp)
+        return self._gen_eval(x, self._d_hyp_eval, hyp)
 
     def _to_func(self, obj):
         """Take func and return a proper function if it is a float."""
@@ -298,14 +304,14 @@ class _FunctionContainer(Function):
             num_hyp += f.num_hyp
             start_hyp += [start_hyp[-1] + f.num_hyp]
         self._functions = functions
-        self._start_hyp = start_hyp[:-1]
+        self._start_hyp = start_hyp
         super(_FunctionContainer, self).__init__(num_input, num_output,
                                                   num_hyp=num_hyp,
                                                   name=name)
 
     def _to_string(self, pad):
         """Return a string representation with padding."""
-        s = super(_FunctionContainer, self)._to_string(pad)
+        s = super(_FunctionContainer, self)._to_string(pad) + '\n'
         s += pad + ' Contents:'
         for f in self.functions:
             s += '\n' + f._to_string(pad + ' ')
@@ -397,14 +403,41 @@ class FunctionProduct(_FunctionContainer):
 
     def d(self, x, hyp=None):
         """Evaluate the derivative of the function."""
-        val = self._eval_all(x, '__call__', hyp)
-        d_val = self._eval_all(x, 'd', hyp)
-        res = np.zeros(d_val[0].shape)
-        for i in range(len(self.functions)):
-            for k in range(self.num_input):
-                res[:, :, k] += np.prod((val[:i], val[(i + 1):],
-                                         d_val[i][:, :, k]), axis=0)
-        return res
+        val = np.array(self._eval_all(x, '__call__', hyp))
+        prod_val = np.atleast_1d(np.prod(val, axis=0))
+        d_val = np.array(self._eval_all(x, 'd', hyp))
+        ival = np.zeros(val.shape)
+        idx = val != 0.
+        ival[idx] = 1. / val[idx]
+        if prod_val.ndim == 1:
+            return np.einsum('i, ji, jik->ik', prod_val, ival, d_val)
+        else:
+            return np.einsum('ijk, lijk, likm->ikm', prod_val, ival,
+                             d_val)
+
+    def d_hyp(self, x, hyp=None):
+        """Evaluate the derivative of the function with respect to hyp."""
+        val = np.array(self._eval_all(x, '__call__', hyp))
+        prod_val = np.atleast_1d(np.prod(val, axis=0))
+        tmp = self._eval_all(x, 'd_hyp', hyp)
+        tmp_all = np.zeros((len(self.functions),) + tmp[0].shape[:-1] +
+                            (self.num_hyp, ))
+        ival = np.zeros(val.shape)
+        idx = val != 0.
+        ival[idx] = 1. / val[idx]
+        if prod_val.ndim == 1:
+            for f, i in itertools.izip(self.functions,
+                                       range(len(self.functions))):
+                tmp_all[i, :, self.start_hyp[i]:
+                              self.start_hyp[i] + f.num_hyp] = tmp[i][:, :]
+            return np.einsum('i, ji, jik->ik', prod_val, ival, tmp_all)
+        else:
+            for f, i in itertools.izip(self.functions,
+                                       range(len(self.functions))):
+                tmp_all[i, :, :, self.start_hyp[i]:
+                                 self.start_hyp[i] + f.num_hyp] = tmp[i][:, :, :]
+            return np.einsum('ijk, lijk, likm->ikm', prod_val, ival,
+                             tmp_all)
 
 
 class ConstantFunction(Function):
@@ -446,6 +479,10 @@ class ConstantFunction(Function):
     def _d_eval(self, x, hyp):
         """Evaluate the derivative of the function at x."""
         return np.zeros(self.const.shape)
+
+    def _d_hyp_eval(self, x, hyp):
+        """Evaluate the derivative with respect to the hyper-parameters."""
+        return 0.
 
 
 class FunctionComposition(Function):

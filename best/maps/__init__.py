@@ -12,7 +12,7 @@ Date:
 """
 
 
-__all__ = ['Function', 'FunctionSum', 'FunctionMultiplication',
+__all__ = ['Function', 'FunctionSum', 'FunctionProduct',
            'FunctionJoinedOutputs', 'FunctionPower',
            'ConstantFunction', 'FunctionScreened', 'FunctionComposition',
            'GeneralizedLinearModel',

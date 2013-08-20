@@ -104,7 +104,7 @@ class CovarianceFunction(Object):
         # Check the hidden parameters
         if hyp is None:
             hyp = self.hyp
-        if hyp is None:
+        if hyp is None and not self.num_hyp == 0:
             raise ValueError('You must specify the hyper-parameters.')
         hyp = np.atleast_1d(hyp)
         if not self._check_hyp(hyp):
