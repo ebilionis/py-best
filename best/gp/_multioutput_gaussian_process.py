@@ -519,7 +519,7 @@ class MultioutputGaussianProcess(MarkovChainMonteCarlo):
             self._sample_r = mgp.sample_r
             self._sample_g = mgp.sample_g
             self._proposal = mgp.proposal
-            self._target = mgp.posterior
+            self._target = mgp.target
         else:
             self.num_mcmc = MGP_DEFAULT_NUM_MCMC
             self.num_init = MGP_DEFAULT_NUM_INIT
@@ -902,7 +902,7 @@ class MultioutputGaussianProcess(MarkovChainMonteCarlo):
 
         Keyword Arguments:
             x           ---         The initial state. If not specified, then,
-                                    we attempt to use the previous state
+                                    we attemp to use the previous state
                                     processed by this class.
             eval_state  ---         A dictionary containing the all the data
                                     required to initialize the object. Such a

@@ -21,7 +21,7 @@ from . import MeanModel
 from . import ConstantMeanModel
 from . import SeparableMeanModel
 from ..maps import Solver
-#from uq.random import lhs
+from ..design import lhs
 
 
 class TreedMultioutputGaussianProcess(object):
