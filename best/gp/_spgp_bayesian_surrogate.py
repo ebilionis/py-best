@@ -7,33 +7,37 @@ Date:
     3/13/2013
 """
 
+
+__all__ = ['SPGPBayesianSurrogate']
+
+
 import numpy as np
-from uq.gp.spgp import *
-from uq.maps import Function
+from ._spgp import *
+from ..maps import Function
 import itertools
 
 
 class SPGPBayesianSurrogate(Function):
     """A SPGP Bayesian surrogate for one output."""
-    
+
     # A surrogate for each particle (SPGPSurrogate list)
     _particles = None
-    
+
     # The weights of the particles (np.ndarray)
     _weights = None
-    
+
     @property
     def particles(self):
         return self._particles
-    
+
     @property
     def weights(self):
         return self._weights
-    
+
     @property
     def num_particles(self):
         return len(self._particles)
-  
+
     def __init__(self, particles, weights):
         super(SPGPBayesianSurrogate, self).__init__(particles[0].num_input,
                                                     particles[0].num_output,
@@ -52,12 +56,12 @@ class SPGPBayesianSurrogate(Function):
             return mu, s2
         else:
             return mu
-    
+
     def _sample_particle(self):
         """Sample a particle."""
         I = np.random.multinomial(1, self.weights)
         return np.arange(self.num_particles)[I == 1][0]
-    
+
     def sample(self, x, num_samples=1, add_noise=False):
         # Sample a particle
         samples = []

@@ -7,9 +7,13 @@ Date:
     2/3/2013
 """
 
-from uq.maps import Function
-from uq.maps import ConstantFunction
+
+__all__ = ['SeparableFunctionWrapper']
+
+
 import numpy as np
+from ..maps import Function
+from ..maps import ConstantFunction
 
 
 class SeparableFunctionWrapper(Function):

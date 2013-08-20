@@ -7,6 +7,10 @@ Date:
     3/11/2013
 """
 
+
+__all__ = ['SPGPMCMCGibbs']
+
+
 import numpy as np
 import math
 #import matplotlib.pylab as plt
@@ -14,53 +18,53 @@ import math
 
 class SPGPMCMCGibbs(object):
     """MCMC-Gibbs for SPGP."""
-    
+
     # The target distribution
     _target = None
-    
+
     # The proposal
     _proposal = None
-    
+
     # Count samples per variable
     _count = None
-    
+
     # Counted accepted samples per variable
     _accepted = None
-    
+
     # Number of gibbs steps per variable
     _num_gibbs = None
-    
+
     # Verbosity
     _verbose = None
-    
+
     @property
     def target(self):
         return self._target
-    
+
     @property
     def proposal(self):
         return self._proposal
-    
+
     @property
     def count(self):
         return self._count
-    
+
     @property
     def accepted(self):
         return self._accepted
-    
+
     @property
     def acceptance_rate(self):
         return self._accepted / self._count
-    
+
     @property
     def num_gibbs(self):
         return self._num_gibbs
-    
+
     @property
     def verbose(self):
         return self._verbose
-    
+
     def __init__(self, posterior, proposal, num_gibbs=[1, 1, 1, 1],
                  verbose=False):
         self._num_gibbs = np.array(num_gibbs, dtype='int')
@@ -69,7 +73,7 @@ class SPGPMCMCGibbs(object):
         self._count = np.zeros(4, dtype='float')
         self._accepted = np.zeros(4, dtype='float')
         self._verbose = verbose
-    
+
     def _get_var_idx(self, varname):
         if varname == 'xb':
             return 0
@@ -79,7 +83,7 @@ class SPGPMCMCGibbs(object):
             return 2
         elif varname == 'log_sig':
             return 3
-    
+
     def sample(self, x, steps=1):
         for i in range(steps):
             if self.verbose:
@@ -94,7 +98,7 @@ class SPGPMCMCGibbs(object):
             #plt.plot(x['xb'], np.zeros(x['xb'].shape), 'ro', markersize=10)
             #plt.plot(np.exp(-x['log_b']/2)[0], math.exp(x['log_c']/2), 'r.')
             #plt.pause(1e-1)
-    
+
     def _sample_gibbs(self, x, var_name):
         if self.verbose:
             print ' Sampling', var_name
@@ -107,7 +111,7 @@ class SPGPMCMCGibbs(object):
         for i in range(self.num_gibbs[var_idx]):
             self._sample_single_gibbs(x, var_idx, prop_func, prop_eval_old_new,
                                       prop_eval_new_old)
-    
+
     def _sample_single_gibbs(self, x, var_idx, prop_func,
                             prop_eval_old_new, prop_eval_new_old):
         # Propose a move

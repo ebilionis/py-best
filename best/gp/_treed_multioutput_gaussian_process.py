@@ -8,15 +8,19 @@ Date:
 
 """
 
+
+__all__ = ['TreedMultioutputGaussianProcess']
+
+
 import math
 import numpy as np
 import itertools as iter
-from uq import RandomElement
-from uq.gp import MultioutputGaussianProcess
-from uq.gp import MeanModel
-from uq.gp import ConstantMeanModel
-from uq.gp import SeparableMeanModel
-from uq import Solver
+from ..domain import RandomElement
+from . import MultioutputGaussianProcess
+from . import MeanModel
+from . import ConstantMeanModel
+from . import SeparableMeanModel
+from ..maps import Solver
 #from uq.random import lhs
 
 
@@ -129,7 +133,7 @@ class TreedMultioutputGaussianProcess(object):
     def is_initialized(self):
         """Is the model initialized?"""
         return self._is_initialized
-    
+
     @property
     def verbose(self):
         """Should I be verbose or not?"""
@@ -167,7 +171,7 @@ class TreedMultioutputGaussianProcess(object):
         self._init_hyp = value
 
     def __init__(self, solver=Solver,
-                 model=MultioutputGaussianProcess(), 
+                 model=MultioutputGaussianProcess(),
                  mean_model=None,
                  tree=RandomElement(scale_X=True)):
         """Initialize the object.
@@ -259,7 +263,7 @@ class TreedMultioutputGaussianProcess(object):
 
     def _add_more_points(self):
         """Adds one more point using the ALM criterion.
-        
+
         Return a list of the elements that were updated.
         """
         if self.verbose:

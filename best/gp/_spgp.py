@@ -8,6 +8,10 @@ Date:
 
 """
 
+
+__all__ = ['dist', 'spgp_lik', 'kern', 'kdiag', 'spgp_pred']
+
+
 import numpy as np
 import scipy
 import math
@@ -175,5 +179,5 @@ def spgp_pred(y, x, xb, xt, hyp, d=1e-6):
     s2 = (kdiag(xt, hyp)
           - np.atleast_2d(np.sum(lst ** 2, 0)).T
           + sig * np.atleast_2d(np.sum(lmst ** 2, 0)).T)
-        
+
     return mu, s2

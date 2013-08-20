@@ -8,7 +8,9 @@ Date:
 """
 
 
-__all__ = ['Domain', 'Rectangle', 'UnitCube', 'AllSpace']
+__all__ = ['Domain', 'Rectangle', 'UnitCube', 'AllSpace',
+           'RandomElement']
 
 
 from ._domain import *
+from ._random_element import * # Fix

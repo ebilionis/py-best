@@ -33,14 +33,14 @@ __all__ = ['Object', 'core', 'misc', 'domain', 'maps', 'linalg',
 from ._basic_objects import *
 
 from . import core
-from . import misc
-from . import domain
+from . import misc # Fix
+from . import domain # Fix
 from . import linalg
-from . import maps
-from . import random
+from . import maps # Fix
+from . import random # Fix
 from . import gpc
 from . import rvm
-from . import gp
+from . import gp # Fix
 from . import design
-from . import uq
-from . import inverse
+from . import uq # Fix
+from . import inverse # Fix

@@ -2,47 +2,51 @@
 
 Author:
     Ilias Bilionis
-    
+
 Date:
     3/11/2013
 """
 
+
+__all__ = ['SPGPLikelihood']
+
+
 import numpy as np
 import math
-from uq.gp.spgp import *
+from ._spgp import *
 
 
 class SPGPLikelihood(object):
     """SPGP Likelihood."""
-    
+
     # Inputs
     _X = None
-    
+
     # Outputs
     _Y = None
-    
+
     # Number of pseudo inputs
     _num_pseudo = None
-    
+
     # For stability
     _d = None
-    
+
     @property
     def X(self):
         return self._X
-    
+
     @property
     def Y(self):
         return self._Y
-    
+
     @property
     def num_pseudo(self):
         return self._num_pseudo
-    
+
     @property
     def d(self):
         return self._d
-    
+
     def __init__(self, X, Y, num_pseudo, d=1e-6):
         self._X = X
         self._Y = Y
@@ -58,7 +62,7 @@ class SPGPLikelihood(object):
             lw += spgp_lik(w, self.Y[:, i:(i+1)], self.X, self.num_pseudo,
                           d=self.d, compute_der=False)
         x['log_like'] = -lw
-    
+
     def d_eval(self, x):
         """Evaluate the log likelihood and its derivative."""
         dim = self.X.shape[1]

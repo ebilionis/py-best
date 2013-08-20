@@ -8,9 +8,13 @@ Date:
 
 """
 
+
+__all__ = ['RandomElement']
+
+
 import numpy as np
 import itertools as iter
-from uq import BinaryTree
+from ..misc import BinaryTree
 
 
 class RandomElement(BinaryTree):
@@ -190,7 +194,7 @@ class RandomElement(BinaryTree):
         if value < 0 or value >= self.s:
             raise ValueError('split_comp is out of bounds.')
         self._split_comp = value
-    
+
     @property
     def split_dim(self):
         """Get the splitting dimension."""
@@ -217,7 +221,7 @@ class RandomElement(BinaryTree):
     @split_pt.setter
     def split_pt(self, value):
         """Set the splitting point.
-        
+
         Precondition:
             + The splitting component has already been set.
             + The splitting dimension has already been set.
@@ -231,7 +235,7 @@ class RandomElement(BinaryTree):
 
     def __init__(self, domain=None, purge=True, scale_X=False):
         """Initialize the object.
-        
+
         Keyword Arguments:
             domain  ---     The desired domain for the element.
             purge   ---     Do you want to clean up every time you split an
@@ -273,7 +277,7 @@ class RandomElement(BinaryTree):
         for i, x_s in iter.izip(range(self.s), X_s):
             X.append(self._scale_back_input_comp(i, x_s))
         return X
-    
+
     def set_data(self, X, H, Y):
         """Set the data of the element."""
         if isinstance(X, tuple):
@@ -360,7 +364,7 @@ class RandomElement(BinaryTree):
 
     def add_data(self, X, H, Y):
         """Add more data to the element.
-        
+
         If this is not a leaf element, then it adds the data to the right
         children.
         """
@@ -414,7 +418,7 @@ class RandomElement(BinaryTree):
             if comp == self.parent.split_comp and dim == self.parent.split_dim:
                 return self.parent.split_pt
         return self.parent._get_domain_right(comp, dim)
-    
+
     def get_domain(self, comp, dim=None):
         """Return a tuple that describes the comp-dim part of the domain."""
         if dim is None:
@@ -458,7 +462,7 @@ class RandomElement(BinaryTree):
         Arguments:
             dim         ---     The dimension on which to split.
             comp        ---     The component to split.
-        
+
         Keyword Arguments:
             loc         ---     The location to split.
 
@@ -537,16 +541,16 @@ class RandomElement(BinaryTree):
             s += '\n' + padding + 'Right:\n'
             s += self.right._str_helper(padding + ' ')
         return s
-        
+
     def __str__(self):
         """Return a string representation of the object."""
         s = 'Random Element\n'
         s += self._str_helper('')
         return s
-    
+
     def _uniform_split_helper(self, comp, dim, depth):
         """Split the element depth times along comp and dim.
-        
+
         Arguments:
             comp    ---     Component to split.
             dim     ---     Dimension to split.
@@ -575,7 +579,7 @@ class RandomElement(BinaryTree):
 
     def join_children(self):
         """Join the children of this node.
-        
+
         All children of the current node are joined recursvively.
         """
         if not self.is_leaf:
@@ -646,7 +650,7 @@ class RandomElement(BinaryTree):
 
     def __call__(self, X, H, Y, V=None):
         """Evaluate the model at a particular point.
-        
+
         Precondition:
             A model has been attached to the element.
         """

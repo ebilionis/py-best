@@ -7,35 +7,39 @@ Date:
     1/21/2013
 """
 
+
+__all__ = ['GaussianLikelihoodFunction']
+
+
 import numpy as np
 import scipy
 import math
-from uq.random import LikelihoodFunctionWithGivenMean
+from . import LikelihoodFunctionWithGivenMean
 
 
 class GaussianLikelihoodFunction(LikelihoodFunctionWithGivenMean):
     """The class represents a Gaussian likelihood function.
-    
+
     Namely:
         p(D | x) = N(D| f(x), C),
-    
+
     where C is the covariance matrix.
     """
-    
+
     # The covariance matrix
     _cov = None
-    
+
     # The Cholesky decomposition of the covariance matrix
     _L_cov = None
-    
+
     # The logarithm of the determinant of the covariance matrix
     _log_det_cov = None
-    
+
     @property
     def cov(self):
         """Get the covariance matrix."""
         return self._cov
-    
+
     @cov.setter
     def cov(self, value):
         """Set the covariance matrix."""
@@ -49,21 +53,21 @@ class GaussianLikelihoodFunction(LikelihoodFunctionWithGivenMean):
         self._cov = value
         self._L_cov = np.linalg.cholesky(self.cov)
         self._log_det_cov = 2. * np.log(np.diag(self.L_cov)).sum()
-    
+
     @property
     def L_cov(self):
         """Get the Cholesky decomposition of the covariance."""
         return self._L_cov
-    
+
     @property
     def log_det_cov(self):
         """Get the log of the det of the covariance."""
         return self._log_det_cov
-    
+
     def __init__(self, num_input=None, data=None, mean_function=None, cov=None,
                  name='Gaussian Likelihood Function'):
         """Initialize the object.
-        
+
         Keyword Arguments
             num_input           ---     The number of inputs. Optional, if
                                         mean_function is a proper Function.
@@ -84,7 +88,7 @@ class GaussianLikelihoodFunction(LikelihoodFunctionWithGivenMean):
                                                          name=name)
         if cov is not None:
             self.cov = cov
-    
+
     def __call__(self, x):
         """Evaluate the function at x."""
         mu = self.mean_function(x)

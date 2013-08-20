@@ -8,12 +8,16 @@ Date:
 
 """
 
+
+__all__ = ['SparsePseudoInputGaussianProcess']
+
+
 import numpy as np
 import math
 from scipy.optimize import fmin_bfgs
 from scipy.cluster.vq import *
-from uq.gp.spgp import *
-from uq.maps import Function
+from ._spgp import *
+from ..maps import Function
 
 
 class SparsePseudoInputGaussianProcess(Function):

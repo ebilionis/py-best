@@ -12,7 +12,7 @@ Date:
 """
 
 
-__all__ = ['MultiOutputGaussianProcess']
+__all__ = ['MultioutputGaussianProcess']
 
 
 import math

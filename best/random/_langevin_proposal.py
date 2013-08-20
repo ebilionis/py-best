@@ -8,9 +8,13 @@ Date:
 
 """
 
+
+__all__ = ['LangevinProposal']
+
+
 import numpy as np
 import math
-from uq.random import ProposalDistribution
+from . import ProposalDistribution
 
 
 class LangevinProposal(ProposalDistribution):

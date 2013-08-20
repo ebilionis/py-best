@@ -9,7 +9,7 @@ Date:
 """
 
 
-__all__ = []
+__all__ = ['InverseProblem', 'SeparableFunctionWrapper']
 
-#from inverse_problem import InverseProblem
-#from separable_function_wrapper import SeparableFunctionWrapper
+from ._inverse_problem import * # Fix
+from ._separable_function_wrapper import * # Fix

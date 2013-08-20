@@ -8,8 +8,9 @@ Date:
 """
 
 
-__all__ = ['logsumexp', 'multinomial_resample']
+__all__ = ['logsumexp', 'multinomial_resample', 'BinaryTree']
 
 
 from ._ndarray_methods import *
 from ._resample import *
+from ._binary_tree import * # Fix

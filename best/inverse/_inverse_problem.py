@@ -8,11 +8,15 @@ Date:
     1/21/2013
 """
 
+
+__all__ = ['InverseProblem']
+
+
 import numpy as np
 import itertools
-from uq.random import StudentTLikelihoodFunction
-from uq.random import RandomWalkProposal
-from uq.random import SequentialMonteCarlo
+from ..random import StudentTLikelihoodFunction
+from ..random import RandomWalkProposal
+from ..random import SequentialMonteCarlo
 
 
 class InverseProblem(object):

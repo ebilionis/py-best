@@ -9,6 +9,9 @@ Date:
 """
 
 
+__all__ = ['BinaryTree']
+
+
 class BinaryTree(object):
     """The base class of all binary trees."""
 
@@ -63,7 +66,7 @@ class BinaryTree(object):
     def has_left(self):
         """Return True if we have a left child."""
         return self.left is not None
-    
+
     @property
     def has_right(self):
         """Return True if we have a right child."""
@@ -134,6 +137,6 @@ class BinaryTree(object):
 
         Keyword Arguments:
             parent  ---     The parent of the node that is created.
-        
+
         """
         pass

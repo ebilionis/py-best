@@ -8,13 +8,17 @@ Date:
 
 """
 
+
+__all__ = ['SequentialMonteCarlo']
+
+
 import numpy as np
 from scipy.optimize import brentq
 import math
 import itertools
-from uq.random import PosteriorDistribution
-from uq.random import RandomWalkProposal
-from uq.random import MarkovChainMonteCarlo
+from . import PosteriorDistribution
+from . import RandomWalkProposal
+from . import MarkovChainMonteCarlo
 #import matplotlib.pyplot as plt
 
 

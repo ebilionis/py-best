@@ -15,7 +15,11 @@ __all__ = ['RandomVariableConditional', 'RandomVector',
            'LikelihoodFunction', 'LikelihoodFunctionWithGivenMean',
            'Distribution', 'JointDistribution',
            'ConditionalDistribution', 'ProductDistribution',
-           'UniformDistribution', 'NormalDistribution']
+           'UniformDistribution', 'NormalDistribution',
+           'StudentTDistribution', 'MixtureOfDistributions',
+           'GaussianLikelihoodFunction', 'StudentTLikelihoodFunction',
+           'PosteriorDistribution', 'MarkovChainMonteCarlo',
+           'SequentialMonteCarlo', 'LangevinProposal']
 
 
 from ._random_variable import *
@@ -32,10 +36,11 @@ from ._conditional_distribution import * # Fix
 from ._product_distribution import * # Fix
 from ._uniform_distribution import * # Fix
 from ._normal_distribution import * # Fix
-#from student_t_distribution import StudentTDistribution
-#from mixture_of_distributions import MixtureOfDistributions
-#from gaussian_likelihood_function import GaussianLikelihoodFunction
-#from student_t_likelihood_function import StudentTLikelihoodFunction
-#from posterior_distribution import PosteriorDistribution
-#from markov_chain_monte_carlo import MarkovChainMonteCarlo
-#from sequential_monte_carlo import SequentialMonteCarlo
+from ._student_t_distribution import * # Fix
+from ._mixture_of_distributions import * # Fix
+from ._gaussian_likelihood_function import * # Fix
+from ._student_t_likelihood_function import * # Fix
+from ._posterior_distribution import * # Fix
+from ._markov_chain_monte_carlo import * # Fix
+from ._sequential_monte_carlo import * # Fix
+from ._langevin_proposal import * # Fix

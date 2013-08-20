@@ -7,30 +7,34 @@ Date:
     1/21/2013
 """
 
+
+__all__ = ['StudentTLikelihoodFunction']
+
+
 import numpy as np
 import scipy
 import math
-from uq.random import GaussianLikelihoodFunction
+from . import GaussianLikelihoodFunction
 
 
 class StudentTLikelihoodFunction(GaussianLikelihoodFunction):
     """An object representing a Student-t likelihood function."""
-    
+
     # The degrees of freedom
     _nu = None
-    
+
     @property
     def nu(self):
         """Get the degrees of freedom."""
         return self._nu
-    
+
     @nu.setter
     def nu(self, value):
         """Set the degrees of freedom."""
         if not isinstance(value, float):
             raise TypeError('nu must be a float.')
         self._nu = value
-    
+
     def __init__(self, nu, num_input=None, data=None, mean_function=None, cov=None,
                  name='Student-t Likelihood Function'):
         """Initialize the object.
@@ -58,7 +62,7 @@ class StudentTLikelihoodFunction(GaussianLikelihoodFunction):
                                                          mean_function=mean_function,
                                                          cov=cov,
                                                          name=name)
-    
+
     def __call__(self, x):
         """Evaluate the function at x."""
         mu = self.mean_function(x)

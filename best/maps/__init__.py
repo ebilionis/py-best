@@ -18,10 +18,12 @@ __all__ = ['Function', 'FunctionSum', 'FunctionProduct',
            'GeneralizedLinearModel',
            'CovarianceFunction', 'CovarianceFunctionSum',
            'CovarianceFunctionProduct', 'CovarianceFunctionSE',
-           'CovarianceFunctionBasis']
+           'CovarianceFunctionBasis',
+           'Solver']
 
 
 
 from ._function import *
 from ._generalized_linear_model import *
 from ._covariance_function import *
+from ._solver import * # Fix

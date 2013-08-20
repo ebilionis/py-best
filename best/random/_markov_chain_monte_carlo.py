@@ -8,12 +8,16 @@ Date:
 
 """
 
+
+__all__ = ['MarkovChainMonteCarlo']
+
+
 import numpy as np
 import math
-from uq.random import RandomWalkProposal
-from uq.random import LikelihoodFunction
-from uq.random import PosteriorDistribution
-from uq.random import ProposalDistribution
+from . import RandomWalkProposal
+from . import LikelihoodFunction
+from . import PosteriorDistribution
+from . import ProposalDistribution
 
 
 class MarkovChainMonteCarlo(object):
