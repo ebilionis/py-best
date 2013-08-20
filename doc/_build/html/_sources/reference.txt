@@ -25,6 +25,7 @@ The BEST package is split in several submodules:
    serialization
    maps
    cov
+   domain
    random
    gpc
    glm
