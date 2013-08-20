@@ -170,7 +170,7 @@ class TreedMultioutputGaussianProcess(object):
         """Set the initial hyper-parameters."""
         self._init_hyp = value
 
-    def __init__(self, solver=Solver,
+    def __init__(self, solver,
                  model=MultioutputGaussianProcess(),
                  mean_model=None,
                  tree=RandomElement(scale_X=True)):
@@ -223,18 +223,15 @@ class TreedMultioutputGaussianProcess(object):
         if not hasattr(elm, 'model'):
             elm.model = MultioutputGaussianProcess(self.model)
             if elm.has_parent and hasattr(elm.parent, 'model'):
-                hyp = ()
-                for r, g in iter.izip(elm.parent.model.r, elm.parent.model.g):
-                    hyp += ((r, g), )
+                hyp = elm.parent.model.rg_to_hyp()
             else:
                 hyp = self.init_hyp
             elm.model.set_data(elm.scaled_X, elm.H, elm.Y)
             elm.model.initialize(hyp)
             #elm.model.initialize()
-        for i in xrange(num_mcmc):
-            elm.model.sample()
-            if self.verbose:
-                print i+1, elm.model.log_post_lk, elm.model.r, elm.model.g
+        elm.model.sample(steps=num_mcmc)
+            #if self.verbose:
+            #    print i+1, elm.model.log_post_lk, elm.model.r, elm.model.g
 
     def _train_all_elements(self):
         """Train all elements."""
@@ -246,7 +243,7 @@ class TreedMultioutputGaussianProcess(object):
         min_c = -1
         min_dim = -1
         m = 1e99
-        for c in range(self.solver.s):
+        for c in range(1):
             for d in range(self.solver.k_of[c]):
                 if elm.model.r[c][d] < m:
                     m = elm.model.r[c][d]
@@ -292,13 +289,14 @@ class TreedMultioutputGaussianProcess(object):
         self._train_all_elements()
         n = self.num_xi_init
         while n < self.num_max:
+            print 'Total number of points: ', n
             updated = self._add_more_points()
             for elm in updated:
                 if elm.n_of[0] > self.num_elm_max:
                     for child in self._refine_element(elm):
-                        self._train_element(child)
+                        self._train_element(child, self.num_mcmc)
                 else:
-                    self._train_element(elm, 500)
+                    self._train_element(elm, 1)
             n += 1
 
     def __call__(self, X, H, Y, V=None):

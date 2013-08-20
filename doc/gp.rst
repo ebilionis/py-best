@@ -316,3 +316,101 @@ You should see something like the following figure:
 
 Treed Gaussian Process Regression
 ---------------------------------
+
+The class :class:`TreedMultioutputGaussianProcess` implements an
+extension of the model we developed in (PAPER REFERENCE). This model
+is not trained directly on data, but it requires a
+:class:`best.maps.Solver` object. It is used to construct a surrogate
+of the solver.
+
+.. class best.gp.TreedMultioutputGaussianProcess
+
+    .. method:: __init__(solver[, model=MultioutputGaussianProcess()[, \
+                         mean_model=None[, \
+                         tree=RandomElement(scale_X=True)]]])
+
+            Initialize the object.
+
+            :param solver: The solver you wish to learn.
+            :type solver: :class:`best.maps.Solver`
+
+    .. method:: initialize()
+
+        Initialize the model.
+
+    .. method:: train()
+
+        Train the model to the solver.
+
+    .. __call__(X, H, Y[, V=None])
+
+        Evaluate the model at a particular point.
+
+
+Simple Treed Gaussian Process Regression Example
+------------------------------------------------
+
+The following demo can be found in :file:`best/demo/test_treed_gp.py`.
+It learns the output of a dynamical system with a discontinuity with
+respect to the initial conditions (see :class:`examples.ko.KOSolver`).
+It uses active learning (Bayesian Experimental Design) to select
+the observed inputs::
+
+    if __name__ == '__main__':
+        import fix_path
+
+
+    from examples.ko import KOSolver
+    from best.gp import TreedMultioutputGaussianProcess
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+
+    if __name__ == '__main__':
+        # Initialize the solver
+        solver = KOSolver(k=2, T=[0, 1], n_t=32)
+        # Initialize the treed GP
+        tmgp = TreedMultioutputGaussianProcess(solver=solver)
+        tmgp.num_xi_init = 10
+        tmgp.num_xi_test = 100
+        tmgp.num_max = 100
+        tmgp.num_elm_max = 20
+        tmgp.verbose = True
+        tmgp.model.sample_g = True
+        tmgp.model.num_mcmc = 1
+        tmgp.model.num_init = 100
+        # Initialial hyper-parameters
+        init_hyp = np.array([.1, .1, .1, 1e-1, 1e-1])
+        tmgp.init_hyp = init_hyp
+        tmgp.num_mcmc = 100
+        # Train
+        tmgp.train()
+        # Print the tree
+        print str(tmgp.tree)
+        # A fine scale solver to test our predictions
+        fine_solver = KOSolver(k=solver.k_of[0], n_t=50)
+        # Make predictions
+        for i in range(10):
+            xi = np.random.rand(1, solver.k_of[0])
+            X = [xi] + fine_solver.X_fixed
+            H = tmgp.mean_model(X)
+            n = np.prod([x.shape[0] for x in X])
+            Yp = np.ndarray((n, solver.q), order='F')
+            Vp = np.ndarray((n, solver.q), order='F')
+            tmgp(X, H, Yp, Vp)
+            Y = fine_solver(xi[0, :])
+            plt.plot(fine_solver.X_fixed[0], Y)
+            E = 2. * np.sqrt(Vp)
+            for i in range(solver.q):
+                plt.errorbar(fine_solver.X_fixed[0], Yp[:, i], yerr=E[:, i])
+            plt.show()
+
+The plots you will see will look like the following:
+
+.. figure:: images/tgp_ko.png
+    :align: center
+
+    The prediction of the treed Gaussian Process model for the response
+    of the dynamical system as a function of time with error bars. This
+    the prediction on a random input sample not used in the training
+    data. The total number of observations was restricted to 100.

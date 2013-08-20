@@ -20,30 +20,31 @@ import matplotlib.pyplot as plt
 
 
 if __name__ == '__main__':
+    # Initialize the solver
     solver = KOSolver(k=2, T=[0, 1], n_t=32)
+    # Initialize the treed GP
     tmgp = TreedMultioutputGaussianProcess(solver=solver)
     tmgp.num_xi_init = 10
     tmgp.num_xi_test = 100
-    tmgp.num_max = 11
-    tmgp.num_elm_max = 10
+    tmgp.num_max = 100
+    tmgp.num_elm_max = 20
     tmgp.verbose = True
     tmgp.model.sample_g = True
     tmgp.model.num_mcmc = 1
     tmgp.model.num_init = 100
-    init_hyp = [(.1 * np.ones(k), 1e-1) for k in solver.k_of]
-    #init_hyp[0][0][0] = 0.21
-    #init_hyp[0][0][1] = 0.37
-    #init_hyp[1][0][0] = 0.34
+    # Initialial hyper-parameters
+    init_hyp = np.array([.1, .1, .1, 1e-1, 1e-1])
     tmgp.init_hyp = init_hyp
-    tmgp.num_mcmc = 500
+    tmgp.num_mcmc = 100
+    # Train
     tmgp.train()
+    # Print the tree
     print str(tmgp.tree)
-    #plt.plot(tmgp.tree.model.X[0], np.zeros(tmgp.tree.model.X[0].shape), '+')
-    #plt.show()
+    # A fine scale solver to test our predictions
     fine_solver = KOSolver(k=solver.k_of[0], n_t=50)
+    # Make predictions
     for i in range(10):
         xi = np.random.rand(1, solver.k_of[0])
-        #xi = tmgp.tree.X[0][i:(i + 1), :]
         X = [xi] + fine_solver.X_fixed
         H = tmgp.mean_model(X)
         n = np.prod([x.shape[0] for x in X])

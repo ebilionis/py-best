@@ -341,7 +341,7 @@ class RandomElement(BinaryTree):
                             self._scale_input_comp(0, X[0])])
             else:
                 self.scaled_X[0] = self.X[0]
-            hyp = [(r.copy(), g) for r, g in iter.izip(self.model.r, self.model.g)]
+            hyp = self.model.rg_to_hyp()
             self.model.set_data(self.scaled_X, self.H, self.Y)
             self.model.initialize(hyp)
             return [self]
@@ -669,7 +669,7 @@ class RandomElement(BinaryTree):
             if V is not None:
                 V = V.reshape([x.shape[0] for x in X] + [V.shape[1]])
             idx_left, idx_right = self._split_data_to_evaluate(X)
-            print idx_left, idx_right
+            #print idx_left, idx_right
             if len(idx_left[self.split_comp]) > 0:
                 self._evaluate_child(self.left, idx_left, X, H, Y, V=V)
             if len(idx_right[self.split_comp]) > 0:

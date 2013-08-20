@@ -12,12 +12,15 @@ Date:
 __all__ = ['MarkovChain']
 
 
-class MarkovChain(object):
+from .. import Object
+
+
+class MarkovChain(Object):
     """The base class of a Markov chain."""
 
-    def __init__(self):
+    def __init__(self, name='Markov Chain'):
         """Initializes the object."""
-        pass
+        super(MarkovChain, self).__init__(name=name)
 
     def __call__(x_p, x_n):
         """Evaluates the logarithm of the pdf of the chain.

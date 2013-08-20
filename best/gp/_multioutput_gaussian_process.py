@@ -1208,13 +1208,15 @@ class MultioutputGaussianProcess(MarkovChainMonteCarlo):
         self._log_post_lk, self._log_like = self._compute_log_post_lk()
         return True
 
+    def rg_to_hyp(self):
+        """Get a 1D representation of the hyper-parameters."""
+        return np.hstack([np.hstack(self.r), self.g])
+
     def copy(self):
         """Get a copy of the surrogate."""
         surrogate_sample = MultioutputGaussianProcess()
         surrogate_sample.set_data(self.X, self.H, self.Y)
-        r = np.hstack(self.r)
-        g = np.array(self.g)
-        hyp = np.hstack([r, g])
+        hyp = self.rg_to_hyp
         surrogate_sample.initialize(hyp, eval_state=self.current_state)
         return surrogate_sample
 

@@ -606,3 +606,48 @@ You should see something like the following figure:
 
         Samples from a 1D Gaussian random field with zero mean and
         a :ref:`cov-se` using the :ref:`kle`.
+
+
+.. _mcmc::
+
+Markov Chain Monte Carlo
+------------------------
+
+We start by listing all the classes that take part in the formulation
+of the MCMC sampling algorithm. The purpose here, is to highlight the
+inheritance structure. We will give an example at the end that puts
+everything together.
+
+.. class:: best.random.MarkovChain
+
+    :inherits: :class:`best.Object`
+
+    The base class for a Markov Chain. Any Markov Chain should inherit
+    it.
+
+    .. method:: __init__([name='Markov Chain'])
+
+        Initialize the object.
+
+    .. method:: __call__(x_p, x_n)
+
+        Evaluate the logarithm of the pdf of the chain.
+
+        Usually this would be written as:
+
+            .. math:: \ln p(x_n | x_p),
+
+        but we are using the programming convention that whatever is
+        given comes first.
+
+        :param x_p: The state on which we are conditioning.
+        :param x_n: The new state.
+        :trhows: :class:`NotImplementedError`
+
+    .. method:: sample(x_p, x_n)
+
+        Sample from the Markov Chain and write the result on ``x_n``.
+
+        :param x_p: The state on which we are conditioning.
+        :param x_n: The new state. To be overwritten.
+        :throws: :class:`NotImplementedError`
