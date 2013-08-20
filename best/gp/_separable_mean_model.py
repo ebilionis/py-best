@@ -8,9 +8,13 @@ Date:
 
 """
 
+
+__all__ = ['SeparableMeanModel']
+
+
 import numpy as np
 import itertools as iter
-from uq.gp import MeanModel
+from . import MeanModel
 
 
 class SeparableMeanModel(MeanModel):

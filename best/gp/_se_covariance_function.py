@@ -1,4 +1,4 @@
-"""Define the Squared Exponential Covariance Function 
+"""Define the Squared Exponential Covariance Function
 
 Author:
     Ilias Bilionis
@@ -8,9 +8,14 @@ Date:
 
 """
 
+
+__all__ = ['SECovarianceFunction']
+
+
 import numpy as np
 import math
-from uq.gp import RealCovarianceFunction
+from . import RealCovarianceFunction
+
 
 
 class SECovarianceFunction(RealCovarianceFunction):
@@ -21,7 +26,7 @@ class SECovarianceFunction(RealCovarianceFunction):
         """Initialize the object.
 
         For the arguments see the docstring of RealCovarianceFunction.
-        
+
         """
         super(SECovarianceFunction, self).__init__(dim, name=name)
 
@@ -62,17 +67,17 @@ class SECovarianceFunction(RealCovarianceFunction):
             is_A_None = True
         else:
             is_A_None = False
-        A[:] = np.exp( - 0.5 * 
+        A[:] = np.exp( - 0.5 *
             np.sum(
-                (np.tile(x1 / (hyp), (x2.shape[0], 1)) 
+                (np.tile(x1 / (hyp), (x2.shape[0], 1))
                 - np.repeat(x2 / (hyp), x1.shape[0], axis=0)
                 ) ** 2,
                     axis=1)).reshape(x1.shape[0], x2.shape[0], order='F')
         if is_A_None:
             return A
-    
+
     def d(self, hyp, x1, x2, A=None, J=None):
-        """Calculate the derivative of a course covariance matrix."""
+        """Calculate the derivative of a covariance matrix."""
         assert x2.shape[0] == 1
         if A is None:
             A = self(hyp, x1, x2)

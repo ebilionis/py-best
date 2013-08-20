@@ -8,8 +8,12 @@ Date:
 
 """
 
+
+__all__ = ['ConstantMeanModel']
+
+
 import numpy as np
-from uq.gp import MeanModel
+from . import MeanModel
 
 
 class ConstantMeanModel(MeanModel):

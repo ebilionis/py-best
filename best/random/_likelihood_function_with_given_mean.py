@@ -7,9 +7,13 @@ Date:
     1/21/2013
 """
 
+
+__all__ = ['LikelihoodFunctionWithGivenMean']
+
+
 import numpy as np
-from uq.random import LikelihoodFunction
-from uq.maps import Function
+from . import LikelihoodFunction
+from ..maps import Function
 
 
 class LikelihoodFunctionWithGivenMean(LikelihoodFunction):
@@ -17,20 +21,20 @@ class LikelihoodFunctionWithGivenMean(LikelihoodFunction):
     of another function within it (.e.g. that of a forward solver.). It is not
     to be used by its own, but rather as a base class for more specific likelihood
     functions.
-    
+
     Here, we assume that the data are actually a num_data vector and that the
     mean of the likelihood is given by a function (mean_function) with num_input
     variables to num_data variables.
     """
-    
+
     # The mean function
     _mean_function = None
-    
+
     @property
     def data(self):
         """Get the data."""
         return super(LikelihoodFunctionWithGivenMean, self).data
-    
+
     @data.setter
     def data(self, value):
         """Set the data (only accept numpy arrays)."""
@@ -39,7 +43,7 @@ class LikelihoodFunctionWithGivenMean(LikelihoodFunction):
         if not len(value.shape) == 1:
             raise ValueError('The data must be a vector.')
         self._data = value
-    
+
     @property
     def num_data(self):
         """Get the number of dimensions of the data."""

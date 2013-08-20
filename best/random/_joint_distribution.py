@@ -8,8 +8,12 @@ Date:
 
 """
 
+
+__all__ = ['JointDistribution']
+
+
 import numpy as np
-from uq.random import Distribution
+from . import Distribution
 
 
 class JointDistribution(Distribution):

@@ -8,9 +8,13 @@ Date:
 
 """
 
+
+__all__ = ['RandomWalkProposal']
+
+
 import numpy as np
 import math
-from uq.random import ProposalDistribution
+from . import ProposalDistribution
 
 
 class RandomWalkProposal(ProposalDistribution):

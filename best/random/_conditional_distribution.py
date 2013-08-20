@@ -10,7 +10,11 @@ Date:
 
 """
 
-from uq.random import Distribution
+
+__all__ = ['ConditionalDistribution']
+
+
+from . import Distribution
 
 
 class ConditionalDistribution(Distribution):

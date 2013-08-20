@@ -9,14 +9,17 @@ Date:
 """
 
 
+__all__ = ['RealCovarianceFunction']
+
+
 import numpy as np
-from uq.gp import CovarianceFunction
+from . import CovarianceFunction
 
 
 class RealCovarianceFunction(CovarianceFunction):
 
     """Define a real covariance function.
-    
+
     A real covariance function is a covariance function defined in R^n.
 
     """
@@ -66,7 +69,7 @@ class RealCovarianceFunction(CovarianceFunction):
                                 + ' dimensions.')
             return x.reshape((1, x.shape[0]))
         if not len(x.shape) == 2:
-            raise TypeError(varm_name 
+            raise TypeError(varm_name
                             + ' cannot have more than two dimensions.')
         if not x.shape[1] == self.dim:
             raise TypeError(var_name + ' must have ' + self.dim
@@ -77,7 +80,7 @@ class RealCovarianceFunction(CovarianceFunction):
         """Compute the covariance function at two given points.
 
         This function has to be implemented by the deriving classes.
-    
+
         Arguments:
         hyp     ---     The hyper parameters.
         x1      ---     The first point.
@@ -117,8 +120,8 @@ class RealCovarianceFunction(CovarianceFunction):
         if A_is_None:
             return A
 
-    def __str__(self):
+    def _to_string(self, pad):
         """Return a string representation of the object."""
-        s = super(RealCovarianceFunction, self).__str__()
-        s += '\ndim = ' + str(self.dim)
+        s = super(RealCovarianceFunction, self)._to_string(pad) + '\n'
+        s += pad + ' num_dim:' + str(self.dim)
         return s

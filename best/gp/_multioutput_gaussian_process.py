@@ -11,27 +11,29 @@ Date:
     1/2/2013    (Added add_data and sample_surrogate.)
 """
 
+
+__all__ = ['MultiOutputGaussianProcess']
+
+
 import math
 import numpy as np
 import scipy.linalg
 from scipy.stats import lognorm
 import scipy.sparse as sp
 import itertools as iter
-from uq.linalg import kron_prod
-from uq.linalg import incomplete_cholesky
-#from uq.linalg import kron_trsm
-#from uq.linalg import trsm
-from uq.linalg import kron_solve
-from uq.linalg import update_cholesky
-from uq.linalg import update_cholesky_linear_system
-from uq.linalg import update_qr
-from uq.gp import SECovarianceFunction
-from uq.gp import SeparableCovarianceFunction
-from uq.random import Distribution
-from uq.random import LikelihoodFunction
-from uq.random import PosteriorDistribution
-from uq.random import ProposalDistribution
-from uq.random import MarkovChainMonteCarlo
+from ..linalg import kron_prod
+from ..linalg import incomplete_cholesky
+from ..linalg import kron_solve
+from ..linalg import update_cholesky
+from ..linalg import update_cholesky_linear_system
+#from ..linalg import update_qr
+from . import SECovarianceFunction
+from . import SeparableCovarianceFunction
+from ..random import Distribution
+from ..random import LikelihoodFunction
+from ..random import PosteriorDistribution
+from ..random import ProposalDistribution
+from ..random import MarkovChainMonteCarlo
 #import matplotlib.pyplot as plt
 
 

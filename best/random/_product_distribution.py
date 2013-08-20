@@ -10,9 +10,13 @@ Date:
 
 """
 
+
+__all__ = ['ProductDistribution']
+
+
 import numpy as np
-from uq.random import Distribution
-from uq.random import ConditionalDistribution
+from . import Distribution
+from . import ConditionalDistribution
 
 
 class ProductDistribution(Distribution):

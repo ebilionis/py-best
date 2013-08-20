@@ -8,9 +8,13 @@ Date:
 
 """
 
+
+__all__ = ['SeparableCovarianceFunction']
+
+
 import numpy as np
 import itertools as iter
-from uq.gp import CovarianceFunction
+from . import CovarianceFunction
 
 
 class SeparableCovarianceFunction(CovarianceFunction):
@@ -19,7 +23,7 @@ class SeparableCovarianceFunction(CovarianceFunction):
 
     # A tuple of covariance functions
     _cov = None
-    
+
     @property
     def cov(self):
         """Return covariance."""
@@ -38,7 +42,7 @@ class SeparableCovarianceFunction(CovarianceFunction):
 
     def __init__(self, cov=None, name='SeparableCovarianceFunction'):
         """Initialize the object.
-        
+
         Keyword Arguments:
         cov     ---     A tuple of covariance functions
 

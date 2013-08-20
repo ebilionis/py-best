@@ -8,12 +8,16 @@ Date:
 
 """
 
+
+__all__ = ['MeanModel']
+
+
 import numpy as np
 
 
 class MeanModel(object):
     """The base class of all mean models."""
-    
+
     # Number of basis functions
     _m = None
 
@@ -32,7 +36,7 @@ class MeanModel(object):
 
     def __init__(self, k, m):
         """Initialize the object.
-        
+
         Arguments:
             k   ---     The number of input dimensions.
             m   ---     The number of basis functions.

@@ -2,13 +2,17 @@
 
 Author:
     Ilias Bilionis
-    
+
 Date:
     1/14/2013
-    
+
 """
 
-from uq.random import LikelihoodFunction
+
+__all__ = ['Distribution']
+
+
+from . import LikelihoodFunction
 
 
 class Distribution(LikelihoodFunction):
@@ -24,10 +28,10 @@ class Distribution(LikelihoodFunction):
             name        ---     A name for this distribution.
         """
         super(Distribution, self).__init__(num_input, 1, name=name)
- 
+
     def sample(self, x=None):
         """Sample the distribution.
-        
+
         Keyword Arguments:
         x   ---     If it is specified then x should be overriden.
                     If it is not specified, then the sample is allocated and
