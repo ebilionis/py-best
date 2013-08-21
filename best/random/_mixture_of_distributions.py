@@ -61,7 +61,7 @@ class MixtureOfDistributions(Distribution):
         Arguments:
         weights     ---     The weight of each component.
         components  ---     A list of the components. They need to
-                            be NormalDistribution objects.
+                            be Distribution objects.
 
         Keyword Arguments:
         name        ---     Give a name to this distribution.

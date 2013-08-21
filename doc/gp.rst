@@ -1,4 +1,4 @@
-.. _gpr::
+.. _gpr:
 
 Gaussian Process Regression
 ===========================
@@ -14,19 +14,20 @@ Gaussian Process Regression
        excited. The code is at the moment not in a compete state.
 
 
-.. _mgpr::
+.. _mgpr:
 
 Multi-output Separable Gaussian Process Regression
 --------------------------------------------------
 
-At the moment, :ref:`best` does not offer a class for performing simple
+At the moment, :mod:`best` does not offer a class for performing simple
 Gaussian process regression (GPR) with 1D outputs.
 Instead it offers a way to do
 multi-output GP regression with a separable covariance function. The
 simple case is a subcase of this more general case. We will not get
 into the mathematical details of GPR. The user is adviced to consult:
-    * Gaussian Process Regression book.
-    * Multi-output Separable Gaussian Process Regression
+
+    * `Gaussian Processes for Machine Learning <http://www.gaussianprocess.org/gpml/>`_
+    * `I. Bilionis, N. Zabaras, B. A. Konomi, and G. Lin. Multi-output separable Gaussian process: Towards an efficient, fully Bayesian paradigm for uncertainty quantification. Journal of Computational Physics, 241:212-239, 2013 <http://www.sciencedirect.com/science/article/pii/S0021999113000417>`_
 
 
 The main class for performing GPR is
@@ -174,11 +175,15 @@ must provide the design matrix.
         procedure adds the design point with the maximum uncertainty defined
         by Eq. (19) of the paper and assuming a uniform input distribution
         until:
+
             + we run of design points,
             + or the <global> uncertainty satisfies a stopping criterion.
+
         The global uncertainty is defined to be the average uncertainty of
         all design points. The stopping criterion is implemented as follows:
+
             STOP if ``global uncertainty < rel_tol * init_unc or < abs_tol``,
+
         where init_unc is the initial uncertainty and rel_tol is a relative
         reduction and ``abs_tol`` is the absolute uncertainty we are willing to
         accept.
@@ -279,7 +284,7 @@ just fine with the default parameters::
     Y = np.sin(X) / (X + 1e-6) + noise * np.random.randn(*X.shape)
     # Construct the design matrix
     H = np.ones(X.shape)
-    # Use RVM on the data
+    # Construct an MGP object
     gp = MultioutputGaussianProcess()
     gp.set_data(X, H, Y)
     # Pick the hyper-parameters (length scales, nuggets)

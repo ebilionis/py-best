@@ -98,7 +98,7 @@ class MarkovChainMonteCarlo(object):
     def target(self, value):
         """Set the target distribution.
 
-        Everytime the target changes, the chain must be initialized again.
+        Every time the target changes, the chain must be initialized again.
         If the current state is already present, then this method automatically
         reinitializes the chain.
 
@@ -143,7 +143,10 @@ class MarkovChainMonteCarlo(object):
     @property
     def log_p_current_state(self):
         """Get the log of the pdf of the current state."""
-        return self.eval_current_state['log_p']
+        if isinstance(self.eval_current_state, dict):
+            return self.eval_current_state['log_p']
+        else:
+            return self.eval_current_state
 
     @property
     def eval_current_state(self):
@@ -268,7 +271,7 @@ class MarkovChainMonteCarlo(object):
         self.initialize(self.current_state)
 
     def _get_log_p_from_eval_state(self, eval_state):
-        if isinstance(self.target, PosteriorDistribution):
+        if isinstance(eval_state, dict):
             return eval_state['log_p']
         else:
             return eval_state
@@ -293,7 +296,6 @@ class MarkovChainMonteCarlo(object):
         log_a2 = log_p_n_to_p - log_p_p_to_n
         # 6. Evaluate the acceptance ratio
         log_a = log_a1 + log_a2
-        print ' ar:', math.exp(log_a)
         if log_a > 0.:
             a = 1.
         else:

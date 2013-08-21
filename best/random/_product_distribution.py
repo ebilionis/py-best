@@ -35,7 +35,7 @@ class ProductDistribution(Distribution):
     def px(self):
         return self._px
 
-    def __init__(self, pzcx, px, name='Product distribution'):
+    def __init__(self, pzcx, px, name='Product Distribution'):
         """Initialize the object.
 
         Arguments:

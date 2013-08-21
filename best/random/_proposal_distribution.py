@@ -35,11 +35,11 @@ class ProposalDistribution(MarkovChain):
             raise ValueError('The step size must be positive.')
         self._dt = value
 
-    def __init__(self, dt=1e-3):
+    def __init__(self, dt=1e-3, name='Proposal Distribution'):
         """Initialize the object.
 
         Keyword Arguments:
         dt  ---     The step size of the proposal.
         """
-        super(ProposalDistribution, self).__init__()
+        super(ProposalDistribution, self).__init__(name=name)
         self.dt = dt

@@ -481,6 +481,7 @@ It is implemented via the class
 .. class:: best.random.KarhuneLoeveExpansion
 
     :inherits: :class:`best.random.RandomVector`
+
     Define a Discrete Karhunen-Loeve Expansion.
     It can also be thought of a as a random vector.
 
@@ -535,7 +536,7 @@ It is implemented via the class
         :returns: The weights corresponding to ``y``.
         :rtype: 1D numpy array
 
-    .. _rvs(self)
+    .. method:: _rvs(self)
 
         Return a sample of the random vector.
 
@@ -608,7 +609,600 @@ You should see something like the following figure:
         a :ref:`cov-se` using the :ref:`kle`.
 
 
-.. _mcmc::
+.. _like:
+
+Likelihood Functions
+--------------------
+
+Many algorithms require the concept of a likelihood function. This is
+provided via:
+
+.. class:: best.random.LikelihoodFunction
+
+    :inherits: :class:`best.maps.Function`
+
+    The base class of all likelihood functions.
+
+    A likelihood function is a actually a function of the
+    hyper-parameters (or simply the parameters) of the model
+    and the data. In Bayesian statistics,
+    it basicaly models:
+
+    .. math::
+        L(x) = \ln p\left(\mathcal{D} |x\right)
+        :label: likelihood
+
+    :math:`\mathcal{D}` is the data and it should be set either
+    at the constructor or with::
+
+        likelihood.data = data
+
+    The log of the likelihood at :math:`x` for a given
+    :math:`\mathcal{D}` (see :eq:`likelihood`) is evaluated by::
+
+        likelihood.__call__(x),
+
+    which is a function that should be implemented by the user.
+
+    .. method:: __init__(num_input[, data=None[, \
+                         name='Likelihood Function'[, \
+                         log_l_wrapped=None]]])
+
+        Initialize the object.
+
+        :param num_input: The number of inputs (i.e., the number of
+                          parameters of the likelihood function).
+        :type num_input: ``int``
+        :param data: The observed data.
+        :param name: A name for the distribution.
+        :param log_l_wrapped: A normal function that implements,
+                              the likelihood.
+
+    .. attribute:: data
+
+        Set/Get the data. The data can be any object.
+
+
+A more specific likelihood class that accepts only real data is the
+following:
+
+
+.. class:: best.random.LikelihoodFunctionWithGivenMean
+
+    :inherits: :class:`best.random.LikelihoodFunction`
+
+    This class implements a likelihood function, that requires the evaluation
+    of another function within it (.e.g. that of a forward solver.). It is not
+    to be used by its own, but rather as a base class for more specific likelihood
+    functions.
+
+    Here, we assume that the data are actually a num_data vector and that the
+    mean of the likelihood is given by a function (mean_function) with num_input
+    variables to num_data variables.
+
+
+    .. method:: __init__([num_input=None[, data=None[, \
+                          mean_function=None[, \
+                          name='Likelihood Function with given mean']]]])
+
+        Initializes the object.
+
+        .. warning::
+
+            Either num_input or mean_function must be specified.
+            If mean_function is a simple function, then the data are required
+            so that we can figure out its output dimension.
+
+        :param num_input: Number of input dimensions. Ignored, if
+                          mean_function is a Function class.
+        :param data: The observed data. A numpy vector. It must
+                          be specified if mean_function is a normal
+                          function.
+        :param mean_function: A Function or a normal function. If, it is
+                              a Function, then mean_function.num_output
+                              must be equal to data.shape[0]. If it is
+                              a normal function, then it is assumed that
+                              it returns a data.shape[0]-dimensional vector.
+        :param name: A name for the likelihood function.
+
+    .. method:: _to_string(pad):
+
+        :overloads: :func:`best.maps.Function._to_string()`
+
+    .. attribute:: data
+
+        :overloads: :attr:`best.random.LikelihoodFunction.data`
+
+    .. attribute:: num_data
+
+        Get the number of dimensions of the data.
+
+    .. attribute:: mean_function
+
+        Set/Get the mean function.
+
+.. _like-gauss:
+
+Gaussian Likelihood Function
+++++++++++++++++++++++++++++
+
+Here is a class that implements a Gaussian likelihood function:
+
+.. class:: best.random.GaussianLikelihoodFunction
+
+    :inherits: :class:`best.random.LikelihoodFunctionWithGivenMean`
+
+    This class represents a Gaussian likelihood function:
+
+    .. math::
+        p\left( \mathcal{D} | x\right) =
+        \mathcal{N}\left( \mathcal{D} | f(x), C\right),
+
+    where :math:`C` is the covariance matrix and :math:`f(\cdot)`
+    a mean function.
+
+    .. method:: __init__([num_input=None[, data=None[, \
+                          mean_function=None[, cov=None[, \
+                          name='Gaussian Likelihood Function']]]]])
+
+        Initialize the object.
+
+            :param num_input: The number of inputs. Optional, if
+                              mean_function is a proper
+                              :class:`best.maps.Function`.
+            :param data: The observed data. A vector. Optional,
+                         if ``mean_function`` is a proper
+                         :class:`best.maps.Function`.
+                         It can be set later.
+            :param mean_function: The mean function. See the super class
+                                  for the description.
+            :param cov: The covariance matrix. It can either be
+                        a positive definite matrix, or a number.
+            :param name: A name for the likelihood function.
+
+            :precondition: You must provide eithe the ``data`` or a
+                           proper ``mean_function``.
+
+    .. method:: __call__(x)
+
+        :overloads: :func:`best.maps.Function.__call__()`
+
+    .. attribute:: cov
+
+        Set/Get the covariance matrix.
+
+.. _like-student:
+
+Student-t Likelihood Function
++++++++++++++++++++++++++++++
+
+Here is a class that implements a Student-t likelihood function:
+
+.. class:: best.random.StudentTLikelihoodFunction
+
+    :inherits: :class:`best.random.Gaussian`
+
+    This class represents a Student-t likelihood function.
+
+    .. method:: __init__(nu, [num_input=None[, data=None[, \
+                          mean_function=None[, cov=None[, \
+                          name='Gaussian Likelihood Function']]]]])
+
+        Initialize the object.
+
+            :param nu: The degrees of freedom of the distribution.
+            :param num_input: The number of inputs. Optional, if
+                              mean_function is a proper
+                              :class:`best.maps.Function`.
+            :param data: The observed data. A vector. Optional,
+                         if ``mean_function`` is a proper
+                         :class:`best.maps.Function`.
+                         It can be set later.
+            :param mean_function: The mean function. See the super class
+                                  for the description.
+            :param cov: The covariance matrix. It can either be
+                        a positive definite matrix, or a number.
+            :param name: A name for the likelihood function.
+
+            :precondition: You must provide eithe the ``data`` or a
+                           proper ``mean_function``.
+
+    .. method:: __call__(x)
+
+        :overloads: :func:`best.random.GaussianLikelihoodFunction.__call__()`
+
+
+.. _dist:
+
+Distributions
+-------------
+
+A distribution is a concept that combines a likehood function with
+a random variable. Most probably we will replace it in the future
+with the :class:`best.random.RandomVector` class that combines all
+these concepts.
+
+.. class:: best.random.Distributions
+
+    :inherits: :class:`best.random.LikelihoodFunction`
+
+    The base class of all distributions.
+
+    .. method:: __init__(num_input[, name='Distribution')
+
+        Initialize the object.
+
+        :param num_input: The number of input dimensions.
+        :type num_input: ``int``
+        :param name: A name for the distribution.
+        :type name: ``str``
+
+    .. method:: sample([x=None])
+
+        Sample the distribution.
+
+        :param x: If it is specified then x should be overriden.
+                  If it is not specified, then the sample is allocated and
+                  returned.
+
+
+Many distributions together can be represented by:
+
+.. class:: best.random.JointDistribution
+
+    :inherits: :class:`best.random.Distribution`
+
+    A class that represents a collection of random variables.
+
+    .. method:: __init__(dist[, name='Joint Distribution'])
+
+        Initialize the object.
+
+        :param dist: A list of distributions to be joined.
+        :type dist: :class:`best.random.Distribution`
+
+    .. method:: __call__(x)
+
+        :overloads: :func:`best.maps.Function.__call__()`
+
+    .. method:: sample([x=None])
+
+        :overloads: :func:`best.random.Distribution.sample()`
+
+    .. attribute:: dist
+
+        Get the underlying distributions
+
+
+A conditional distribution can be represented by:
+
+
+.. class:: best.random.ConditionalDistribution
+
+    :inherits: :class:`best.random.Distribution`
+
+    The base class for conditional distributions.
+
+    .. method:: __init__(num_input, num_cond[, \
+                         name='Conditional Distribution')
+
+        Initialize the object.
+
+        :param num_input: The number of inputs.
+        :param num_cond: The number of conditioning variables.
+
+    .. method:: __call__(z, x)
+
+        :redefines: :func:`best.maps.Fucntion.__call__()`
+
+        Evaluate the log of the probability at ``z`` given ``x``.
+
+        :throws: :class:`NotImplementedError`
+
+    .. method:: sample(x[, z=None])
+
+        :redefines: :func:`best.random.Distribution.sample()`
+
+        Sample ``z`` given ``x``.
+
+        :throws: :class:`NotImplementedError`
+
+    .. attribute:: num_cond
+
+        Get the number of conditioning variables.
+
+
+The following class represents the product of a distribution with
+a conditional distribution:
+
+    .. math::
+
+        p(z | x)p(x)
+
+Here it is:
+
+.. class:: best.random.ProductDistribution
+
+    :inherits: :class:`best.random.Distribution`
+
+    It corresponds to the product :math:`p(z | x)p(x)`.
+    :math:`p(x)` corresponds to ``px`` and :math:`p(z|x)` to ``pzcx``.
+    The input is assumed to be the vector ``[x, z]``.
+
+    .. method:: __init__(pzcx, px[, name='Product Distribution'])
+
+        Initialize the object.
+
+        :param pzcx: The distribution :math:`p(z | x)`.
+        :type pzcx: :class:`best.random.ConditionalDistribution`
+        :param px: The distribution :math:`p(x)`.
+        :type px: :class:`best.random.Distribution`
+
+    .. method:: __call__(x)
+
+        :overloads: :func:`best.maps.Function.__call__()`
+
+    .. method:: sample()
+
+        :overloads: :func:`best.maps.Distributions.sample()`
+
+    .. attribute:: px
+
+        Get the distribution corresponding to :math:`p(x)`.
+
+    .. attribute:: pzcx
+
+        Get the distribution corresponding to :math:`p(z | x)`
+
+
+.. _dist-sampling:
+
+Sampling Distributions
+----------------------
+
+We provide several distributions that you can use right away to
+construct new ones.
+
+
+.. _dist-uniform:
+
+Uniform Distribution
+++++++++++++++++++++
+
+.. class:: best.random.UniformDistribution
+
+    :inherits: :class:`best.random.Distribution`
+
+    The uniform distribution on a square domain.
+
+    .. method:: __init__(num_input[, domain=None[, \
+                         name='Uniform Distribution']])
+
+        Initialize the object.
+
+        :param num_input: The number of dimensions.
+        :param domain:  The domain of the random variables. Must be a (k x 2)
+                        matrix. If not specified, then a unit hyper-cube is
+                        used.
+        :param name: A name for this distribution.
+
+    .. method:: __call__(x)
+
+        :overloads: :func:`best.maps.Function.__call__()`
+
+        Evaluates the logarithm of:
+
+            .. math:: p(x) = \frac{1}{|D|},
+
+        where :math:`|D|` is the measure of the domain.
+
+    .. method:: sample([x=None])
+
+        :overloads: :func:`best.random.Distribution.sample()`
+
+    .. attribute:: domain
+
+        Get/Set the domain.
+
+
+.. _dist-norm:
+
+Normal Distribution
++++++++++++++++++++
+
+.. class:: best.random.NormalDistribution
+
+    :inherits: :class:`best.random.Distribution`
+
+    .. method:: __init__(num_input[, mu=None[, cov=None[, \
+                         name='Normal Distribution')
+
+        Initialize the object.
+
+        :param num_input: The dimension of the random variables.
+        :param mu: The mean. Zero if not specified.
+        :param cov: The covariance matrix. Unit matrix if not specified.
+        :param name: A name for the distribution.
+
+    .. method:: __call__(x)
+
+        :overloads: :func:`best.maps.Function.__call__()`
+
+    .. method:: sample([x=None])
+
+        :overloads: :func:`best.random.Distribution.sample()`
+
+
+.. _dist-student:
+
+Student-t Distribution
+++++++++++++++++++++++
+
+.. class:: best.random.StudentTDistribution
+
+    :inherits: :class:`best.random.NormalDistribution`
+
+    .. method:: __init__(num_input, nu[, mu=None[, cov=None[, \
+                         name='Normal Distribution')
+
+        Initialize the object.
+
+        :param num_input: The dimension of the random variables.
+        :param nu: The degrees of freedom.
+        :param mu: The mean. Zero if not specified.
+        :param cov: The covariance matrix. Unit matrix if not specified.
+        :param name: A name for the distribution.
+
+    .. method::__call__(x)
+
+        :overloads: :func:`best.random.NormalDistribution.__call__()`
+
+    .. sample([x=None])
+
+        :overloads: :func:`best.random.NormalDistribution.sample()`
+
+
+.. _mixture:
+
+Mixture of Distributions
+------------------------
+
+Here is a class that represents a mixture of distributions:
+
+.. class:: best.random.MixtureOfDistributions
+
+    :inherits: :class:`best.random.Distribution`
+
+    A class representing a mixture of distributions:
+
+    .. math::
+
+        p(x) = \sum_i c_i p_i(x),
+
+    where :math:`\sum_i c_i = 1` and :math:`p_i(x)` are distributions.
+
+    .. method:: __init__(weights, components[, \
+                         name='Mixture of Distributions')
+
+        Initialize the object.
+
+        :param weights: The weight of each component.
+        :param components: A list of the components.
+        :type components: :class:`best.random.Distribution`
+
+    .. method:: __call__(x)
+
+        :overloads: :func:`best.maps.Function.__call__()`
+
+    .. method:: sample([x=None])
+
+        :overloads: :func:`best.random.Distribution.sample()`
+
+    .. attribute:: weights
+
+        Get the weights of each component.
+
+    .. attribute:: components
+
+        Get the components (distributions).
+
+    .. attribute:: num_components
+
+        Get the number of components.
+
+
+.. _post:
+
+Posterior Distribution
+----------------------
+
+A class representing a posterior distribution. It requires a likelihood
+function and a prior. This is design to be used with :ref:`smc`.
+This is why it is a little bit strange. Most probably, you won't
+have to overload it (or even understand how it works) unless you
+are doing something very special.
+
+.. class:: best.random.PosteriorDistribution
+
+    :inherits: :class:`best.random.LikelihoodFunction`
+
+    A class representing a posterior distribution.
+
+    **The likelihood function:**
+    The class requires a likelihood object which can be any class implementing:
+
+        + ``likelihood.__call__(x)``:   Giving the log likelihood at a particular x.
+          Notice that x here is the parameter of the likelihood not the data.
+          It is the responsibility of the user to make sure that the likelihood function,
+          correctly captures the dependence on the data.
+
+    **The prior distribution:**
+    The prior distribution is any object which implements:
+
+        + ``prior.__call__(x)``: Giving the log of the prior.
+
+    Overall, this class represents the following function:
+
+        .. math::
+            p(x | y, \gamma) \propto p(y | x)^\gamma p(x).
+
+    Again, I mention that specifying :math:`y` is the responsibility of the user.
+    It is not directly needed in this class. All we use is
+    :math:`p(y | x)` as a
+    function :math:`x` only, :math:`y` being fixed and implied.
+    The parameter gamma plays the role of a regularizing parameter.
+    The default value is 1. We have explicitely included it, because the main
+    purpose of this class is to be used within the :ref:`smc`
+    framework.
+
+    .. method:: __init__([likelihood=None[, prior=None[, gamma=1[, \
+                          name='Posterior Distribution']]]])
+
+        Initialize the object.
+
+        :param likelihood: The likelihood function.
+        :param prior: The prior distribution.
+        :param gamma: The regularizing parameter.
+        :type gamma: ``float``
+        :param name: A name for the distribution.
+
+    .. method:: __call__(x[, report_all=False])
+
+        :overloads: :func:`best.maps.Function.__call__()`
+
+        Evaluate the log of the posterior at ``x``.
+
+        :param x: The point of evalutation.
+        :param report_all:      If set to True, then it returns
+                                a dictionary of all the values used
+                                to compose the log of the posterior (see
+                                below for details). Otherwise, it simply
+                                returns the log of the posterior.
+
+        The function returns a dictionary r that contains:
+            + ``r['log_p']``:       The log of the pdf at x.
+            + ``r['log_like']``:    The log of the likelihood at x.
+            + ``r['log_prior']``:   The log of the prior at x.
+            + ``r['gamma']``:       The current gamma.
+
+    .. method:: _to_string(pad)
+
+        :overloads: :func:`best.maps.Function._to_string()`
+
+    .. attribute:: likelihood
+
+        Get/Set the likelihood function.
+
+    .. attribute:: prior
+
+        Get/Set the prior.
+
+    .. attribute:: gamma
+
+        Get/Set gamma
+
+
+.. _mcmc:
 
 Markov Chain Monte Carlo
 ------------------------
@@ -617,6 +1211,8 @@ We start by listing all the classes that take part in the formulation
 of the MCMC sampling algorithm. The purpose here, is to highlight the
 inheritance structure. We will give an example at the end that puts
 everything together.
+
+The base class of any Markov Chain should be a:
 
 .. class:: best.random.MarkovChain
 
@@ -651,3 +1247,387 @@ everything together.
         :param x_p: The state on which we are conditioning.
         :param x_n: The new state. To be overwritten.
         :throws: :class:`NotImplementedError`
+
+
+.. _mcmc-proposal:
+
+Proposal Distributions
+++++++++++++++++++++++
+
+MCMC requires a proposal distribution which is, of course, a Markov
+Chain:
+
+.. class:: best.random.ProposalDistribution
+
+    :inherits: :class:`best.random.MarkovChain`
+
+    The base class for the proposals used in MCMC.
+
+    .. method:: __init__([dt=1e-3[, name='Proposal Distribution']])
+
+        Initialize the object.
+
+        :param dt: The step size of the proposal. We put this here
+                   because many commonly met proposals do have a step
+                   size.
+        :type dt: ``float``
+
+    .. attribute:: dt
+
+        Get/set the step size of the proposal.
+
+
+.. _mcmc-random-walk:
+
+Random Walk Proposal
+++++++++++++++++++++
+
+A very common proposal distribution is the **Random Walk** proposal:
+
+.. class:: best.random.RandomWalkProposal
+
+    A random walk proposal distribution.
+
+    The chain is defined by:
+
+        .. math:: p(x_n | x_p, \delta t)
+                  = \mathcal{N}\left(x_n | x_p, \delta t^2\right).
+
+    .. method:: __init__([dt=1e-3[, name='Random Walk Proposal']])
+
+        Initialize the object.
+
+    .. method:: __call__(x_p, x_n)
+
+        :overloads: :func:`best.random.MarkovChain.__call__()`
+
+    .. method:: __sample__(x_p, x_n)
+
+        :overloads: :func:`best.random.MarkovChain.sample()`
+
+.. _mcmc-langevin:
+
+Langevin Proposal
++++++++++++++++++
+
+The Langevin proposal is implemented via:
+
+.. class:: best.random.LangevinProposal
+
+    :inherits: :class:`best.random.Proposal`
+
+    A Langevin proposal that leads to a Metropolized-Adjusted Langevin
+    Algorithm (MALA).
+
+    See the code for further details.
+
+
+.. _mcmc-class:
+
+The MCMC class
+++++++++++++++
+
+Now we are in a position to discuss the implementation of the MCMC
+algorithm in :mod:`best`. It is achieved via the class
+:class:`best.random.MarkovChainMonteCarlo`:
+
+.. class:: best.random.MarkovChainMonteCarlo
+
+    A general MCMC sampler.
+
+    **The state of MCMC.**
+    We assume that the state ``x`` of MCMC is a class that implements
+    the following methods:
+
+        + ``x.copy()``: Create a copy of ``x`` and returns a reference to it.
+
+    **The proposal of MCMC.**
+    The proposal of MCMC should implement the following methods:
+
+        + ``proposal.__call__(x_p, x_n)``: Evaluate the log of the pdf of
+                                           :math:`p(x_n | x_p)` and return the result.
+                                           For reasons of computational efficiency,
+                                           we had to make the return value of this
+                                           function a little bit more complicated than
+                                           is necessary in MCMC. We assume that it
+                                           returns an dictionary obj that has at least one
+                                           field:
+
+                                               + ``obj['log_p']``: The logarithm of the pdf at ``x``.
+
+                                           This object corresponding to the current state
+                                           is always stored.
+                                           To understand, why something this awkward is
+                                           essential, please see the code of the
+                                           :class:`best.random.SequentialMonteCarlo` class.
+
+        + ``proposal.sample(x_p, x_n)``:   Sample :math:`p(x_n | x_p)` and write the
+                                           result on ``x_n``.
+
+    **The target distribution.**
+    The target distribution should implement:
+
+        + ``target.__call__(x)``: Evaluate the log of the target pdf up
+                                  to a normalizing constant.
+
+    .. method:: __init__([target=None[, \
+                          proposal=RandomWalkProposal()[,
+                          store_samples=False[, verbose=False[, \
+                          output_frequency=1]]]]])
+
+        Initialize the object.
+
+        :param target: The target distribution.
+        :param proposal: The proposal distribution.
+        :param store_samples: If set to ``True``, then all samples are stored
+                           (copied) and are accessible via self.samples.
+        :param verbose: The verbosity flag. If set to True, then sth
+                        is printed at each MCMC step.
+        :param output_frequency: If verbose is ``True``, then this specifies how often
+                                 something is printed.
+
+    .. method:: initialize(x[, eval_state=None])
+
+        Initialize the chain.
+
+        Initializes the chain at ``x``. It is essential that the chain has been
+        properly initialized!
+
+    .. method:: reinitialize()
+
+        Re-initialize the chain.
+
+    .. method:: perform_single_mcmc_step(self)
+
+        Performs a single MCMC step.
+
+        The current state of the chain is altered at the end (or not).
+
+    .. method:: sample([x=None[, eval_state=None[, \
+                        return_eval_state=False[, steps=1]]]])
+
+        Sample the chain.
+
+        :param x: The initial state. If not specified, then
+                  we assume that it has already been set.
+        :param steps: The number of MCMC steps to be performed.
+        :param return_eval_state: Return the evaluated state at the end of
+                                  the run.
+        :returns: A reference to the current state of the chain.
+
+    .. method:: copy()
+
+        Return a copy of this object.
+
+    .. attribute:: target
+
+        Set/Get the target distribution.
+
+        Every time the target changes, the chain must be initialized again.
+        If the current state is already present, then this method automatically
+        reinitializes the chain.
+
+    .. attribute:: proposal
+
+        Set/Get the proposal
+
+    .. attribute:: current_state
+
+        Get the current state of MCMC.
+
+    .. attribute:: proposed_state
+
+        Get the proposed state of MCMC.
+
+    .. attribute:: num_samples
+
+        Get the number of samples taken so far.
+
+    .. attribute:: num_accepted
+
+        Get the number of accepted samples so far.
+
+    .. attribute:: acceptance_rate
+
+        Get the acceptance rate.
+
+    .. attribute:: initialized
+
+        Check if the chain has been initialized.
+
+    .. attribute:: store_samples
+
+        Check if the samples are being stored.
+
+    .. attribute:: samples
+
+        Get the stored samples.
+
+    .. attribute:: verbose
+
+        Get/Set the verbosity flag.
+
+    .. attribute:: output_frequency
+
+        Get/Set the output_frequency.
+
+
+.. _mcmc-example:
+
+Simple MCMC Example
+-------------------
+
+Now that we have introduced :class:`best.random.MarkovChainMonteCarlo`,
+let's look at a very simple example that can be found in
+:file:`best/demo/test_mcmc.py`::
+
+    if __name__ == '__main__':
+        import fix_path
+
+    import numpy as np
+    import math
+    from best.random import *
+    import matplotlib.pyplot as plt
+
+
+    class SampleTarget(LikelihoodFunction):
+        """A sample target distribution."""
+
+        def __init__(self):
+            super(SampleTarget, self).__init__(1)
+
+        def __call__(self, x):
+            k = 3.
+            t = 2.
+            if x[0] < 0.:
+                return -1e99
+            else:
+                return (k - 1.) * math.log(x[0]) - x[0] / t
+
+
+    if __name__ == '__main__':
+        target = SampleTarget()
+        x_init = np.ones(1)
+        proposal = RandomWalkProposal(dt=5.)
+        mcmc = MarkovChainMonteCarlo(target=target, proposal=proposal,
+                                     store_samples=True,
+                                     verbose=True,
+                                     output_frequency=1000)
+        mcmc.initialize(x_init)
+        mcmc.sample(steps=100000)
+        samples = [mcmc.samples[i][0] for i in range(len(mcmc.samples))]
+        plt.hist(samples, 100)
+        plt.show()
+
+This should plot the following figure:
+
+    .. figure:: images/mcmc_1d.png
+        :align: center
+
+        The histogram of the samples gathered by MCMC.
+
+
+.. _smc:
+
+Sequential Monte Carlo
+----------------------
+
+Sequential Monte Carlo (SMC) is a way to sample multi-modal probability
+distributions by constructing a sequence of distributions that converge
+to the target distribution in a smooth manner and propagating through
+them an ensemble of particles.
+
+In :mod:`best` SMC is implemented via the
+:class:`best.random.SequentialMonteCarlo` which:
+
+    + Can work with arbitrary underlying MCMC samplers.
+    + Can automatically detect an optimal sequence of distributions.
+    + Can be run in parallel.
+
+The mathematical details can be found in our paper on inverse problems
+which is currently under review.
+
+.. class:: best.random.SequentialMonteCarlo
+
+    For the moment do the following to get the complete documentation:
+
+    >> from best.random import SequentialMonteCarlo
+    >> help(SequentialMonteCarlo)
+
+    I will add the complete documentation in short time.
+
+
+.. _smc-example:
+
+Simple Sequential Monte Carlo Example
+-------------------------------------
+
+We are going to use :ref:`smc` to sample from a mixture of Gaussians::
+
+    if __name__ == '__main__':
+        import fix_path
+
+
+    import numpy as np
+    import math
+    from best.random import *
+    import matplotlib.pyplot as plt
+
+
+    if __name__ == '__main__':
+        # Number of inputs
+        num_input = 1
+        # Construct the likelihood function
+        # Number of components
+        num_comp = 4
+        # Degrees of freedom of the Inverse Wishart distribution
+        # from which we draw the covariance matrix
+        n_d = 10
+        # Randomly pick each component
+        components = []
+        for i in range(num_comp):
+            mu = 5. * np.random.randn(num_input)
+            X = np.random.randn(n_d, num_input)
+            A = np.dot(X.T, X)
+            C = np.linalg.inv(A)
+            components.append(NormalDistribution(num_input, mu, C))
+        # Randomly pick weights for the components
+        #w = np.random.rand(num_comp)
+        w = np.ones(num_comp) / num_comp
+        # Construct the likelihood
+        likelihood = MixtureOfDistributions(w, components)
+        # Let's just take a look at this distribution
+        print 'weights:, ', likelihood.weights
+        print 'components:'
+        for c in likelihood.components:
+            print 'mu: ', c.mu
+            print 'cov: ', c.cov
+        x = np.linspace(-10., 10., 100.)
+        # The prior is just going to be a normal distribution with
+        # zero mean and very big variance
+        prior = NormalDistribution(num_input, cov=2.)
+        # Construct the SMC object
+        smc = SequentialMonteCarlo(prior=prior, likelihood=likelihood,
+                                   verbose=True, num_particles=1000,
+                                   num_mcmc=10,
+                                   proposal=RandomWalkProposal(dt=2.),
+                                   store_intermediate_samples=True)
+        r, w = smc.sample()
+        step = 0
+        for s in smc.intermediate_samples:
+            fig = plt.figure()
+            ax1 = fig.add_subplot(1, 2, 1)
+            ax1.hist(s['r'], bins=20, weights=s['w'], normed=True)
+            ax1.set_xlim([-5., 5.])
+            ax1.set_title('gamma = %1.4f' % s['gamma'])
+            ax1.set_xlabel('x')
+            ax1.set_ylabel('normalized histogram')
+            ax2 = fig.add_subplot(1, 2, 2)
+            smc.mcmc_sampler.target.gamma = s['gamma']
+            log_post = np.array([smc.mcmc_sampler.target(np.array([t])) for t in x])
+            ax2.plot(x, np.exp(np.exp(log_post)))
+            ax2.set_title('gamma = %1.4f' % s['gamma'])
+            ax2.set_xlabel('x')
+            ax2.set_ylabel('pdf')
+            plt.savefig('smc_step=%d.png' % step)
+            step += 1

@@ -20,9 +20,9 @@ from . import ProposalDistribution
 class RandomWalkProposal(ProposalDistribution):
     """A random walk proposal distribution."""
 
-    def __init__(self, dt=1e-3):
+    def __init__(self, dt=1e-3, name='Random Walk Proposal'):
         """Initialize the object."""
-        super(RandomWalkProposal, self).__init__(dt=dt)
+        super(RandomWalkProposal, self).__init__(dt=dt, name=name)
 
     def __call__(self, x_p, x_n):
         """Evaluate the logarithm of the pdf of the chain."""
