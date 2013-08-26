@@ -1,0 +1,192 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Reference Guide &mdash; Bayesian Exploration Statistical Toolbox 0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Bayesian Exploration Statistical Toolbox 0 documentation" href="index.html" />
+    <link rel="next" title="Core" href="core.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="core.html" title="Core"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-best">
+<span id="reference-guide"></span><span id="ref"></span><h1>Reference Guide<a class="headerlink" href="#module-best" title="Permalink to this headline">¶</a></h1>
+<p>There are two kinds of documentation for BEST. The reference guide you
+are reading right now and the docstrings of the actual Python code. In
+this reference guide, we have omitted the details of the various objects
+or functions. We only describe how the should be used. For the complete
+details you are advised to look at the code itself.</p>
+<p>The main module of BEST is (of course) called <a class="reference internal" href="#module-best" title="best: The main module of BEST."><tt class="xref py py-mod docutils literal"><span class="pre">best</span></tt></a>.</p>
+<p>The BEST package is split in several submodules:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic.html">Basic Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="misc.html">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linalg.html">Linear Algebra</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="linalg.html#manipulating-kronecker-products">Manipulating Kronecker Products</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linalg.html#generalized-singular-value-decomposition">Generalized Singular Value Decomposition</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="serialization.html">Serialization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maps.html">Maps</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="maps.html#the-basic-concepts">The basic concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maps.html#the-best-maps-function-class">The <tt class="docutils literal"><span class="pre">best.maps.Function</span></tt> class.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maps.html#some-examples">Some Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maps.html#screened-function">Screened Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maps.html#basis">Basis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cov.html">Covariance Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cov.html#the-best-maps-covariancefunction-class">The <tt class="docutils literal"><span class="pre">best.maps.CovarianceFunction</span></tt> class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cov.html#examples-of-covariance-functions">Examples of Covariance Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cov.html#constructing-basis-from-covariance-functions">Constructing Basis from Covariance Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="domain.html">Domain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="random.html">Random</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="random.html#conditional-random-variable">Conditional Random Variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="random.html#random-vector">Random Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="random.html#random-vector-of-independent-variables">Random Vector of Independent Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="random.html#karhunen-loeve-expansion">Karhunen-Loeve Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="random.html#likelihood-functions">Likelihood Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="random.html#distributions">Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="random.html#sampling-distributions">Sampling Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="random.html#mixture-of-distributions">Mixture of Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="random.html#posterior-distribution">Posterior Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="random.html#markov-chain-monte-carlo">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="random.html#simple-mcmc-example">Simple MCMC Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="random.html#sequential-monte-carlo">Sequential Monte Carlo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="random.html#simple-sequential-monte-carlo-example">Simple Sequential Monte Carlo Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gpc.html">Generalized Polynomial Chaos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gpc.html#d-orthogonal-polynomials">1D Orthogonal Polynomials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gpc.html#product-basis">Product Basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gpc.html#constructing-polynomials">Constructing Polynomials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glm.html">Generalized Linear Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rvm.html">Relevance Vector Machine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rvm.html#a-simple-1d-example">A Simple 1D Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Process Regression</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gp.html#multi-output-separable-gaussian-process-regression">Multi-output Separable Gaussian Process Regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gp.html#a-simple-1d-example">A simple 1D example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gp.html#treed-gaussian-process-regression">Treed Gaussian Process Regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gp.html#simple-treed-gaussian-process-regression-example">Simple Treed Gaussian Process Regression Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">Design of Experiments</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="design.html#latin-hyper-cube-designs">Latin Hyper-cube Designs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="inverse.html">Inverse Problems</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="previous chapter">Installation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="core.html"
+                        title="next chapter">Core</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/reference.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="core.html" title="Core"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             >previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Ilias Bilionis, Nicholas Zabaras.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

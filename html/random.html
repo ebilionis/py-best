@@ -1,0 +1,2519 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Random &mdash; Bayesian Exploration Statistical Toolbox 0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Bayesian Exploration Statistical Toolbox 0 documentation" href="index.html" />
+    <link rel="up" title="Reference Guide" href="reference.html" />
+    <link rel="next" title="Generalized Polynomial Chaos" href="gpc.html" />
+    <link rel="prev" title="Domain" href="domain.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="gpc.html" title="Generalized Polynomial Chaos"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="domain.html" title="Domain"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" accesskey="U">Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-best.random">
+<span id="random"></span><h1>Random<a class="headerlink" href="#module-best.random" title="Permalink to this headline">¶</a></h1>
+<p>The purpose of <a class="reference internal" href="#module-best.random" title="best.random: Classes and functions related to random number generation."><tt class="xref py py-mod docutils literal"><span class="pre">best.random</span></tt></a> is to define various probabilistic
+concepts that are useful in uncertainty quantification tasks as well as
+in solving inverse problems. The module is trying to make as much use
+as possible of
+<a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/stats.html">scipy.stats</a>.
+This module intends to be a generalization to random vectors of the
+concepts found there. Therefore, it suggested that you are familiar
+with <tt class="docutils literal"><span class="pre">scipy.stats</span></tt> before moving forward.</p>
+<div class="section" id="conditional-random-variable">
+<h2>Conditional Random Variable<a class="headerlink" href="#conditional-random-variable" title="Permalink to this headline">¶</a></h2>
+<p>The class <a class="reference internal" href="#best.random.best.random.RandomVariableConditional" title="best.random.best.random.RandomVariableConditional"><tt class="xref py py-class docutils literal"><span class="pre">best.random.RandomVariableConditional</span></tt></a> defines a
+1D random variable conditioned to live in a subinterval. Generally
+speaking, let <img class="math" src="_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> be a random variable and <img class="math" src="_images/math/2697b9420e7d8c72385a88a31601db0f216acbf3.png" alt="p_x(x)"/> its
+probability density. Now let, <img class="math" src="_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> be the truncation of <img class="math" src="_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>
+conditioned to live on the interval <img class="math" src="_images/math/da2e551d2ca2155b8d8f4935d2e9757722c9bab6.png" alt="[a, b]"/>. Its probability
+density is:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/b92b2da7218435c4772c064bf93dc2fded69e902.png" alt="p_y(y) = \frac{p_x(x)1_{[a, b]}(x)}{\int_a^b p_x(x')dx'}."/></p>
+</div></div></blockquote>
+<p>Here is the definition of this class:</p>
+<dl class="class">
+<dt id="best.random.best.random.RandomVariableConditional">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">RandomVariableConditional</tt><a class="headerlink" href="#best.random.best.random.RandomVariableConditional" title="Permalink to this definition">¶</a></dt>
+<dd><p>A 1D random variable conditioned to live in a subinterval.</p>
+<p>The class inherits <tt class="xref py py-class docutils literal"><span class="pre">scipy.stats.rv_continuous</span></tt> and
+overloads the functions <tt class="docutils literal"><span class="pre">_pdf</span></tt> and <tt class="docutils literal"><span class="pre">_cdf</span></tt>. The rest of the
+functionality is provided automatically by
+<tt class="xref py py-class docutils literal"><span class="pre">scipy.stats.rv_continuous</span></tt>.</p>
+<dl class="method">
+<dt id="best.random.best.random.RandomVariableConditional.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>random_variable</em>, <em>subinterval</em><span class="optional">[</span>, <em>name='Conditional Random Variable'</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVariableConditional.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>random_variable</strong> (<tt class="xref py py-class docutils literal"><span class="pre">scipy.stats.rv_continuous</span></tt> or <a class="reference internal" href="#best.random.best.random.RandomVariableConditional" title="best.random.best.random.RandomVariableConditional"><tt class="xref py py-class docutils literal"><span class="pre">best.random.RandomVariableConditional</span></tt></a>) &#8211; A 1D random variable.</li>
+<li><strong>subinterval</strong> (<em>tuple, list or numpy array with two elements</em>) &#8211; The subinterval <img class="math" src="_images/math/da2e551d2ca2155b8d8f4935d2e9757722c9bab6.png" alt="[a, b]"/>.</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; A name for the random variable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomVariableConditional.pdf">
+<tt class="descname">pdf</tt><big>(</big><em>y</em><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVariableConditional.pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the probability density at <tt class="docutils literal"><span class="pre">y</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>y</strong> (<em>float</em>) &#8211; The evaluation point.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomVariableConditional.cdf">
+<tt class="descname">cdf</tt><big>(</big><em>y</em><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVariableConditional.cdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the cummulative distribution function at <tt class="docutils literal"><span class="pre">y</span></tt>.</p>
+<p>This is:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/2d840e41b6f243097e227a3442b06183827c498f.png" alt="F_y(y) = \int_a^y p_y(y')dy' = \frac{F_x(\min(y, b)) - F_x(a)}{F_x(b) - F_x(a)}."/></p>
+</div></div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>y</strong> (<em>float</em>) &#8211; The evaluation point.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomVariableConditional.rvs">
+<tt class="descname">rvs</tt><big>(</big><span class="optional">[</span><em>size=1</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVariableConditional.rvs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take samples from the probability density.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Note :</th><td class="field-body"><p class="first">This is carried out by rejection sampling. Therefore, it can potentially be very slow if the interval is very overload it if you want something faster.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Todo :</th><td class="field-body"><p class="first">In future editions this could use some MCMC variant.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>size</strong> (<em>int or tuple/list of integers</em>) &#8211; The shape of the samples you want to take.</li>
+<li><strong>loc</strong> (<em>float</em>) &#8211; Shift the random variable by <tt class="docutils literal"><span class="pre">loc</span></tt>.</li>
+<li><strong>scale</strong> (<em>float</em>) &#8211; Scale the random variable by <tt class="docutils literal"><span class="pre">scale</span></tt>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The samples</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomVariableConditional.split">
+<tt class="descname">split</tt><big>(</big><span class="optional">[</span><em>pt=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVariableConditional.split" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split the random variable in two conditioned random variables.</p>
+<p>Creates two random variables <img class="math" src="_images/math/4ae250d1bdd46e5677f27edcf5efb34587b6fc1a.png" alt="y_1"/> and <img class="math" src="_images/math/0320ab2ddd4939f9072e5316fe8888b0cddee319.png" alt="y_2"/> with
+probability densities:</p>
+<div class="math">
+<p><img src="_images/math/03c885e8e74c82adac651c9a3c85314f587239d2.png" alt="p_{y_1}(y_1) = \frac{p_x(x)1_{[a, \text{pt}]}(x)}{\int_a^{\text{pt}} p_x(x')dx'}"/></p>
+</div><p>and</p>
+<div class="math">
+<p><img src="_images/math/5a8776532827cdfc82666df297f21e5b19f30de8.png" alt="p_{y_2}(y_2) = \frac{p_x(x)1_{[\text{pt}, b]}(x)}{\int_{\text{pt}}^b p_x(x')dx'}."/></p>
+</div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pt</strong> (<em>float or NoneType</em>) &#8211; The splitting point. If None, then the median is used.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A tuple of two <a class="reference internal" href="#best.random.best.random.RandomVariableConditional" title="best.random.best.random.RandomVariableConditional"><tt class="xref py py-class docutils literal"><span class="pre">best.random.RandomVariableConditional</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Note:</th><td class="field-body">In addition to the few methods defined above, <a class="reference internal" href="#best.random.best.random.RandomVariableConditional" title="best.random.best.random.RandomVariableConditional"><tt class="xref py py-class docutils literal"><span class="pre">best.random.RandomVariableConditional</span></tt></a> has the full
+functionality of
+<a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.rv_continuous.html#scipy.stats.rv_continuous">scipy.stats.rv_continuous </a>.</td>
+</tr>
+</tbody>
+</table>
+<p>Now, let&#8217;s look at an example.
+Let&#8217;s create a random variable <img class="math" src="_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> with an Exponential probability
+density:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/e3bca6b75e955f4c21c120925ea9c50c599de09e.png" alt="p(x) = e^{-x},"/></p>
+</div></div></blockquote>
+<p>and construct the conditioned random variable <img class="math" src="_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> by restricting
+<img class="math" src="_images/math/2751d79d3bbfb34440d68c685fe6ba7414951749.png" alt="p(x)"/> on <img class="math" src="_images/math/69273482bff8727194f6407e55ac1bfa94d9c555.png" alt="(1, 2)"/>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">scipy.stats</span>
+<span class="kn">import</span> <span class="nn">best.random</span>
+
+<span class="n">px</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">expon</span><span class="p">()</span>
+<span class="n">py</span> <span class="o">=</span> <span class="n">best</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomVariableConditional</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;Conditioned Exponential&#39;</span><span class="p">)</span>
+<span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">py</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">py</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">py</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">py</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">py</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">py</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">py</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">py</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">py</span><span class="o">.</span><span class="n">moment</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which gives:</p>
+<div class="highlight-python"><pre>Conditioned Random Variable: Conditioned Exponential
+Original interval: (1, 2)
+Subinterval: (1, 2)
+Prob of sub: 0.232544157935
+[ 1.67915905  1.18775814  1.78365754  1.3167513   1.33650141  1.19931135
+  1.85734068  1.74867647  1.35161718  1.55198301]
+(1.1720110607571301, 1.6426259804912111)
+1.37988549304
+1.41802329313
+0.0793264057922
+0.281649437763
+(array(1.4180232931306735), array(0.0793264057922074))
+129.491205116</pre>
+</div>
+<p>Here is, how you can visualize the pdf and the cdf:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">py</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">y</span><span class="p">,</span> <span class="n">py</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s">&#39;PDF&#39;</span><span class="p">,</span> <span class="s">&#39;CDF&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>which gives you the following figure:</p>
+<blockquote>
+<div><div class="figure align-center">
+<img alt="_images/rv_conditional.png" src="_images/rv_conditional.png" />
+<p class="caption">PDF and CDF of a conditioned Exponential random variable.</p>
+</div>
+</div></blockquote>
+<p>Now, let&#8217;s split it in half and visualize the two other random variables:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">py1</span><span class="p">,</span> <span class="n">py2</span> <span class="o">=</span> <span class="n">py</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+<span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">py1</span><span class="p">)</span>
+<span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">py2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which prints:</p>
+<div class="highlight-python"><pre>Conditioned Random Variable: Conditioned Random Variable
+Original interval: (0.0, inf)
+Subinterval: [ 1.          1.38629436]
+Prob of sub: 0.117879441171
+Conditioned Random Variable: Conditioned Random Variable
+Original interval: (0.0, inf)
+Subinterval: [ 1.38629436  2.        ]
+Prob of sub: 0.114664716763</pre>
+</div>
+<p>and also creates the following figure:</p>
+<blockquote>
+<div><div class="figure align-center">
+<img alt="_images/rv_conditional_split.png" src="_images/rv_conditional_split.png" />
+<p class="caption">PDF and CDF of the two random variables that occure after splitting
+in two the conditioned Exponential random variable of this example.</p>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="random-vector">
+<h2>Random Vector<a class="headerlink" href="#random-vector" title="Permalink to this headline">¶</a></h2>
+<p>The class <a class="reference internal" href="#best.random.best.random.RandomVector" title="best.random.best.random.RandomVector"><tt class="xref py py-class docutils literal"><span class="pre">best.random.RandomVector</span></tt></a> represents a random vector.
+The purpose of this class is to serve as a generalization of
+<tt class="docutils literal"><span class="pre">scipy.stats.rv_continuous</span></tt>.
+It should be inherited by all classes that wish to be
+random vectors.</p>
+<p>Here is a basic reference for the class:</p>
+<dl class="class">
+<dt id="best.random.best.random.RandomVector">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">RandomVector</tt><a class="headerlink" href="#best.random.best.random.RandomVector" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="best.random.best.random.RandomVector.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>support</em><span class="optional">[</span>, <em>num_input=None</em><span class="optional">[</span>, <em>hyp=None</em><span class="optional">[</span>, <em>name='Random Vector'</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVector.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<p>The class inherits from <tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt>. The
+motivation for this choice is that the mathematical
+definition of a
+<a class="reference external" href="http://en.wikipedia.org/wiki/Random_variable">random variable</a>
+which states that it is a measurable function.
+Now, the inputs of a <a class="reference internal" href="#best.random.best.random.RandomVector" title="best.random.best.random.RandomVector"><tt class="xref py py-class docutils literal"><span class="pre">best.random.RandomVector</span></tt></a> can
+be thought thought as an other random vector given which
+this random vector has a given value. This becomes useful
+in classes that inherit from this one, e.g.
+<a class="reference internal" href="#best.random.best.random.KarhuneLoeveExpansion" title="best.random.best.random.KarhuneLoeveExpansion"><tt class="xref py py-class docutils literal"><span class="pre">best.random.KarhuneLoeveExpansion</span></tt></a>.</p>
+<p>The <tt class="docutils literal"><span class="pre">support</span></tt> is an object representing the support
+of the random vector. It has to be a <tt class="xref py py-class docutils literal"><span class="pre">best.domain.Domain</span></tt>
+or a rectangle represented by lists, tuples or numpy arrays.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>support</strong> (<tt class="xref py py-class docutils literal"><span class="pre">best.domain.Domain</span></tt> or a rectangle) &#8211; The support of the random variable.</li>
+<li><strong>num_input</strong> (<em>int</em>) &#8211; The number of inputs. If <cite>None</cite>, then it is
+set equal to <tt class="docutils literal"><span class="pre">support.num_dim</span></tt>.</li>
+<li><strong>num_hyp</strong> (<em>int</em>) &#8211; The number of hyper-paramers (zero by default).</li>
+<li><strong>hyp</strong> (1D numpy array or <tt class="docutils literal"><span class="pre">None</span></tt>) &#8211; The hyper-parameters.</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; A name for the random vector.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.RandomVector.support">
+<tt class="descname">support</tt><a class="headerlink" href="#best.random.best.random.RandomVector.support" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the support of the random vector.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.RandomVector.num_dim">
+<tt class="descname">num_dim</tt><a class="headerlink" href="#best.random.best.random.RandomVector.num_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of dimensions of the random vector.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.RandomVector.name">
+<tt class="descname">name</tt><a class="headerlink" href="#best.random.best.random.RandomVector.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the name of the random vector.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomVector._pdf">
+<tt class="descname">_pdf</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVector._pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>This should return the probability density at <tt class="docutils literal"><span class="pre">x</span></tt> assuming
+that <tt class="docutils literal"><span class="pre">x</span></tt> is inside the domain. <strong>It must be implemented by all
+deriving classes.</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (1D numpy array of dimension <tt class="docutils literal"><span class="pre">num_dim</span></tt>) &#8211; The evaluation point.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomVector.pdf">
+<tt class="descname">pdf</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVector.pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the probability density at <tt class="docutils literal"><span class="pre">x</span></tt>. It uses
+<tt class="xref py py-func docutils literal"><span class="pre">besr.random.RandomVector._pdf()</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (1D numpy array of dimension <tt class="docutils literal"><span class="pre">num_dim</span></tt> or a 2D numpy array of dimenson <tt class="docutils literal"><span class="pre">N</span> <span class="pre">x</span> <span class="pre">num_dim</span></tt>) &#8211; The evaluation point(s).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomVector._rvs">
+<tt class="descname">_rvs</tt><big>(</big><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVector._rvs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a sample of the random variable. <strong>It must be implemented
+by all deriving classes.</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A sample of the random variable.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">1D numpy array if dimension <tt class="docutils literal"><span class="pre">num_dim</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomVector.rvs">
+<tt class="descname">rvs</tt><big>(</big><span class="optional">[</span><em>size=1</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVector.rvs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get many samples from the random variable.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>size</strong> (<em>list or tuple of ints</em>) &#8211; The shape of the samples you wish to draw.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Many samples of the random variable.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy array of dimension <tt class="docutils literal"><span class="pre">size</span> <span class="pre">+</span> <span class="pre">(num_dim,</span> <span class="pre">)</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomVector.moment">
+<tt class="descname">moment</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVector.moment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the <tt class="docutils literal"><span class="pre">n</span></tt>-th non-centered moment of the random variable.
+This must be implemented by deriving methods.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> (<em>int</em>) &#8211; The order of the moment.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The <tt class="docutils literal"><span class="pre">n</span></tt>-th non-centered moment of the random variable.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomVector.mean">
+<tt class="descname">mean</tt><big>(</big><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVector.mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the mean of the random variable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomVector.var">
+<tt class="descname">var</tt><big>(</big><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVector.var" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the variance of the random variable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomVector.std">
+<tt class="descname">std</tt><big>(</big><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVector.std" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the standard deviation of the random variable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomVector.stats">
+<tt class="descname">stats</tt><big>(</big><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVector.stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the mean, variance, skewness and kurtosis of the random variable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomVector.expect">
+<tt class="descname">expect</tt><big>(</big><span class="optional">[</span><em>func=None</em><span class="optional">[</span>, <em>args=()</em><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVector.expect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the expectation of a function with respect to the probability
+density of the random variable. This must be implemented by the
+deriving classes.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="random-vector-of-independent-variables">
+<h2>Random Vector of Independent Variables<a class="headerlink" href="#random-vector-of-independent-variables" title="Permalink to this headline">¶</a></h2>
+<p>The class <a class="reference internal" href="#best.random.best.random.RandomVectorIndependent" title="best.random.best.random.RandomVectorIndependent"><tt class="xref py py-class docutils literal"><span class="pre">best.random.RandomVectorIndependent</span></tt></a> represents
+a random vector of independent random variables. It inherits the
+functionality of <a class="reference internal" href="#best.random.best.random.RandomVector" title="best.random.best.random.RandomVector"><tt class="xref py py-class docutils literal"><span class="pre">best.random.RandomVector</span></tt></a>.
+Here is the reference for this class:</p>
+<dl class="class">
+<dt id="best.random.best.random.RandomVectorIndependent">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">RandomVectorIndependent</tt><a class="headerlink" href="#best.random.best.random.RandomVectorIndependent" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class representing a random vector with independent components.</p>
+<dl class="method">
+<dt id="best.random.best.random.RandomVectorIndependent.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>components[, name='Independent Random Vector'</em><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVectorIndependent.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object given a container of 1D random variables.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>components</strong> (tuple or list of <tt class="docutils literal"><span class="pre">scipy.stats.rv_continuous</span></tt>) &#8211; A container of 1D random variables.</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; A name for the randomv vector.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.RandomVectorIndependent.component">
+<tt class="descname">component</tt><a class="headerlink" href="#best.random.best.random.RandomVectorIndependent.component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the container of the 1D random variables.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomVectorIndependent.__getitem__">
+<tt class="descname">__getitem__</tt><big>(</big><em>i</em><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVectorIndependent.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allows the usage of <cite>[]</cite> operator in order to get access to
+the underlying 1D random variables.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomVectorIndependent._pdf">
+<tt class="descname">_pdf</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVectorIndependent._pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the probability density at <tt class="docutils literal"><span class="pre">x</span></tt>. This is an
+overloaded version of <a class="reference internal" href="#best.random.best.random.RandomVector._pdf" title="best.random.best.random.RandomVector._pdf"><tt class="xref py py-func docutils literal"><span class="pre">best.random.RandomVector._pdf()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomVectorIndependent._rvs">
+<tt class="descname">_rvs</tt><big>(</big><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVectorIndependent._rvs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a random sample. This is an overloaded version of
+<a class="reference internal" href="#best.random.best.random.RandomVector._rvs" title="best.random.best.random.RandomVector._rvs"><tt class="xref py py-func docutils literal"><span class="pre">best.random.RandomVector._rvs()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomVectorIndependent.moment">
+<tt class="descname">moment</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVectorIndependent.moment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the n-th non-centered moment. This is an overloaded
+version of <a class="reference internal" href="#best.random.best.random.RandomVector.moment" title="best.random.best.random.RandomVector.moment"><tt class="xref py py-func docutils literal"><span class="pre">best.random.RandomVector.moment()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomVectorIndependent.split">
+<tt class="descname">split</tt><big>(</big><em>dim</em><span class="optional">[</span>, <em>pt=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.RandomVectorIndependent.split" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split the random vector in two, perpendicular to dimension <tt class="docutils literal"><span class="pre">dim</span></tt>
+at point <tt class="docutils literal"><span class="pre">pt</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dim</strong> (<em>int</em>) &#8211; The splitting dimension.</li>
+<li><strong>pt</strong> (<em>float</em>) &#8211; The splitting point. If <tt class="docutils literal"><span class="pre">None</span></tt>, then the median of dimension <tt class="docutils literal"><span class="pre">dim</span></tt> is used.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A tuple of two random vectors.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple of <a class="reference internal" href="#best.random.best.random.RandomVectorIndependent" title="best.random.best.random.RandomVectorIndependent"><tt class="xref py py-class docutils literal"><span class="pre">best.random.RandomVectorIndependent</span></tt></a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<p>Here are some examples of how you may use this class:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">comp</span> <span class="o">=</span> <span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">expon</span><span class="p">(),</span> <span class="n">stats</span><span class="o">.</span><span class="n">beta</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">),</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">())</span>
+<span class="n">rv</span> <span class="o">=</span> <span class="n">best</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomVectorIndependent</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+<span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">rv</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">rv</span><span class="o">.</span><span class="n">rvs</span><span class="p">()</span>
+<span class="k">print</span> <span class="s">&#39;One sample: &#39;</span><span class="p">,</span> <span class="n">x</span>
+<span class="k">print</span> <span class="s">&#39;pdf:&#39;</span><span class="p">,</span> <span class="n">rv</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">rv</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&#39;10 samples: &#39;</span><span class="p">,</span> <span class="n">x</span>
+<span class="k">print</span> <span class="s">&#39;pdf: &#39;</span><span class="p">,</span> <span class="n">rv</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This prints:</p>
+<div class="highlight-python"><pre>Random Vector: Independent Random Vector
+Domain: Rectangular Domain &lt; R^3
+Rectangle: [[  0.  inf]
+  [  0.   1.]
+  [-inf  inf]]
+pdf of domain: 1.0
+One sample:  [ 0.27583967  0.62299007  1.01218697]
+pdf: 0.104129553451
+10 samples:  [[  2.48588069e+00   5.13373494e-01   2.51959945e+00]
+  [  7.18463201e-01   8.03626538e-01  -1.30967423e-01]
+  [  3.81458502e-01   1.22199215e-01  -5.47956262e-02]
+  [  4.80799826e-01   3.75637813e-02   1.10318554e-02]
+  [  4.52448778e-01   2.91548860e-05   8.79078586e-01]
+  [  3.03627476e+00   2.35715855e-02  -1.18775141e+00]
+  [  3.49253408e-01   8.90061454e-01  -8.93935818e-01]
+  [  2.29852363e-02   4.55557385e-04   1.13318738e+00]
+  [  2.69130645e-01   2.88083586e-02   7.97967613e-01]
+  [  4.18872218e-01   9.97623679e-01  -2.24285728e+00]]
+pdf:  [  1.30325502e-01   2.68022713e-02   1.62999252e-01   3.26470531e-03
+   9.98952583e-02   7.43932369e+00   3.29566324e-02   1.62779856e-01
+   1.26561530e-01   1.25984246e-03]</pre>
+</div>
+<p>Here are some statistics:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span> <span class="n">rv</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">rv</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">rv</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">rv</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This prints:</p>
+<div class="highlight-python"><pre>[ 1.          0.33333333  0.        ]
+[ 1.         0.1010101  1.       ]
+[ 1.          0.31782086  1.        ]
+(array([ 1.        ,  0.33333333,  0.        ]), array([ 1.       ,  0.1010101,  1.       ]), array([ 2.        ,  0.65550553,  0.        ]), array([ 23.    ,  11.6225,   2.    ]))</pre>
+</div>
+<p>Let us split the random vector perpendicular to the first dimension:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">rv1</span><span class="p">,</span> <span class="n">rv2</span> <span class="o">=</span> <span class="n">rv</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">rv1</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">rv1</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">x</span>
+<span class="k">print</span> <span class="n">rv1</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">rv2</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">rv2</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">x</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">rv2</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">rv2</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This prints:</p>
+<div class="highlight-python"><pre>Random Vector: Independent Random Vector
+Domain: Rectangular Domain &lt; R^3
+Rectangle: [[ 0.          0.69314718]
+[ 0.          1.        ]
+[       -inf         inf]]
+pdf of domain: 0.5
+[[  5.19548316e-01   7.68241112e-01   3.91270986e-01]
+ [  1.39697221e-01   1.45666923e-02  -4.77341007e-01]
+ [  3.81103879e-01   3.77165970e-01  -2.79344311e-01]
+ [  3.89403608e-01   3.05662039e-02   9.24004739e-01]
+ [  4.48582217e-01   1.74794018e-04   1.16001176e+00]]
+[  0.2452701    2.79216704   0.36777408   1.02298609  16.60788446]
+[ 0.  0.  0.  0.  0.]
+Random Vector: Independent Random Vector
+Domain: Rectangular Domain &lt; R^3
+Rectangle: [[ 0.69314718         inf]
+ [ 0.          1.        ]
+ [       -inf         inf]]
+pdf of domain: 0.5
+[[  5.19548316e-01   7.68241112e-01   3.91270986e-01]
+ [  1.39697221e-01   1.45666923e-02  -4.77341007e-01]
+ [  3.81103879e-01   3.77165970e-01  -2.79344311e-01]
+ [  3.89403608e-01   3.05662039e-02   9.24004739e-01]
+ [  4.48582217e-01   1.74794018e-04   1.16001176e+00]]
+ [ 2.47788783  0.073047    4.95662696  0.16646329  0.09860328]</pre>
+</div>
+</div>
+<div class="section" id="karhunen-loeve-expansion">
+<span id="kle"></span><h2>Karhunen-Loeve Expansion<a class="headerlink" href="#karhunen-loeve-expansion" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://en.wikipedia.org/wiki/Karhunen%E2%80%93Lo%C3%A8ve_theorem">Karhunen-Loeve Expansion</a>
+(KLE) is a way to represent random fields with a discrete set of
+random variables. It can be thought of as a discrete representation
+of a random field, or a low dimensional representation of a
+high-dimensional random vector.
+It is implemented via the class
+<tt class="xref py py-class docutils literal"><span class="pre">best.random.KarhunenLoeveExpansion</span></tt>.</p>
+<dl class="class">
+<dt id="best.random.best.random.KarhuneLoeveExpansion">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">KarhuneLoeveExpansion</tt><a class="headerlink" href="#best.random.best.random.KarhuneLoeveExpansion" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><a class="reference internal" href="#best.random.best.random.RandomVector" title="best.random.best.random.RandomVector"><tt class="xref py py-class docutils literal"><span class="pre">best.random.RandomVector</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<p>Define a Discrete Karhunen-Loeve Expansion.
+It can also be thought of a as a random vector.</p>
+<dl class="attribute">
+<dt id="best.random.best.random.KarhuneLoeveExpansion.PHI">
+<tt class="descname">PHI</tt><a class="headerlink" href="#best.random.best.random.KarhuneLoeveExpansion.PHI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the set of eigenvectors of the covariance matrix.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.KarhuneLoeveExpansion.lam">
+<tt class="descname">lam</tt><a class="headerlink" href="#best.random.best.random.KarhuneLoeveExpansion.lam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the set of eigenvalues of the covariance matrix.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.KarhuneLoeveExpansion.sigma">
+<tt class="descname">sigma</tt><a class="headerlink" href="#best.random.best.random.KarhuneLoeveExpansion.sigma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the signal strength of the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.KarhuneLoeveExpansion.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>PHI</em>, <em>lam</em><span class="optional">[</span>, <em>mean=None</em><span class="optional">[</span>, <em>sigma=None</em><span class="optional">[</span>, <em>name='Karhunen-Loeve Expansion'</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.KarhuneLoeveExpansion.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>PHI</strong> (<em>2D numpy array</em>) &#8211; The eigenvector matrix.</li>
+<li><strong>lam</strong> (<em>1D numpy array</em>) &#8211; The eigen velues.</li>
+<li><strong>mean</strong> (<em>1D numpy array</em>) &#8211; The mean of the model.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Precondition :</th><td class="field-body"><p class="first last"><tt class="docutils literal"><span class="pre">PHI.shape[1]</span> <span class="pre">==</span> <span class="pre">lam.shape[1]</span></tt>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.KarhuneLoeveExpansion._eval">
+<tt class="descname">_eval</tt><big>(</big><em>theta</em>, <em>hyp</em><big>)</big><a class="headerlink" href="#best.random.best.random.KarhuneLoeveExpansion._eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the expansion at <tt class="docutils literal"><span class="pre">theta</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Note :</th><td class="field-body"><p class="first">Do not use this directly. Use
+<tt class="xref py py-func docutils literal"><span class="pre">best.random.KarhunenLoeveExpansion.__call__()</span></tt>
+which is directly inherited from
+<tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt>.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>theta</strong> (<em>1D array</em>) &#8211; The weights of the expansion.</li>
+<li><strong>hyp</strong> &#8211; Ignored.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><p class="first last"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function._eval()</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.KarhuneLoeveExpansion.project">
+<tt class="descname">project</tt><big>(</big><em>y</em><big>)</big><a class="headerlink" href="#best.random.best.random.KarhuneLoeveExpansion.project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Project <tt class="docutils literal"><span class="pre">y</span></tt> to the space of the KLE weights.
+It is essentially the inverse of
+<tt class="xref py py-func docutils literal"><span class="pre">best.random.KarhunenLoeveExpansion.__call__()</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>y</strong> (<em>1D numpy array</em>) &#8211; A sample from the output.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The weights corresponding to <tt class="docutils literal"><span class="pre">y</span></tt>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">1D numpy array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.KarhuneLoeveExpansion._rvs">
+<tt class="descname">_rvs</tt><big>(</big><em>self</em><big>)</big><a class="headerlink" href="#best.random.best.random.KarhuneLoeveExpansion._rvs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a sample of the random vector.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Note :</th><td class="field-body">Do not use this directly. Use
+<tt class="xref py py-func docutils literal"><span class="pre">best.random.KarhuneLoeveExpansion.rvs()</span></tt>
+which is directly inherited from
+<a class="reference internal" href="#best.random.best.random.RandomVector" title="best.random.best.random.RandomVector"><tt class="xref py py-class docutils literal"><span class="pre">best.random.RandomVector</span></tt></a>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A sample of the random vector.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">1D numpy array</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Overloads :</th><td class="field-body"><a class="reference internal" href="#best.random.best.random.RandomVector._rvs" title="best.random.best.random.RandomVector._rvs"><tt class="xref py py-func docutils literal"><span class="pre">best.random.RandomVector._rvs()</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.KarhuneLoeveExpansion._pdf">
+<tt class="descname">_pdf</tt><big>(</big><em>self</em>, <em>y</em><big>)</big><a class="headerlink" href="#best.random.best.random.KarhuneLoeveExpansion._pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the pdf of the random vector at <tt class="docutils literal"><span class="pre">y</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Note :</th><td class="field-body">Do not use this directly. Use
+<tt class="xref py py-func docutils literal"><span class="pre">best.random.KarhuneLoeveExpansion.pdf()</span></tt>
+which is directly inherited from
+<a class="reference internal" href="#best.random.best.random.RandomVector" title="best.random.best.random.RandomVector"><tt class="xref py py-class docutils literal"><span class="pre">best.random.RandomVector</span></tt></a>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The pdf at <tt class="docutils literal"><span class="pre">y</span></tt>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="docutils literal"><span class="pre">float</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Overloads :</th><td class="field-body"><a class="reference internal" href="#best.random.best.random.RandomVector._pdf" title="best.random.best.random.RandomVector._pdf"><tt class="xref py py-func docutils literal"><span class="pre">best.random.RandomVector._pdf()</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.KarhuneLoeveExpansion.create_from_covariance_matrix">
+<tt class="descname">create_from_covariance_matrix</tt><big>(</big><em>A[, mean=None[                                       energy=0.95[,                                       k_max=None]]]</em><big>)</big><a class="headerlink" href="#best.random.best.random.KarhuneLoeveExpansion.create_from_covariance_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a <a class="reference internal" href="#best.random.best.random.KarhuneLoeveExpansion" title="best.random.best.random.KarhuneLoeveExpansion"><tt class="xref py py-class docutils literal"><span class="pre">best.random.KarhuneLoeveExpansion</span></tt></a> object
+from a covariance matrix <tt class="docutils literal"><span class="pre">A</span></tt>.</p>
+<p>This is a static method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>A</strong> (<em>2D numpy array</em>) &#8211; The covariance matrix</li>
+<li><strong>mean</strong> (1D numpy array or <tt class="docutils literal"><span class="pre">None</span></tt>) &#8211; The mean of the model. If <tt class="docutils literal"><span class="pre">None</span></tt> then all zeros.</li>
+<li><strong>energy</strong> (<tt class="docutils literal"><span class="pre">float</span></tt>) &#8211; The energy of the field you wish to retain.</li>
+<li><strong>k_max</strong> (<tt class="docutils literal"><span class="pre">int</span></tt>) &#8211; The maximum number of eigenvalues to be computed. If <tt class="docutils literal"><span class="pre">None</span></tt>, then we compute all of them.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A KLE based on <tt class="docutils literal"><span class="pre">A</span></tt>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">best.random.KarhunenLoeveExpansion</span></tt>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<p>Let&#8217;s now look at a simple 1D example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplolib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">best.maps</span> <span class="kn">import</span> <span class="n">CovarianceFunctionSE</span>
+<span class="kn">from</span> <span class="nn">best.random</span> <span class="kn">import</span> <span class="n">KarhunenLoeveExpansion</span>
+<span class="c"># Construct a 1D covariance function</span>
+<span class="n">k</span> <span class="o">=</span> <span class="n">CovarianceFunctionSE</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="c"># We are going to discretize the field at:</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="c"># The covariance matrix is:</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">hyp</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">kle</span> <span class="o">=</span> <span class="n">KarhunenLoeveExpansion</span><span class="o">.</span><span class="n">create_from_covariance_matrix</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="c"># Let&#39;s plot 10 samples</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">kle</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You should see something like the following figure:</p>
+<blockquote>
+<div><div class="figure align-center">
+<img alt="_images/kle_1d.png" src="_images/kle_1d.png" />
+<p class="caption">Samples from a 1D Gaussian random field with zero mean and
+a <a class="reference internal" href="cov.html#cov-se"><em>Squared Exponential Covariance</em></a> using the <a class="reference internal" href="#kle"><em>Karhunen-Loeve Expansion</em></a>.</p>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="likelihood-functions">
+<span id="like"></span><h2>Likelihood Functions<a class="headerlink" href="#likelihood-functions" title="Permalink to this headline">¶</a></h2>
+<p>Many algorithms require the concept of a likelihood function. This is
+provided via:</p>
+<dl class="class">
+<dt id="best.random.best.random.LikelihoodFunction">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">LikelihoodFunction</tt><a class="headerlink" href="#best.random.best.random.LikelihoodFunction" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>The base class of all likelihood functions.</p>
+<p>A likelihood function is a actually a function of the
+hyper-parameters (or simply the parameters) of the model
+and the data. In Bayesian statistics,
+it basicaly models:</p>
+<div class="math" id="equation-likelihood">
+<p><span class="eqno">(1)</span><img src="_images/math/9d666cd92b86b7a27e6a1f3a0775c86827c1da39.png" alt="L(x) = \ln p\left(\mathcal{D} |x\right)"/></p>
+</div><p><img class="math" src="_images/math/36eee9eaded3a8c323d85046041a94a032ded392.png" alt="\mathcal{D}"/> is the data and it should be set either
+at the constructor or with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">likelihood</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+</pre></div>
+</div>
+<p>The log of the likelihood at <img class="math" src="_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> for a given
+<img class="math" src="_images/math/36eee9eaded3a8c323d85046041a94a032ded392.png" alt="\mathcal{D}"/> (see <a href="#equation-likelihood">(1)</a>) is evaluated by:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">likelihood</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+</pre></div>
+</div>
+<p>which is a function that should be implemented by the user.</p>
+<dl class="method">
+<dt id="best.random.best.random.LikelihoodFunction.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>num_input</em><span class="optional">[</span>, <em>data=None</em><span class="optional">[</span>, <em>name='Likelihood Function'</em><span class="optional">[</span>, <em>log_l_wrapped=None</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.LikelihoodFunction.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>num_input</strong> (<tt class="docutils literal"><span class="pre">int</span></tt>) &#8211; The number of inputs (i.e., the number of
+parameters of the likelihood function).</li>
+<li><strong>data</strong> &#8211; The observed data.</li>
+<li><strong>name</strong> &#8211; A name for the distribution.</li>
+<li><strong>log_l_wrapped</strong> &#8211; A normal function that implements,
+the likelihood.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.LikelihoodFunction.data">
+<tt class="descname">data</tt><a class="headerlink" href="#best.random.best.random.LikelihoodFunction.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set/Get the data. The data can be any object.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>A more specific likelihood class that accepts only real data is the
+following:</p>
+<dl class="class">
+<dt id="best.random.best.random.LikelihoodFunctionWithGivenMean">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">LikelihoodFunctionWithGivenMean</tt><a class="headerlink" href="#best.random.best.random.LikelihoodFunctionWithGivenMean" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><a class="reference internal" href="#best.random.best.random.LikelihoodFunction" title="best.random.best.random.LikelihoodFunction"><tt class="xref py py-class docutils literal"><span class="pre">best.random.LikelihoodFunction</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<p>This class implements a likelihood function, that requires the evaluation
+of another function within it (.e.g. that of a forward solver.). It is not
+to be used by its own, but rather as a base class for more specific likelihood
+functions.</p>
+<p>Here, we assume that the data are actually a num_data vector and that the
+mean of the likelihood is given by a function (mean_function) with num_input
+variables to num_data variables.</p>
+<dl class="method">
+<dt id="best.random.best.random.LikelihoodFunctionWithGivenMean.__init__">
+<tt class="descname">__init__</tt><big>(</big><span class="optional">[</span><em>num_input=None</em><span class="optional">[</span>, <em>data=None</em><span class="optional">[</span>, <em>mean_function=None</em><span class="optional">[</span>, <em>name='Likelihood Function with given mean'</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.LikelihoodFunctionWithGivenMean.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the object.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Either num_input or mean_function must be specified.
+If mean_function is a simple function, then the data are required
+so that we can figure out its output dimension.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>num_input</strong> &#8211; Number of input dimensions. Ignored, if
+mean_function is a Function class.</li>
+<li><strong>data</strong> &#8211; The observed data. A numpy vector. It must
+be specified if mean_function is a normal
+function.</li>
+<li><strong>mean_function</strong> &#8211; A Function or a normal function. If, it is
+a Function, then mean_function.num_output
+must be equal to data.shape[0]. If it is
+a normal function, then it is assumed that
+it returns a data.shape[0]-dimensional vector.</li>
+<li><strong>name</strong> &#8211; A name for the likelihood function.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">_to_string(pad):</tt></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function._to_string()</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.LikelihoodFunctionWithGivenMean.data">
+<tt class="descname">data</tt><a class="headerlink" href="#best.random.best.random.LikelihoodFunctionWithGivenMean.data" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><a class="reference internal" href="#best.random.best.random.LikelihoodFunction.data" title="best.random.best.random.LikelihoodFunction.data"><tt class="xref py py-attr docutils literal"><span class="pre">best.random.LikelihoodFunction.data</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.LikelihoodFunctionWithGivenMean.num_data">
+<tt class="descname">num_data</tt><a class="headerlink" href="#best.random.best.random.LikelihoodFunctionWithGivenMean.num_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of dimensions of the data.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.LikelihoodFunctionWithGivenMean.mean_function">
+<tt class="descname">mean_function</tt><a class="headerlink" href="#best.random.best.random.LikelihoodFunctionWithGivenMean.mean_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set/Get the mean function.</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="gaussian-likelihood-function">
+<span id="like-gauss"></span><h3>Gaussian Likelihood Function<a class="headerlink" href="#gaussian-likelihood-function" title="Permalink to this headline">¶</a></h3>
+<p>Here is a class that implements a Gaussian likelihood function:</p>
+<dl class="class">
+<dt id="best.random.best.random.GaussianLikelihoodFunction">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">GaussianLikelihoodFunction</tt><a class="headerlink" href="#best.random.best.random.GaussianLikelihoodFunction" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><a class="reference internal" href="#best.random.best.random.LikelihoodFunctionWithGivenMean" title="best.random.best.random.LikelihoodFunctionWithGivenMean"><tt class="xref py py-class docutils literal"><span class="pre">best.random.LikelihoodFunctionWithGivenMean</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<p>This class represents a Gaussian likelihood function:</p>
+<div class="math">
+<p><img src="_images/math/7f6048c80d987f82b21893f646d753fd562b4288.png" alt="p\left( \mathcal{D} | x\right) =
+\mathcal{N}\left( \mathcal{D} | f(x), C\right),"/></p>
+</div><p>where <img class="math" src="_images/math/c3355896da590fc491a10150a50416687626d7cc.png" alt="C"/> is the covariance matrix and <img class="math" src="_images/math/5acc5b41c9146612d0c74c5475748d26ae3c832d.png" alt="f(\cdot)"/>
+a mean function.</p>
+<dl class="method">
+<dt id="best.random.best.random.GaussianLikelihoodFunction.__init__">
+<tt class="descname">__init__</tt><big>(</big><span class="optional">[</span><em>num_input=None</em><span class="optional">[</span>, <em>data=None</em><span class="optional">[</span>, <em>mean_function=None</em><span class="optional">[</span>, <em>cov=None</em><span class="optional">[</span>, <em>name='Gaussian Likelihood Function'</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.GaussianLikelihoodFunction.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param num_input:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">The number of inputs. Optional, if
+mean_function is a proper
+<tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param data:</th><td class="field-body">The observed data. A vector. Optional,
+if <tt class="docutils literal"><span class="pre">mean_function</span></tt> is a proper
+<tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt>.
+It can be set later.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param mean_function:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">The mean function. See the super class
+for the description.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param cov:</th><td class="field-body">The covariance matrix. It can either be
+a positive definite matrix, or a number.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param name:</th><td class="field-body">A name for the likelihood function.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">precondition:</th><td class="field-body">You must provide eithe the <tt class="docutils literal"><span class="pre">data</span></tt> or a
+proper <tt class="docutils literal"><span class="pre">mean_function</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.GaussianLikelihoodFunction.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#best.random.best.random.GaussianLikelihoodFunction.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function.__call__()</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.GaussianLikelihoodFunction.cov">
+<tt class="descname">cov</tt><a class="headerlink" href="#best.random.best.random.GaussianLikelihoodFunction.cov" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set/Get the covariance matrix.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="student-t-likelihood-function">
+<span id="like-student"></span><h3>Student-t Likelihood Function<a class="headerlink" href="#student-t-likelihood-function" title="Permalink to this headline">¶</a></h3>
+<p>Here is a class that implements a Student-t likelihood function:</p>
+<dl class="class">
+<dt id="best.random.best.random.StudentTLikelihoodFunction">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">StudentTLikelihoodFunction</tt><a class="headerlink" href="#best.random.best.random.StudentTLikelihoodFunction" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">best.random.Gaussian</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>This class represents a Student-t likelihood function.</p>
+<dl class="method">
+<dt id="best.random.best.random.StudentTLikelihoodFunction.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>nu</em><span class="optional">[</span>, <em>num_input=None</em><span class="optional">[</span>, <em>data=None</em><span class="optional">[</span>, <em>mean_function=None</em><span class="optional">[</span>, <em>cov=None</em><span class="optional">[</span>, <em>name='Gaussian Likelihood Function'</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.StudentTLikelihoodFunction.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param nu:</th><td class="field-body">The degrees of freedom of the distribution.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">param num_input:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">The number of inputs. Optional, if
+mean_function is a proper
+<tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param data:</th><td class="field-body">The observed data. A vector. Optional,
+if <tt class="docutils literal"><span class="pre">mean_function</span></tt> is a proper
+<tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt>.
+It can be set later.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">param mean_function:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">The mean function. See the super class
+for the description.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param cov:</th><td class="field-body">The covariance matrix. It can either be
+a positive definite matrix, or a number.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param name:</th><td class="field-body">A name for the likelihood function.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">precondition:</th><td class="field-body">You must provide eithe the <tt class="docutils literal"><span class="pre">data</span></tt> or a
+proper <tt class="docutils literal"><span class="pre">mean_function</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.StudentTLikelihoodFunction.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#best.random.best.random.StudentTLikelihoodFunction.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><a class="reference internal" href="#best.random.best.random.GaussianLikelihoodFunction.__call__" title="best.random.best.random.GaussianLikelihoodFunction.__call__"><tt class="xref py py-func docutils literal"><span class="pre">best.random.GaussianLikelihoodFunction.__call__()</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="distributions">
+<span id="dist"></span><h2>Distributions<a class="headerlink" href="#distributions" title="Permalink to this headline">¶</a></h2>
+<p>A distribution is a concept that combines a likehood function with
+a random variable. Most probably we will replace it in the future
+with the <a class="reference internal" href="#best.random.best.random.RandomVector" title="best.random.best.random.RandomVector"><tt class="xref py py-class docutils literal"><span class="pre">best.random.RandomVector</span></tt></a> class that combines all
+these concepts.</p>
+<dl class="class">
+<dt id="best.random.best.random.Distributions">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">Distributions</tt><a class="headerlink" href="#best.random.best.random.Distributions" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><a class="reference internal" href="#best.random.best.random.LikelihoodFunction" title="best.random.best.random.LikelihoodFunction"><tt class="xref py py-class docutils literal"><span class="pre">best.random.LikelihoodFunction</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<p>The base class of all distributions.</p>
+<dl class="method">
+<dt id="best.random.best.random.Distributions.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>num_input[, name='Distribution'</em><big>)</big><a class="headerlink" href="#best.random.best.random.Distributions.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>num_input</strong> (<tt class="docutils literal"><span class="pre">int</span></tt>) &#8211; The number of input dimensions.</li>
+<li><strong>name</strong> (<tt class="docutils literal"><span class="pre">str</span></tt>) &#8211; A name for the distribution.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.Distributions.sample">
+<tt class="descname">sample</tt><big>(</big><span class="optional">[</span><em>x=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.Distributions.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample the distribution.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> &#8211; If it is specified then x should be overriden.
+If it is not specified, then the sample is allocated and
+returned.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<p>Many distributions together can be represented by:</p>
+<dl class="class">
+<dt id="best.random.best.random.JointDistribution">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">JointDistribution</tt><a class="headerlink" href="#best.random.best.random.JointDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">best.random.Distribution</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>A class that represents a collection of random variables.</p>
+<dl class="method">
+<dt id="best.random.best.random.JointDistribution.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>dist</em><span class="optional">[</span>, <em>name='Joint Distribution'</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.JointDistribution.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dist</strong> (<tt class="xref py py-class docutils literal"><span class="pre">best.random.Distribution</span></tt>) &#8211; A list of distributions to be joined.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.JointDistribution.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#best.random.best.random.JointDistribution.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function.__call__()</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.JointDistribution.sample">
+<tt class="descname">sample</tt><big>(</big><span class="optional">[</span><em>x=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.JointDistribution.sample" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.random.Distribution.sample()</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.JointDistribution.dist">
+<tt class="descname">dist</tt><a class="headerlink" href="#best.random.best.random.JointDistribution.dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the underlying distributions</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>A conditional distribution can be represented by:</p>
+<dl class="class">
+<dt id="best.random.best.random.ConditionalDistribution">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">ConditionalDistribution</tt><a class="headerlink" href="#best.random.best.random.ConditionalDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">best.random.Distribution</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>The base class for conditional distributions.</p>
+<dl class="method">
+<dt id="best.random.best.random.ConditionalDistribution.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>num_input, num_cond[,                  name='Conditional Distribution'</em><big>)</big><a class="headerlink" href="#best.random.best.random.ConditionalDistribution.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>num_input</strong> &#8211; The number of inputs.</li>
+<li><strong>num_cond</strong> &#8211; The number of conditioning variables.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.ConditionalDistribution.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>z</em>, <em>x</em><big>)</big><a class="headerlink" href="#best.random.best.random.ConditionalDistribution.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Redefines :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Fucntion.__call__()</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>Evaluate the log of the probability at <tt class="docutils literal"><span class="pre">z</span></tt> given <tt class="docutils literal"><span class="pre">x</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Throws :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">NotImplementedError</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.ConditionalDistribution.sample">
+<tt class="descname">sample</tt><big>(</big><em>x</em><span class="optional">[</span>, <em>z=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.ConditionalDistribution.sample" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Redefines :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.random.Distribution.sample()</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>Sample <tt class="docutils literal"><span class="pre">z</span></tt> given <tt class="docutils literal"><span class="pre">x</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Throws :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">NotImplementedError</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.ConditionalDistribution.num_cond">
+<tt class="descname">num_cond</tt><a class="headerlink" href="#best.random.best.random.ConditionalDistribution.num_cond" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of conditioning variables.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>The following class represents the product of a distribution with
+a conditional distribution:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/06eafa8e34c64c8b45469d5f92fd2c822333c3aa.png" alt="p(z | x)p(x)"/></p>
+</div></div></blockquote>
+<p>Here it is:</p>
+<dl class="class">
+<dt id="best.random.best.random.ProductDistribution">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">ProductDistribution</tt><a class="headerlink" href="#best.random.best.random.ProductDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">best.random.Distribution</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>It corresponds to the product <img class="math" src="_images/math/a8ed103205458736a45516b381802d6dcfec150b.png" alt="p(z | x)p(x)"/>.
+<img class="math" src="_images/math/2751d79d3bbfb34440d68c685fe6ba7414951749.png" alt="p(x)"/> corresponds to <tt class="docutils literal"><span class="pre">px</span></tt> and <img class="math" src="_images/math/9c0851a5e5aefa507f2245448070bf21a55f8e94.png" alt="p(z|x)"/> to <tt class="docutils literal"><span class="pre">pzcx</span></tt>.
+The input is assumed to be the vector <tt class="docutils literal"><span class="pre">[x,</span> <span class="pre">z]</span></tt>.</p>
+<dl class="method">
+<dt id="best.random.best.random.ProductDistribution.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>pzcx</em>, <em>px</em><span class="optional">[</span>, <em>name='Product Distribution'</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.ProductDistribution.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>pzcx</strong> (<a class="reference internal" href="#best.random.best.random.ConditionalDistribution" title="best.random.best.random.ConditionalDistribution"><tt class="xref py py-class docutils literal"><span class="pre">best.random.ConditionalDistribution</span></tt></a>) &#8211; The distribution <img class="math" src="_images/math/16866d795116423add949bf34b9585d036ec7361.png" alt="p(z | x)"/>.</li>
+<li><strong>px</strong> (<tt class="xref py py-class docutils literal"><span class="pre">best.random.Distribution</span></tt>) &#8211; The distribution <img class="math" src="_images/math/2751d79d3bbfb34440d68c685fe6ba7414951749.png" alt="p(x)"/>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.ProductDistribution.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#best.random.best.random.ProductDistribution.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function.__call__()</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.ProductDistribution.sample">
+<tt class="descname">sample</tt><big>(</big><big>)</big><a class="headerlink" href="#best.random.best.random.ProductDistribution.sample" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Distributions.sample()</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.ProductDistribution.px">
+<tt class="descname">px</tt><a class="headerlink" href="#best.random.best.random.ProductDistribution.px" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the distribution corresponding to <img class="math" src="_images/math/2751d79d3bbfb34440d68c685fe6ba7414951749.png" alt="p(x)"/>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.ProductDistribution.pzcx">
+<tt class="descname">pzcx</tt><a class="headerlink" href="#best.random.best.random.ProductDistribution.pzcx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the distribution corresponding to <img class="math" src="_images/math/16866d795116423add949bf34b9585d036ec7361.png" alt="p(z | x)"/></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="sampling-distributions">
+<span id="dist-sampling"></span><h2>Sampling Distributions<a class="headerlink" href="#sampling-distributions" title="Permalink to this headline">¶</a></h2>
+<p>We provide several distributions that you can use right away to
+construct new ones.</p>
+<div class="section" id="uniform-distribution">
+<span id="dist-uniform"></span><h3>Uniform Distribution<a class="headerlink" href="#uniform-distribution" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="best.random.best.random.UniformDistribution">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">UniformDistribution</tt><a class="headerlink" href="#best.random.best.random.UniformDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">best.random.Distribution</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>The uniform distribution on a square domain.</p>
+<dl class="method">
+<dt id="best.random.best.random.UniformDistribution.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>num_input</em><span class="optional">[</span>, <em>domain=None</em><span class="optional">[</span>, <em>name='Uniform Distribution'</em><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.UniformDistribution.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>num_input</strong> &#8211; The number of dimensions.</li>
+<li><strong>domain</strong> &#8211; The domain of the random variables. Must be a (k x 2)
+matrix. If not specified, then a unit hyper-cube is
+used.</li>
+<li><strong>name</strong> &#8211; A name for this distribution.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.UniformDistribution.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#best.random.best.random.UniformDistribution.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function.__call__()</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>Evaluates the logarithm of:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/f99e5774aa457fe1aa01c36222f2e17bc6944094.png" alt="p(x) = \frac{1}{|D|},"/></p>
+</div></div></blockquote>
+<p>where <img class="math" src="_images/math/a012b9149bad1633c7aa2f027c5a4409c87dda78.png" alt="|D|"/> is the measure of the domain.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.UniformDistribution.sample">
+<tt class="descname">sample</tt><big>(</big><span class="optional">[</span><em>x=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.UniformDistribution.sample" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.random.Distribution.sample()</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.UniformDistribution.domain">
+<tt class="descname">domain</tt><a class="headerlink" href="#best.random.best.random.UniformDistribution.domain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get/Set the domain.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="normal-distribution">
+<span id="dist-norm"></span><h3>Normal Distribution<a class="headerlink" href="#normal-distribution" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="best.random.best.random.NormalDistribution">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">NormalDistribution</tt><a class="headerlink" href="#best.random.best.random.NormalDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">best.random.Distribution</span></tt></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="best.random.best.random.NormalDistribution.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>num_input[, mu=None[, cov=None[,                  name='Normal Distribution'</em><big>)</big><a class="headerlink" href="#best.random.best.random.NormalDistribution.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>num_input</strong> &#8211; The dimension of the random variables.</li>
+<li><strong>mu</strong> &#8211; The mean. Zero if not specified.</li>
+<li><strong>cov</strong> &#8211; The covariance matrix. Unit matrix if not specified.</li>
+<li><strong>name</strong> &#8211; A name for the distribution.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.NormalDistribution.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#best.random.best.random.NormalDistribution.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function.__call__()</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.NormalDistribution.sample">
+<tt class="descname">sample</tt><big>(</big><span class="optional">[</span><em>x=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.NormalDistribution.sample" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.random.Distribution.sample()</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="student-t-distribution">
+<span id="dist-student"></span><h3>Student-t Distribution<a class="headerlink" href="#student-t-distribution" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="best.random.best.random.StudentTDistribution">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">StudentTDistribution</tt><a class="headerlink" href="#best.random.best.random.StudentTDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><a class="reference internal" href="#best.random.best.random.NormalDistribution" title="best.random.best.random.NormalDistribution"><tt class="xref py py-class docutils literal"><span class="pre">best.random.NormalDistribution</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="best.random.best.random.StudentTDistribution.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>num_input, nu[, mu=None[, cov=None[,                  name='Normal Distribution'</em><big>)</big><a class="headerlink" href="#best.random.best.random.StudentTDistribution.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>num_input</strong> &#8211; The dimension of the random variables.</li>
+<li><strong>nu</strong> &#8211; The degrees of freedom.</li>
+<li><strong>mu</strong> &#8211; The mean. Zero if not specified.</li>
+<li><strong>cov</strong> &#8211; The covariance matrix. Unit matrix if not specified.</li>
+<li><strong>name</strong> &#8211; A name for the distribution.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="mixture-of-distributions">
+<span id="mixture"></span><h2>Mixture of Distributions<a class="headerlink" href="#mixture-of-distributions" title="Permalink to this headline">¶</a></h2>
+<p>Here is a class that represents a mixture of distributions:</p>
+<dl class="class">
+<dt id="best.random.best.random.MixtureOfDistributions">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">MixtureOfDistributions</tt><a class="headerlink" href="#best.random.best.random.MixtureOfDistributions" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">best.random.Distribution</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>A class representing a mixture of distributions:</p>
+<div class="math">
+<p><img src="_images/math/03aa81371abfb24f01b42087ed40836ef5cce44b.png" alt="p(x) = \sum_i c_i p_i(x),"/></p>
+</div><p>where <img class="math" src="_images/math/bdf807cd453b6a6039997477ba68f51eec310416.png" alt="\sum_i c_i = 1"/> and <img class="math" src="_images/math/d01a5e1284bc27a1fcf7644fc809bf7fcd57e07e.png" alt="p_i(x)"/> are distributions.</p>
+<dl class="method">
+<dt id="best.random.best.random.MixtureOfDistributions.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>weights, components[,                  name='Mixture of Distributions'</em><big>)</big><a class="headerlink" href="#best.random.best.random.MixtureOfDistributions.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>weights</strong> &#8211; The weight of each component.</li>
+<li><strong>components</strong> (<tt class="xref py py-class docutils literal"><span class="pre">best.random.Distribution</span></tt>) &#8211; A list of the components.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.MixtureOfDistributions.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#best.random.best.random.MixtureOfDistributions.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function.__call__()</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.MixtureOfDistributions.sample">
+<tt class="descname">sample</tt><big>(</big><span class="optional">[</span><em>x=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.MixtureOfDistributions.sample" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.random.Distribution.sample()</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.MixtureOfDistributions.weights">
+<tt class="descname">weights</tt><a class="headerlink" href="#best.random.best.random.MixtureOfDistributions.weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the weights of each component.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.MixtureOfDistributions.components">
+<tt class="descname">components</tt><a class="headerlink" href="#best.random.best.random.MixtureOfDistributions.components" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the components (distributions).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.MixtureOfDistributions.num_components">
+<tt class="descname">num_components</tt><a class="headerlink" href="#best.random.best.random.MixtureOfDistributions.num_components" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of components.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="posterior-distribution">
+<span id="post"></span><h2>Posterior Distribution<a class="headerlink" href="#posterior-distribution" title="Permalink to this headline">¶</a></h2>
+<p>A class representing a posterior distribution. It requires a likelihood
+function and a prior. This is design to be used with <a class="reference internal" href="#smc"><em>Sequential Monte Carlo</em></a>.
+This is why it is a little bit strange. Most probably, you won&#8217;t
+have to overload it (or even understand how it works) unless you
+are doing something very special.</p>
+<dl class="class">
+<dt id="best.random.best.random.PosteriorDistribution">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">PosteriorDistribution</tt><a class="headerlink" href="#best.random.best.random.PosteriorDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><a class="reference internal" href="#best.random.best.random.LikelihoodFunction" title="best.random.best.random.LikelihoodFunction"><tt class="xref py py-class docutils literal"><span class="pre">best.random.LikelihoodFunction</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<p>A class representing a posterior distribution.</p>
+<p><strong>The likelihood function:</strong>
+The class requires a likelihood object which can be any class implementing:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">likelihood.__call__(x)</span></tt>:   Giving the log likelihood at a particular x.
+Notice that x here is the parameter of the likelihood not the data.
+It is the responsibility of the user to make sure that the likelihood function,
+correctly captures the dependence on the data.</li>
+</ul>
+</div></blockquote>
+<p><strong>The prior distribution:</strong>
+The prior distribution is any object which implements:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">prior.__call__(x)</span></tt>: Giving the log of the prior.</li>
+</ul>
+</div></blockquote>
+<p>Overall, this class represents the following function:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/0669f320e782c2e04a88dea61e1a6c365aa9c432.png" alt="p(x | y, \gamma) \propto p(y | x)^\gamma p(x)."/></p>
+</div></div></blockquote>
+<p>Again, I mention that specifying <img class="math" src="_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> is the responsibility of the user.
+It is not directly needed in this class. All we use is
+<img class="math" src="_images/math/846f334bc197d7e0622a610823b2f948fb0b3cd4.png" alt="p(y | x)"/> as a
+function <img class="math" src="_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> only, <img class="math" src="_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> being fixed and implied.
+The parameter gamma plays the role of a regularizing parameter.
+The default value is 1. We have explicitely included it, because the main
+purpose of this class is to be used within the <a class="reference internal" href="#smc"><em>Sequential Monte Carlo</em></a>
+framework.</p>
+<dl class="method">
+<dt id="best.random.best.random.PosteriorDistribution.__init__">
+<tt class="descname">__init__</tt><big>(</big><span class="optional">[</span><em>likelihood=None</em><span class="optional">[</span>, <em>prior=None</em><span class="optional">[</span>, <em>gamma=1</em><span class="optional">[</span>, <em>name='Posterior Distribution'</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.PosteriorDistribution.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>likelihood</strong> &#8211; The likelihood function.</li>
+<li><strong>prior</strong> &#8211; The prior distribution.</li>
+<li><strong>gamma</strong> (<tt class="docutils literal"><span class="pre">float</span></tt>) &#8211; The regularizing parameter.</li>
+<li><strong>name</strong> &#8211; A name for the distribution.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.PosteriorDistribution.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>x</em><span class="optional">[</span>, <em>report_all=False</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.PosteriorDistribution.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function.__call__()</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>Evaluate the log of the posterior at <tt class="docutils literal"><span class="pre">x</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> &#8211; The point of evalutation.</li>
+<li><strong>report_all</strong> &#8211; If set to True, then it returns
+a dictionary of all the values used
+to compose the log of the posterior (see
+below for details). Otherwise, it simply
+returns the log of the posterior.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>The function returns a dictionary r that contains:</dt>
+<dd><ul class="first last simple">
+<li><tt class="docutils literal"><span class="pre">r['log_p']</span></tt>:       The log of the pdf at x.</li>
+<li><tt class="docutils literal"><span class="pre">r['log_like']</span></tt>:    The log of the likelihood at x.</li>
+<li><tt class="docutils literal"><span class="pre">r['log_prior']</span></tt>:   The log of the prior at x.</li>
+<li><tt class="docutils literal"><span class="pre">r['gamma']</span></tt>:       The current gamma.</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.PosteriorDistribution._to_string">
+<tt class="descname">_to_string</tt><big>(</big><em>pad</em><big>)</big><a class="headerlink" href="#best.random.best.random.PosteriorDistribution._to_string" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function._to_string()</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.PosteriorDistribution.likelihood">
+<tt class="descname">likelihood</tt><a class="headerlink" href="#best.random.best.random.PosteriorDistribution.likelihood" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get/Set the likelihood function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.PosteriorDistribution.prior">
+<tt class="descname">prior</tt><a class="headerlink" href="#best.random.best.random.PosteriorDistribution.prior" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get/Set the prior.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.PosteriorDistribution.gamma">
+<tt class="descname">gamma</tt><a class="headerlink" href="#best.random.best.random.PosteriorDistribution.gamma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get/Set gamma</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="markov-chain-monte-carlo">
+<span id="mcmc"></span><h2>Markov Chain Monte Carlo<a class="headerlink" href="#markov-chain-monte-carlo" title="Permalink to this headline">¶</a></h2>
+<p>We start by listing all the classes that take part in the formulation
+of the MCMC sampling algorithm. The purpose here, is to highlight the
+inheritance structure. We will give an example at the end that puts
+everything together.</p>
+<p>The base class of any Markov Chain should be a:</p>
+<dl class="class">
+<dt id="best.random.best.random.MarkovChain">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">MarkovChain</tt><a class="headerlink" href="#best.random.best.random.MarkovChain" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><a class="reference internal" href="basic.html#best.Object" title="best.Object"><tt class="xref py py-class docutils literal"><span class="pre">best.Object</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<p>The base class for a Markov Chain. Any Markov Chain should inherit
+it.</p>
+<dl class="method">
+<dt id="best.random.best.random.MarkovChain.__init__">
+<tt class="descname">__init__</tt><big>(</big><span class="optional">[</span><em>name='Markov Chain'</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.MarkovChain.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.MarkovChain.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>x_p</em>, <em>x_n</em><big>)</big><a class="headerlink" href="#best.random.best.random.MarkovChain.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the logarithm of the pdf of the chain.</p>
+<p>Usually this would be written as:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/34d0ac915b8cebc483ea9b9d5cd5fd4bddd9b192.png" alt="\ln p(x_n | x_p),"/></p>
+</div></div></blockquote>
+<p>but we are using the programming convention that whatever is
+given comes first.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x_p</strong> &#8211; The state on which we are conditioning.</li>
+<li><strong>x_n</strong> &#8211; The new state.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Trhows :</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">NotImplementedError</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.MarkovChain.sample">
+<tt class="descname">sample</tt><big>(</big><em>x_p</em>, <em>x_n</em><big>)</big><a class="headerlink" href="#best.random.best.random.MarkovChain.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample from the Markov Chain and write the result on <tt class="docutils literal"><span class="pre">x_n</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x_p</strong> &#8211; The state on which we are conditioning.</li>
+<li><strong>x_n</strong> &#8211; The new state. To be overwritten.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Throws :</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">NotImplementedError</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="proposal-distributions">
+<span id="mcmc-proposal"></span><h3>Proposal Distributions<a class="headerlink" href="#proposal-distributions" title="Permalink to this headline">¶</a></h3>
+<p>MCMC requires a proposal distribution which is, of course, a Markov
+Chain:</p>
+<dl class="class">
+<dt id="best.random.best.random.ProposalDistribution">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">ProposalDistribution</tt><a class="headerlink" href="#best.random.best.random.ProposalDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><a class="reference internal" href="#best.random.best.random.MarkovChain" title="best.random.best.random.MarkovChain"><tt class="xref py py-class docutils literal"><span class="pre">best.random.MarkovChain</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<p>The base class for the proposals used in MCMC.</p>
+<dl class="method">
+<dt id="best.random.best.random.ProposalDistribution.__init__">
+<tt class="descname">__init__</tt><big>(</big><span class="optional">[</span><em>dt=1e-3</em><span class="optional">[</span>, <em>name='Proposal Distribution'</em><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.ProposalDistribution.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dt</strong> (<tt class="docutils literal"><span class="pre">float</span></tt>) &#8211; The step size of the proposal. We put this here
+because many commonly met proposals do have a step
+size.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.ProposalDistribution.dt">
+<tt class="descname">dt</tt><a class="headerlink" href="#best.random.best.random.ProposalDistribution.dt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get/set the step size of the proposal.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="random-walk-proposal">
+<span id="mcmc-random-walk"></span><h3>Random Walk Proposal<a class="headerlink" href="#random-walk-proposal" title="Permalink to this headline">¶</a></h3>
+<p>A very common proposal distribution is the <strong>Random Walk</strong> proposal:</p>
+<dl class="class">
+<dt id="best.random.best.random.RandomWalkProposal">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">RandomWalkProposal</tt><a class="headerlink" href="#best.random.best.random.RandomWalkProposal" title="Permalink to this definition">¶</a></dt>
+<dd><p>A random walk proposal distribution.</p>
+<p>The chain is defined by:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/960e44c69467752de5b121f77a7b9c9069286c9a.png" alt="p(x_n | x_p, \delta t)
+= \mathcal{N}\left(x_n | x_p, \delta t^2\right)."/></p>
+</div></div></blockquote>
+<dl class="method">
+<dt id="best.random.best.random.RandomWalkProposal.__init__">
+<tt class="descname">__init__</tt><big>(</big><span class="optional">[</span><em>dt=1e-3</em><span class="optional">[</span>, <em>name='Random Walk Proposal'</em><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.RandomWalkProposal.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomWalkProposal.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>x_p</em>, <em>x_n</em><big>)</big><a class="headerlink" href="#best.random.best.random.RandomWalkProposal.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><a class="reference internal" href="#best.random.best.random.MarkovChain.__call__" title="best.random.best.random.MarkovChain.__call__"><tt class="xref py py-func docutils literal"><span class="pre">best.random.MarkovChain.__call__()</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.RandomWalkProposal.__sample__">
+<tt class="descname">__sample__</tt><big>(</big><em>x_p</em>, <em>x_n</em><big>)</big><a class="headerlink" href="#best.random.best.random.RandomWalkProposal.__sample__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><a class="reference internal" href="#best.random.best.random.MarkovChain.sample" title="best.random.best.random.MarkovChain.sample"><tt class="xref py py-func docutils literal"><span class="pre">best.random.MarkovChain.sample()</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="langevin-proposal">
+<span id="mcmc-langevin"></span><h3>Langevin Proposal<a class="headerlink" href="#langevin-proposal" title="Permalink to this headline">¶</a></h3>
+<p>The Langevin proposal is implemented via:</p>
+<dl class="class">
+<dt id="best.random.best.random.LangevinProposal">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">LangevinProposal</tt><a class="headerlink" href="#best.random.best.random.LangevinProposal" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">best.random.Proposal</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>A Langevin proposal that leads to a Metropolized-Adjusted Langevin
+Algorithm (MALA).</p>
+<p>See the code for further details.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="the-mcmc-class">
+<span id="mcmc-class"></span><h3>The MCMC class<a class="headerlink" href="#the-mcmc-class" title="Permalink to this headline">¶</a></h3>
+<p>Now we are in a position to discuss the implementation of the MCMC
+algorithm in <a class="reference internal" href="reference.html#module-best" title="best: The main module of BEST."><tt class="xref py py-mod docutils literal"><span class="pre">best</span></tt></a>. It is achieved via the class
+<a class="reference internal" href="#best.random.best.random.MarkovChainMonteCarlo" title="best.random.best.random.MarkovChainMonteCarlo"><tt class="xref py py-class docutils literal"><span class="pre">best.random.MarkovChainMonteCarlo</span></tt></a>:</p>
+<dl class="class">
+<dt id="best.random.best.random.MarkovChainMonteCarlo">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">MarkovChainMonteCarlo</tt><a class="headerlink" href="#best.random.best.random.MarkovChainMonteCarlo" title="Permalink to this definition">¶</a></dt>
+<dd><p>A general MCMC sampler.</p>
+<p><strong>The state of MCMC.</strong>
+We assume that the state <tt class="docutils literal"><span class="pre">x</span></tt> of MCMC is a class that implements
+the following methods:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">x.copy()</span></tt>: Create a copy of <tt class="docutils literal"><span class="pre">x</span></tt> and returns a reference to it.</li>
+</ul>
+</div></blockquote>
+<p><strong>The proposal of MCMC.</strong>
+The proposal of MCMC should implement the following methods:</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">proposal.__call__(x_p,</span> <span class="pre">x_n)</span></tt>: Evaluate the log of the pdf of</dt>
+<dd><p class="first"><img class="math" src="_images/math/c3b852df244a9874d2a13c2b2afdc5ac0060f089.png" alt="p(x_n | x_p)"/> and return the result.
+For reasons of computational efficiency,
+we had to make the return value of this
+function a little bit more complicated than
+is necessary in MCMC. We assume that it
+returns an dictionary obj that has at least one
+field:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">obj['log_p']</span></tt>: The logarithm of the pdf at <tt class="docutils literal"><span class="pre">x</span></tt>.</li>
+</ul>
+</div></blockquote>
+<p class="last">This object corresponding to the current state
+is always stored.
+To understand, why something this awkward is
+essential, please see the code of the
+<a class="reference internal" href="#best.random.best.random.SequentialMonteCarlo" title="best.random.best.random.SequentialMonteCarlo"><tt class="xref py py-class docutils literal"><span class="pre">best.random.SequentialMonteCarlo</span></tt></a> class.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">proposal.sample(x_p,</span> <span class="pre">x_n)</span></tt>:   Sample <img class="math" src="_images/math/c3b852df244a9874d2a13c2b2afdc5ac0060f089.png" alt="p(x_n | x_p)"/> and write the</dt>
+<dd><p class="first last">result on <tt class="docutils literal"><span class="pre">x_n</span></tt>.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p><strong>The target distribution.</strong>
+The target distribution should implement:</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">target.__call__(x)</span></tt>: Evaluate the log of the target pdf up</dt>
+<dd><p class="first last">to a normalizing constant.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<dl class="method">
+<dt>
+<tt class="descname">__init__([target=None[,                   proposal=RandomWalkProposal()[,</tt></dt>
+<dt>
+<tt class="descname">store_samples=False[, verbose=False[,                   output_frequency=1]]]]])</tt></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>target</strong> &#8211; The target distribution.</li>
+<li><strong>proposal</strong> &#8211; The proposal distribution.</li>
+<li><strong>store_samples</strong> &#8211; If set to <tt class="docutils literal"><span class="pre">True</span></tt>, then all samples are stored
+(copied) and are accessible via self.samples.</li>
+<li><strong>verbose</strong> &#8211; The verbosity flag. If set to True, then sth
+is printed at each MCMC step.</li>
+<li><strong>output_frequency</strong> &#8211; If verbose is <tt class="docutils literal"><span class="pre">True</span></tt>, then this specifies how often
+something is printed.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.MarkovChainMonteCarlo.initialize">
+<tt class="descname">initialize</tt><big>(</big><em>x</em><span class="optional">[</span>, <em>eval_state=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.MarkovChainMonteCarlo.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the chain.</p>
+<p>Initializes the chain at <tt class="docutils literal"><span class="pre">x</span></tt>. It is essential that the chain has been
+properly initialized!</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.MarkovChainMonteCarlo.reinitialize">
+<tt class="descname">reinitialize</tt><big>(</big><big>)</big><a class="headerlink" href="#best.random.best.random.MarkovChainMonteCarlo.reinitialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-initialize the chain.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.MarkovChainMonteCarlo.perform_single_mcmc_step">
+<tt class="descname">perform_single_mcmc_step</tt><big>(</big><em>self</em><big>)</big><a class="headerlink" href="#best.random.best.random.MarkovChainMonteCarlo.perform_single_mcmc_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs a single MCMC step.</p>
+<p>The current state of the chain is altered at the end (or not).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.MarkovChainMonteCarlo.sample">
+<tt class="descname">sample</tt><big>(</big><span class="optional">[</span><em>x=None</em><span class="optional">[</span>, <em>eval_state=None</em><span class="optional">[</span>, <em>return_eval_state=False</em><span class="optional">[</span>, <em>steps=1</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.random.best.random.MarkovChainMonteCarlo.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample the chain.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> &#8211; The initial state. If not specified, then
+we assume that it has already been set.</li>
+<li><strong>steps</strong> &#8211; The number of MCMC steps to be performed.</li>
+<li><strong>return_eval_state</strong> &#8211; Return the evaluated state at the end of
+the run.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A reference to the current state of the chain.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.random.best.random.MarkovChainMonteCarlo.copy">
+<tt class="descname">copy</tt><big>(</big><big>)</big><a class="headerlink" href="#best.random.best.random.MarkovChainMonteCarlo.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of this object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.MarkovChainMonteCarlo.target">
+<tt class="descname">target</tt><a class="headerlink" href="#best.random.best.random.MarkovChainMonteCarlo.target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set/Get the target distribution.</p>
+<p>Every time the target changes, the chain must be initialized again.
+If the current state is already present, then this method automatically
+reinitializes the chain.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.MarkovChainMonteCarlo.proposal">
+<tt class="descname">proposal</tt><a class="headerlink" href="#best.random.best.random.MarkovChainMonteCarlo.proposal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set/Get the proposal</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.MarkovChainMonteCarlo.current_state">
+<tt class="descname">current_state</tt><a class="headerlink" href="#best.random.best.random.MarkovChainMonteCarlo.current_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the current state of MCMC.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.MarkovChainMonteCarlo.proposed_state">
+<tt class="descname">proposed_state</tt><a class="headerlink" href="#best.random.best.random.MarkovChainMonteCarlo.proposed_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the proposed state of MCMC.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.MarkovChainMonteCarlo.num_samples">
+<tt class="descname">num_samples</tt><a class="headerlink" href="#best.random.best.random.MarkovChainMonteCarlo.num_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of samples taken so far.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.MarkovChainMonteCarlo.num_accepted">
+<tt class="descname">num_accepted</tt><a class="headerlink" href="#best.random.best.random.MarkovChainMonteCarlo.num_accepted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of accepted samples so far.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.MarkovChainMonteCarlo.acceptance_rate">
+<tt class="descname">acceptance_rate</tt><a class="headerlink" href="#best.random.best.random.MarkovChainMonteCarlo.acceptance_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the acceptance rate.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.MarkovChainMonteCarlo.initialized">
+<tt class="descname">initialized</tt><a class="headerlink" href="#best.random.best.random.MarkovChainMonteCarlo.initialized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the chain has been initialized.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.MarkovChainMonteCarlo.store_samples">
+<tt class="descname">store_samples</tt><a class="headerlink" href="#best.random.best.random.MarkovChainMonteCarlo.store_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the samples are being stored.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.MarkovChainMonteCarlo.samples">
+<tt class="descname">samples</tt><a class="headerlink" href="#best.random.best.random.MarkovChainMonteCarlo.samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the stored samples.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.MarkovChainMonteCarlo.verbose">
+<tt class="descname">verbose</tt><a class="headerlink" href="#best.random.best.random.MarkovChainMonteCarlo.verbose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get/Set the verbosity flag.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.random.best.random.MarkovChainMonteCarlo.output_frequency">
+<tt class="descname">output_frequency</tt><a class="headerlink" href="#best.random.best.random.MarkovChainMonteCarlo.output_frequency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get/Set the output_frequency.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="simple-mcmc-example">
+<span id="mcmc-example"></span><h2>Simple MCMC Example<a class="headerlink" href="#simple-mcmc-example" title="Permalink to this headline">¶</a></h2>
+<p>Now that we have introduced <a class="reference internal" href="#best.random.best.random.MarkovChainMonteCarlo" title="best.random.best.random.MarkovChainMonteCarlo"><tt class="xref py py-class docutils literal"><span class="pre">best.random.MarkovChainMonteCarlo</span></tt></a>,
+let&#8217;s look at a very simple example that can be found in
+<tt class="file docutils literal"><span class="pre">best/demo/test_mcmc.py</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">fix_path</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">best.random</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+
+<span class="k">class</span> <span class="nc">SampleTarget</span><span class="p">(</span><span class="n">LikelihoodFunction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A sample target distribution.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SampleTarget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="mf">3.</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="mf">2.</span>
+        <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mf">1e99</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="mf">1.</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">t</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">SampleTarget</span><span class="p">()</span>
+    <span class="n">x_init</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">proposal</span> <span class="o">=</span> <span class="n">RandomWalkProposal</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">5.</span><span class="p">)</span>
+    <span class="n">mcmc</span> <span class="o">=</span> <span class="n">MarkovChainMonteCarlo</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">proposal</span><span class="o">=</span><span class="n">proposal</span><span class="p">,</span>
+                                 <span class="n">store_samples</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                 <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                 <span class="n">output_frequency</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+    <span class="n">mcmc</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">x_init</span><span class="p">)</span>
+    <span class="n">mcmc</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="n">mcmc</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mcmc</span><span class="o">.</span><span class="n">samples</span><span class="p">))]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This should plot the following figure:</p>
+<blockquote>
+<div><div class="figure align-center">
+<img alt="_images/mcmc_1d.png" src="_images/mcmc_1d.png" />
+<p class="caption">The histogram of the samples gathered by MCMC.</p>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="sequential-monte-carlo">
+<span id="smc"></span><h2>Sequential Monte Carlo<a class="headerlink" href="#sequential-monte-carlo" title="Permalink to this headline">¶</a></h2>
+<p>Sequential Monte Carlo (SMC) is a way to sample multi-modal probability
+distributions by constructing a sequence of distributions that converge
+to the target distribution in a smooth manner and propagating through
+them an ensemble of particles.</p>
+<p>In <a class="reference internal" href="reference.html#module-best" title="best: The main module of BEST."><tt class="xref py py-mod docutils literal"><span class="pre">best</span></tt></a> SMC is implemented via the
+<a class="reference internal" href="#best.random.best.random.SequentialMonteCarlo" title="best.random.best.random.SequentialMonteCarlo"><tt class="xref py py-class docutils literal"><span class="pre">best.random.SequentialMonteCarlo</span></tt></a> which:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Can work with arbitrary underlying MCMC samplers.</li>
+<li>Can automatically detect an optimal sequence of distributions.</li>
+<li>Can be run in parallel.</li>
+</ul>
+</div></blockquote>
+<p>The mathematical details can be found in our paper on inverse problems
+which is currently under review.</p>
+<dl class="class">
+<dt id="best.random.best.random.SequentialMonteCarlo">
+<em class="property">class </em><tt class="descclassname">best.random.</tt><tt class="descname">SequentialMonteCarlo</tt><a class="headerlink" href="#best.random.best.random.SequentialMonteCarlo" title="Permalink to this definition">¶</a></dt>
+<dd><p>For the moment do the following to get the complete documentation:</p>
+<p>&gt;&gt; from best.random import SequentialMonteCarlo
+&gt;&gt; help(SequentialMonteCarlo)</p>
+<p>I will add the complete documentation in short time.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="simple-sequential-monte-carlo-example">
+<span id="smc-example"></span><h2>Simple Sequential Monte Carlo Example<a class="headerlink" href="#simple-sequential-monte-carlo-example" title="Permalink to this headline">¶</a></h2>
+<p>We are going to use <a class="reference internal" href="#smc"><em>Sequential Monte Carlo</em></a> to sample from a mixture of Gaussians:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">fix_path</span>
+
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">best.random</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c"># Number of inputs</span>
+    <span class="n">num_input</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="c"># Construct the likelihood function</span>
+    <span class="c"># Number of components</span>
+    <span class="n">num_comp</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="c"># Degrees of freedom of the Inverse Wishart distribution</span>
+    <span class="c"># from which we draw the covariance matrix</span>
+    <span class="n">n_d</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="c"># Randomly pick each component</span>
+    <span class="n">components</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_comp</span><span class="p">):</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="mf">5.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_input</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_d</span><span class="p">,</span> <span class="n">num_input</span><span class="p">)</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+        <span class="n">components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NormalDistribution</span><span class="p">(</span><span class="n">num_input</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">C</span><span class="p">))</span>
+    <span class="c"># Randomly pick weights for the components</span>
+    <span class="c">#w = np.random.rand(num_comp)</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_comp</span><span class="p">)</span> <span class="o">/</span> <span class="n">num_comp</span>
+    <span class="c"># Construct the likelihood</span>
+    <span class="n">likelihood</span> <span class="o">=</span> <span class="n">MixtureOfDistributions</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">components</span><span class="p">)</span>
+    <span class="c"># Let&#39;s just take a look at this distribution</span>
+    <span class="k">print</span> <span class="s">&#39;weights:, &#39;</span><span class="p">,</span> <span class="n">likelihood</span><span class="o">.</span><span class="n">weights</span>
+    <span class="k">print</span> <span class="s">&#39;components:&#39;</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">likelihood</span><span class="o">.</span><span class="n">components</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&#39;mu: &#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">mu</span>
+        <span class="k">print</span> <span class="s">&#39;cov: &#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">cov</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">)</span>
+    <span class="c"># The prior is just going to be a normal distribution with</span>
+    <span class="c"># zero mean and very big variance</span>
+    <span class="n">prior</span> <span class="o">=</span> <span class="n">NormalDistribution</span><span class="p">(</span><span class="n">num_input</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="mf">2.</span><span class="p">)</span>
+    <span class="c"># Construct the SMC object</span>
+    <span class="n">smc</span> <span class="o">=</span> <span class="n">SequentialMonteCarlo</span><span class="p">(</span><span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">,</span> <span class="n">likelihood</span><span class="o">=</span><span class="n">likelihood</span><span class="p">,</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">num_particles</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+                               <span class="n">num_mcmc</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                               <span class="n">proposal</span><span class="o">=</span><span class="n">RandomWalkProposal</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">2.</span><span class="p">),</span>
+                               <span class="n">store_intermediate_samples</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">r</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">smc</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">smc</span><span class="o">.</span><span class="n">intermediate_samples</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s">&#39;r&#39;</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">s</span><span class="p">[</span><span class="s">&#39;w&#39;</span><span class="p">],</span> <span class="n">normed</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="o">-</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">])</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;gamma = </span><span class="si">%1.4f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">s</span><span class="p">[</span><span class="s">&#39;gamma&#39;</span><span class="p">])</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">&#39;normalized histogram&#39;</span><span class="p">)</span>
+        <span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">smc</span><span class="o">.</span><span class="n">mcmc_sampler</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="s">&#39;gamma&#39;</span><span class="p">]</span>
+        <span class="n">log_post</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">smc</span><span class="o">.</span><span class="n">mcmc_sampler</span><span class="o">.</span><span class="n">target</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">t</span><span class="p">]))</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_post</span><span class="p">)))</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;gamma = </span><span class="si">%1.4f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">s</span><span class="p">[</span><span class="s">&#39;gamma&#39;</span><span class="p">])</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">)</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">&#39;pdf&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;smc_step=</span><span class="si">%d</span><span class="s">.png&#39;</span> <span class="o">%</span> <span class="n">step</span><span class="p">)</span>
+        <span class="n">step</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>The code will produce a sequence of <tt class="docutils literal"><span class="pre">*.png</span></tt> files showing the evolution
+of the algorithm:</p>
+<blockquote>
+<div><div class="figure align-center">
+<img alt="_images/smc_step=0.png" src="_images/smc_step=0.png" />
+</div>
+<div class="figure align-center">
+<img alt="_images/smc_step=1.png" src="_images/smc_step=1.png" />
+</div>
+<div class="figure align-center">
+<img alt="_images/smc_step=2.png" src="_images/smc_step=2.png" />
+</div>
+<div class="figure align-center">
+<img alt="_images/smc_step=3.png" src="_images/smc_step=3.png" />
+</div>
+<div class="figure align-center">
+<img alt="_images/smc_step=4.png" src="_images/smc_step=4.png" />
+</div>
+<div class="figure align-center">
+<img alt="_images/smc_step=5.png" src="_images/smc_step=5.png" />
+</div>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Random</a><ul>
+<li><a class="reference internal" href="#conditional-random-variable">Conditional Random Variable</a></li>
+<li><a class="reference internal" href="#random-vector">Random Vector</a></li>
+<li><a class="reference internal" href="#random-vector-of-independent-variables">Random Vector of Independent Variables</a></li>
+<li><a class="reference internal" href="#karhunen-loeve-expansion">Karhunen-Loeve Expansion</a></li>
+<li><a class="reference internal" href="#likelihood-functions">Likelihood Functions</a><ul>
+<li><a class="reference internal" href="#gaussian-likelihood-function">Gaussian Likelihood Function</a></li>
+<li><a class="reference internal" href="#student-t-likelihood-function">Student-t Likelihood Function</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#distributions">Distributions</a></li>
+<li><a class="reference internal" href="#sampling-distributions">Sampling Distributions</a><ul>
+<li><a class="reference internal" href="#uniform-distribution">Uniform Distribution</a></li>
+<li><a class="reference internal" href="#normal-distribution">Normal Distribution</a></li>
+<li><a class="reference internal" href="#student-t-distribution">Student-t Distribution</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mixture-of-distributions">Mixture of Distributions</a></li>
+<li><a class="reference internal" href="#posterior-distribution">Posterior Distribution</a></li>
+<li><a class="reference internal" href="#markov-chain-monte-carlo">Markov Chain Monte Carlo</a><ul>
+<li><a class="reference internal" href="#proposal-distributions">Proposal Distributions</a></li>
+<li><a class="reference internal" href="#random-walk-proposal">Random Walk Proposal</a></li>
+<li><a class="reference internal" href="#langevin-proposal">Langevin Proposal</a></li>
+<li><a class="reference internal" href="#the-mcmc-class">The MCMC class</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simple-mcmc-example">Simple MCMC Example</a></li>
+<li><a class="reference internal" href="#sequential-monte-carlo">Sequential Monte Carlo</a></li>
+<li><a class="reference internal" href="#simple-sequential-monte-carlo-example">Simple Sequential Monte Carlo Example</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="domain.html"
+                        title="previous chapter">Domain</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="gpc.html"
+                        title="next chapter">Generalized Polynomial Chaos</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/random.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="gpc.html" title="Generalized Polynomial Chaos"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="domain.html" title="Domain"
+             >previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" >Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Ilias Bilionis, Nicholas Zabaras.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

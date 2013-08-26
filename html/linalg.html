@@ -1,0 +1,520 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Linear Algebra &mdash; Bayesian Exploration Statistical Toolbox 0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Bayesian Exploration Statistical Toolbox 0 documentation" href="index.html" />
+    <link rel="up" title="Reference Guide" href="reference.html" />
+    <link rel="next" title="Serialization" href="serialization.html" />
+    <link rel="prev" title="Miscellaneous" href="misc.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="serialization.html" title="Serialization"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="misc.html" title="Miscellaneous"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" accesskey="U">Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="linear-algebra">
+<span id="linalg"></span><h1>Linear Algebra<a class="headerlink" href="#linear-algebra" title="Permalink to this headline">¶</a></h1>
+<p>The linear algebra module (<tt class="xref py py-mod docutils literal"><span class="pre">best.linalg</span></tt>)
+defines several functions that cannot be found in numpy or
+scipy but are extremely useful in various Bayesian problems.</p>
+<div class="section" id="manipulating-kronecker-products">
+<span id="linalg-kron"></span><h2>Manipulating Kronecker Products<a class="headerlink" href="#manipulating-kronecker-products" title="Permalink to this headline">¶</a></h2>
+<p>Being able to avoid forming the Kronecker products in linear algebra
+can save lots of memory and time. Here are a few functions that we have
+put together. They should be slef-explanatory.</p>
+<dl class="function">
+<dt id="best.linalg.kron_prod">
+<tt class="descclassname">best.linalg.</tt><tt class="descname">kron_prod</tt><big>(</big><em>A</em>, <em>x</em><big>)</big><a class="headerlink" href="#best.linalg.kron_prod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiply a Kronecker product of matrices with a vector.</p>
+<dl class="docutils">
+<dt>The function computes the product:</dt>
+<dd><div class="first last math">
+<p><img src="_images/math/3a2c086439c21d27eeebc6d858466abe777bea91.png" alt="\mathbf{y} = (\otimes_{i=1}^s \mathbf{A}_i) \mathbf{x},"/></p>
+</div></dd>
+</dl>
+<p>where <img class="math" src="_images/math/5b4f160958078abb4a29e3e3545270fb7a86ff8d.png" alt="\mathbf{A}_i"/> are suitable matrices.
+The characteristic of the routine is that it does not form the
+Kronecker product explicitly. Also, <img class="math" src="_images/math/5f61118f2ae912f86e683687c005145b5eb54aec.png" alt="\mathbf{x}"/> can be a
+matrix of appropriate dimensions. Of course, it will throw an
+exception if you don&#8217;t have the dimensions right.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>A</strong> (<em>a matrix or a collection -list or tuple- of 2D numpy arrays.</em>) &#8211; Represents the Kronecker product of matrices.</li>
+<li><strong>x</strong> (<em>numpy 1D or 2D array.</em>) &#8211; The vector you want to multiply the matrix with.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The product.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">A 2D numpy array. If x was 1D, then it represents a columntmatrix (i.e., a vector).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Here is an example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">best.linalg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A2</span> <span class="o">=</span> <span class="n">A1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">A1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">A2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">best</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">kron_prod</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You should compare the result with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="o">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">),</span> <span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The last ones forms the Kronecker product explicitly and uses much more
+memory.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="best.linalg.kron_solve">
+<tt class="descclassname">best.linalg.</tt><tt class="descname">kron_solve</tt><big>(</big><em>A</em>, <em>y</em><big>)</big><a class="headerlink" href="#best.linalg.kron_solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve a linear system involving Kronecker products.</p>
+<dl class="docutils">
+<dt>The function solves the following linear system:</dt>
+<dd><div class="first last math">
+<p><img src="_images/math/7023e70b35bc9d92b561ce59c7b589e4231ad6e8.png" alt="(\otimes_{i=1}^s\mathbf{A}_i)\mathbf{x} = \mathbf{y},"/></p>
+</div></dd>
+</dl>
+<p>where <img class="math" src="_images/math/5b4f160958078abb4a29e3e3545270fb7a86ff8d.png" alt="\mathbf{A}_i"/> are suitable matrices and
+<img class="math" src="_images/math/6c382eeb0dad017400c2bb6e32c2d5bdf4002c3e.png" alt="\mathbf{y}"/> is a vector or a matrix.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>A</strong> (<em>a matrix or a collection -list or tuple- of 2D numpy arrays.</em>) &#8211; Represents a Kronecker product of matrices.</li>
+<li><strong>y</strong> (<em>a 1D or 2D numpy array</em>) &#8211; The right hand side of the equation.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The solution of the linear system.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">A numpy array of the same type as y.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Here is an example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">best.linalg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A2</span> <span class="o">=</span> <span class="n">A1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">A1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">A2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">best</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">kron_solve</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Compare this with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which actually builds the Kronecker product.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="best.linalg.update_cholesky">
+<tt class="descclassname">best.linalg.</tt><tt class="descname">update_cholesky</tt><big>(</big><em>L</em>, <em>B</em>, <em>C</em><big>)</big><a class="headerlink" href="#best.linalg.update_cholesky" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the Cholesky decomposition of a matrix.</p>
+<p>We assume that <img class="math" src="_images/math/f36a69e6a3b183e05991c8cafae387e99ae527e4.png" alt="\mathbf{L}"/> is the lower Cholesky decomposition
+of an <img class="math" src="_images/math/93f761f7fc79f2bec21a2f31c896840d6f36cdc0.png" alt="n\times n"/> matrix <img class="math" src="_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}"/>, and we want to
+calculate the Cholesky decomposition of the <img class="math" src="_images/math/777df8b723731e75c562bc67723097e994191db6.png" alt="(n+m)\times (n+m)"/>
+matrix:</p>
+<div class="math">
+<p><img src="_images/math/9a184154fd236549a22f2f85cdbde4a684f6a8a3.png" alt="\mathbf{A}' = \left(\begin{array}{cc}\mathbf{A}&amp; \mathbf{B}\\
+\mathbf{B}^T &amp; \mathbf{C} \end{array}\right)"/></p>
+</div><p>It can be easily shown that the Cholesky decomposition of
+<img class="math" src="_images/math/300e827d5db49d05c7a3f15df0a18574576a04fe.png" alt="\mathbf{A}'"/> is given by:</p>
+<div class="math">
+<p><img src="_images/math/ab5e854fdee1aa98f04aafacbc76b1af9700f350.png" alt="\mathbf{L}' = \left(\begin{array}{cc}\mathbf{L}&amp; \mathbf{0}\\
+\mathbf{D}_{21} &amp; \mathbf{D}_{22}\end{array}\right)"/></p>
+</div><p>where</p>
+<div class="math">
+<p><img src="_images/math/ec8d84c9efc7d19eac0c409046cbc5baadf03823.png" alt="\mathbf{B} = \mathbf{L} \mathbf{D}_{21}^T"/></p>
+</div><p>and</p>
+<div class="math">
+<p><img src="_images/math/51e45539a873473cd8ac11ebdd9777b016691140.png" alt="\mathbf{D}_{22} \mathbf{D}_{22} = \mathbf{C}
+- \mathbf{D}_{21}\mathbf{D}_{21}^T."/></p>
+</div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>L</strong> (<em>2D numpy array</em>) &#8211; The Cholesky decomposition of the original matrix.</li>
+<li><strong>B</strong> (<em>2D numpy array</em>) &#8211; The <img class="math" src="_images/math/2404aa4ed92595857808d8bb64c19b016052393f.png" alt="n\times m"/> upper right part of the new matrix.</li>
+<li><strong>C</strong> (<em>2D numpy array</em>) &#8211; The <img class="math" src="_images/math/b14bc3643f1284db09548c8934785923dfebaad2.png" alt="m\times m"/> bottom diagonal part of the new matrix.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The lower Cholesky decomposition of the new matrix.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">2D numpy array</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Here is an example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">best.linalg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>\
+<span class="gp">... </span>                  <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="n">A_new</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">:]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">A_new</span><span class="p">[</span><span class="mi">3</span><span class="p">:,</span> <span class="mi">3</span><span class="p">:]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">L_new</span> <span class="o">=</span> <span class="n">best</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">update_cholesky</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>to be compared with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">L_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">A_new</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="best.linalg.update_cholesky_linear_system">
+<tt class="descclassname">best.linalg.</tt><tt class="descname">update_cholesky_linear_system</tt><big>(</big><em>x</em>, <em>L_new</em>, <em>z</em><big>)</big><a class="headerlink" href="#best.linalg.update_cholesky_linear_system" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the solution of Cholesky-solved linear system.</p>
+<p>Assume that originally we had an <img class="math" src="_images/math/93f761f7fc79f2bec21a2f31c896840d6f36cdc0.png" alt="n\times n"/> lower triangular
+matrix <img class="math" src="_images/math/f36a69e6a3b183e05991c8cafae387e99ae527e4.png" alt="\mathbf{L}"/> and that we have already solved the linear
+system:</p>
+<div class="math">
+<p><img src="_images/math/feb0ffc9818b81e7a9d80deb6ed882c0678a8863.png" alt="\mathbf{L} \mathbf{x} = \mathbf{y},"/></p>
+</div><p>Now, we wish to solve the linear system:</p>
+<div class="math">
+<p><img src="_images/math/0024df2e8c64cf78d26b415573eb29a775a0d075.png" alt="\mathbf{L}'\mathbf{x}' = \mathbf{y}',"/></p>
+</div><p>where <img class="math" src="_images/math/f36a69e6a3b183e05991c8cafae387e99ae527e4.png" alt="\mathbf{L}"/> is again lower triangular matrix whose
+top <img class="math" src="_images/math/c3d38f82f48ef9e81c04d49354293305b0067afc.png" alt="n \times n"/> component is identical to <img class="math" src="_images/math/f36a69e6a3b183e05991c8cafae387e99ae527e4.png" alt="\mathbf{L}"/>
+and <img class="math" src="_images/math/cf0f444fe754ad75a8ffc2fb9c44f6bdcc7b2ac8.png" alt="\mathbf{y}'"/> is <img class="math" src="_images/math/d8de90c74edd40d3ee41dd3b41df0b521807eee7.png" alt="(\mathbf{y}, \mathbf{z})"/>. The
+solution is:</p>
+<div class="math">
+<p><img src="_images/math/327d6a6c55f72a103de5238248bc9b3cf31365b8.png" alt="\mathbf{x}' = (\mathbf{x}, \mathbf{x}_u),"/></p>
+</div><p>where <img class="math" src="_images/math/fb87ace223168d725d1223c1fd42622d1900fed8.png" alt="\mathbf{x}_u"/> is the solution of the triangular system:</p>
+<div class="math">
+<p><img src="_images/math/82c8490c311bec689457c7a36f7a3f45f3cd186a.png" alt="\mathbf{L}_{22}' * \mathbf{x}_u = \mathbf{z} - \mathbf{L}_{21}' \mathbf{x},"/></p>
+</div><p>where <img class="math" src="_images/math/8d22b7ab692b52bf6adabb91b858f933f44631e2.png" alt="\mathbf{L}_{22}'"/> is the lower <img class="math" src="_images/math/b14bc3643f1284db09548c8934785923dfebaad2.png" alt="m\times m"/>
+component of <img class="math" src="_images/math/f6d9219edb72c449662c33f3c779d39c4314d956.png" alt="\mathbf{L}'"/> and <img class="math" src="_images/math/c7d2d81b508eb22a5994597780ea9615d74146ba.png" alt="\mathbf{L}_{21}'"/> is the
+<img class="math" src="_images/math/520df6c71065c91174d0ed0d562ebd3c5980267f.png" alt="m\times n"/> bottom left component of <img class="math" src="_images/math/f6d9219edb72c449662c33f3c779d39c4314d956.png" alt="\mathbf{L}'"/>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>1D or 2D numpy array</em>) &#8211; The solution of the first Cholesky system.</li>
+<li><strong>L_new</strong> (<em>2D numpy array</em>) &#8211; The new Cholesky factor (see <a class="reference internal" href="#best.linalg.update_cholesky" title="best.linalg.update_cholesky"><tt class="xref py py-func docutils literal"><span class="pre">best.linalg.update_cholesky()</span></tt></a>)</li>
+<li><strong>z</strong> (<em>numpy array of the same type as x</em>) &#8211; The new part of <img class="math" src="_images/math/6c382eeb0dad017400c2bb6e32c2d5bdf4002c3e.png" alt="\mathbf{y}"/>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The solution of the linear system.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy array of the same type as x</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Here is an example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="n">A_new</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">:]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">A_new</span><span class="p">[</span><span class="mi">3</span><span class="p">:,</span> <span class="mi">3</span><span class="p">:]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">L_new</span> <span class="o">=</span> <span class="n">best</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">update_cholesky</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">L_new_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">A_new</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x_new</span> <span class="o">=</span> <span class="n">best</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">update_cholesky_linear_system</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">L_new</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and compare it with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x_new_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">L_new_real</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">]))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="generalized-singular-value-decomposition">
+<span id="linalg-gsvd"></span><h2>Generalized Singular Value Decomposition<a class="headerlink" href="#generalized-singular-value-decomposition" title="Permalink to this headline">¶</a></h2>
+<p>Let <img class="math" src="_images/math/959b69f43149b9dc36d48e7fc21e125ece6ec09e.png" alt="A\in\mathbb{R}^{m\times n}"/> and <img class="math" src="_images/math/9be46bcae793dff1a169d6dfdb6c85eeb087c41e.png" alt="B\in\mathbb{R}^{p\times n}"/>.
+The <a class="reference external" href="http://en.wikipedia.org/wiki/Generalized_singular_value_decomposition">Generalized Singular Value Decomposition </a>
+of <img class="math" src="_images/math/1db94db9c0fe064a60b98a0827e461952595a8d8.png" alt="[A B]"/> is such that</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/a9be29e17fe21d273bf1ae6986f1414bda6de565.png" alt="U^T A Q = D_1 [0 R],\;\;V' B Q = D_2 [0 R],"/></p>
+</div></div></blockquote>
+<p>where <img class="math" src="_images/math/34f52fe2209c745a05c1c6e8922aa00f850250d8.png" alt="U, V"/> and <img class="math" src="_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q"/> are orthogonal matrices and
+<img class="math" src="_images/math/bb8868e6cd35757ab92bf2c1f9b75ea5948e1383.png" alt="Z^T"/> is the transpose of <img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/>.
+Let <img class="math" src="_images/math/ba00f5d296dca59c2a2e6b99940a81a8b6b5f358.png" alt="k + l"/> be the effective numerical rank of the matrix
+<img class="math" src="_images/math/458651fb818019f06c428d61d01b231da0d97110.png" alt="\left[A^T B^T\right]^T"/>, then <img class="math" src="_images/math/eff43e84f8a3bcf7b6965f0a3248bc4d3a9d0cd4.png" alt="R"/> is a
+<img class="math" src="_images/math/69d62d2e20784882e2d6a922cb87281f63a85cef.png" alt="(k + l)\times(k + l)"/> non-singular upper triangular matrix,
+<img class="math" src="_images/math/88c7f79185a0b48d33454e85f44b4bfdf81d2420.png" alt="D_1"/> and <img class="math" src="_images/math/4d01cc94a123a0c2b5239d4342be2e6ce7f3fc53.png" alt="D_2"/> are <img class="math" src="_images/math/1d9efccef70cb7c719a6c295ba16677aaf16119e.png" alt="m\times(k+l)"/>
+and <img class="math" src="_images/math/b525564545b10940050357c76a2032bafccf255c.png" alt="p\times(k+l)"/> &#8220;diagonal&#8221; matrices.
+The particular structures of <img class="math" src="_images/math/88c7f79185a0b48d33454e85f44b4bfdf81d2420.png" alt="D_1"/> and <img class="math" src="_images/math/4d01cc94a123a0c2b5239d4342be2e6ce7f3fc53.png" alt="D_2"/> depend
+on the sign of <img class="math" src="_images/math/23d1ecace4423b041a118c5ae561925c214a3157.png" alt="m - k - l"/>. Consult the theory for more details.
+This decomposition is extremely useful in computing the statistics
+required for <tt class="xref py py-class docutils literal"><span class="pre">best.rvm.RelevantVectorMachine</span></tt>.
+Here is a class that interfaces LAPACK&#8217;s
+<a class="reference external" href="http://www.netlib.no/netlib/lapack/double/dggsvd.f">dggsvd</a>:</p>
+<dl class="class">
+<dt id="GeneralizedSVD">
+<em class="property">class </em><tt class="descname">GeneralizedSVD</tt><a class="headerlink" href="#GeneralizedSVD" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class that represents the generalized svd decomposition of A and B.</p>
+<dl class="method">
+<dt id="GeneralizedSVD.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>A</em>, <em>B</em><span class="optional">[</span>, <em>do_U=True</em><span class="optional">[</span>, <em>do_V=True</em><span class="optional">[</span>, <em>do_Q=True</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#GeneralizedSVD.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object and perform the decomposition.</p>
+<p>A copy of <tt class="docutils literal"><span class="pre">A</span></tt> and <tt class="docutils literal"><span class="pre">B</span></tt> will be made.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>A</strong> (<em>2D numpy array</em>) &#8211; A <img class="math" src="_images/math/520df6c71065c91174d0ed0d562ebd3c5980267f.png" alt="m\times n"/> matrix.</li>
+<li><strong>B</strong> (<em>2D numpy array</em>) &#8211; A <img class="math" src="_images/math/f55f30f6676f7268dad73af4622ef0a240506259.png" alt="p\times n"/> matrix.</li>
+<li><strong>do_U</strong> (<em>bool</em>) &#8211; Compute <tt class="docutils literal"><span class="pre">U</span></tt> if <tt class="docutils literal"><span class="pre">True</span></tt>.</li>
+<li><strong>do_V</strong> (<em>bool</em>) &#8211; Compute <tt class="docutils literal"><span class="pre">U</span></tt> if <tt class="docutils literal"><span class="pre">True</span></tt>.</li>
+<li><strong>do_Q</strong> (<em>bool</em>) &#8211; Compute <tt class="docutils literal"><span class="pre">U</span></tt> if <tt class="docutils literal"><span class="pre">True</span></tt>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Do not use the functionality that skips the computation
+of <tt class="docutils literal"><span class="pre">U,</span> <span class="pre">V</span></tt> or <tt class="docutils literal"><span class="pre">Q</span></tt>. It does not work at the moment.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedSVD.A">
+<tt class="descname">A</tt><a class="headerlink" href="#GeneralizedSVD.A" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the final form of the copy of <tt class="docutils literal"><span class="pre">A</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedSVD.B">
+<tt class="descname">B</tt><a class="headerlink" href="#GeneralizedSVD.B" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the final form of the copy of <tt class="docutils literal"><span class="pre">B</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedSVD.alpha">
+<tt class="descname">alpha</tt><a class="headerlink" href="#GeneralizedSVD.alpha" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the vector of singular values of <tt class="docutils literal"><span class="pre">A</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedSVD.beta">
+<tt class="descname">beta</tt><a class="headerlink" href="#GeneralizedSVD.beta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the vector of singular values of <tt class="docutils literal"><span class="pre">B</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedSVD.U">
+<tt class="descname">U</tt><a class="headerlink" href="#GeneralizedSVD.U" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the orthogonal matrix <img class="math" src="_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U"/>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedSVD.V">
+<tt class="descname">V</tt><a class="headerlink" href="#GeneralizedSVD.V" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the orthogonal matrix <img class="math" src="_images/math/12d58aa29201da09d8e620f8698e3a37547f6b4a.png" alt="V"/>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedSVD.Q">
+<tt class="descname">Q</tt><a class="headerlink" href="#GeneralizedSVD.Q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the orthogonal matrix <img class="math" src="_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q"/>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedSVD.m">
+<tt class="descname">m</tt><a class="headerlink" href="#GeneralizedSVD.m" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of rows of <img class="math" src="_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A"/>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedSVD.n">
+<tt class="descname">n</tt><a class="headerlink" href="#GeneralizedSVD.n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of columns of <img class="math" src="_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A"/>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedSVD.p">
+<tt class="descname">p</tt><a class="headerlink" href="#GeneralizedSVD.p" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of rows of <img class="math" src="_images/math/ff5fb3d775862e2123b007eb4373ff6cc1a34d4e.png" alt="B"/>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedSVD.k">
+<tt class="descname">k</tt><a class="headerlink" href="#GeneralizedSVD.k" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get <img class="math" src="_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedSVD.l">
+<tt class="descname">l</tt><a class="headerlink" href="#GeneralizedSVD.l" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get <img class="math" src="_images/math/9b25f8e64b484493fda944d25cad453423041fe6.png" alt="l"/>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedSVD.R">
+<tt class="descname">R</tt><a class="headerlink" href="#GeneralizedSVD.R" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the non-singular, upper triangular matrix <img class="math" src="_images/math/eff43e84f8a3bcf7b6965f0a3248bc4d3a9d0cd4.png" alt="R"/>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedSVD.C">
+<tt class="descname">C</tt><a class="headerlink" href="#GeneralizedSVD.C" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the diagonal <img class="math" src="_images/math/c3355896da590fc491a10150a50416687626d7cc.png" alt="C"/> matrix. See doc of <tt class="docutils literal"><span class="pre">dggsvd</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedSVD.S">
+<tt class="descname">S</tt><a class="headerlink" href="#GeneralizedSVD.S" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the diagonal <img class="math" src="_images/math/ad28c83c99a8fd0dd2e2e594c9d02ee532765a0a.png" alt="S"/> matrix. See doc of <tt class="docutils literal"><span class="pre">ggsvd</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedSVD.D1">
+<tt class="descname">D1</tt><a class="headerlink" href="#GeneralizedSVD.D1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the &#8220;diagonal&#8221; <img class="math" src="_images/math/88c7f79185a0b48d33454e85f44b4bfdf81d2420.png" alt="D_1"/> matrix.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedSVD.D2">
+<tt class="descname">D2</tt><a class="headerlink" href="#GeneralizedSVD.D2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the &#8220;diagonal&#8221; <img class="math" src="_images/math/4d01cc94a123a0c2b5239d4342be2e6ce7f3fc53.png" alt="D_2"/> matrix.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Linear Algebra</a><ul>
+<li><a class="reference internal" href="#manipulating-kronecker-products">Manipulating Kronecker Products</a></li>
+<li><a class="reference internal" href="#generalized-singular-value-decomposition">Generalized Singular Value Decomposition</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="misc.html"
+                        title="previous chapter">Miscellaneous</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="serialization.html"
+                        title="next chapter">Serialization</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/linalg.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="serialization.html" title="Serialization"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="misc.html" title="Miscellaneous"
+             >previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" >Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Ilias Bilionis, Nicholas Zabaras.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

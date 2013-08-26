@@ -1,0 +1,561 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Gaussian Process Regression &mdash; Bayesian Exploration Statistical Toolbox 0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Bayesian Exploration Statistical Toolbox 0 documentation" href="index.html" />
+    <link rel="up" title="Reference Guide" href="reference.html" />
+    <link rel="next" title="Design of Experiments" href="design.html" />
+    <link rel="prev" title="Relevance Vector Machine" href="rvm.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="design.html" title="Design of Experiments"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="rvm.html" title="Relevance Vector Machine"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" accesskey="U">Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-best.gp">
+<span id="gaussian-process-regression"></span><span id="gpr"></span><h1>Gaussian Process Regression<a class="headerlink" href="#module-best.gp" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">note:</th><td class="field-body">The documentation of <a class="reference internal" href="#module-best.gp" title="best.gp: Everything that is related to Gaussian Process Regression."><tt class="xref py py-mod docutils literal"><span class="pre">best.gp</span></tt></a> is incomplete at the moment subject to change in the near future. The package includes lots research details that are not fully documented here. The user is adviced to use only what is discussed in this section and look at the code itself in case he wants to do something more excited. The code is at the moment not in a compete state.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="multi-output-separable-gaussian-process-regression">
+<span id="mgpr"></span><h2>Multi-output Separable Gaussian Process Regression<a class="headerlink" href="#multi-output-separable-gaussian-process-regression" title="Permalink to this headline">¶</a></h2>
+<p>At the moment, <a class="reference internal" href="reference.html#module-best" title="best: The main module of BEST."><tt class="xref py py-mod docutils literal"><span class="pre">best</span></tt></a> does not offer a class for performing simple
+Gaussian process regression (GPR) with 1D outputs.
+Instead it offers a way to do
+multi-output GP regression with a separable covariance function. The
+simple case is a subcase of this more general case. We will not get
+into the mathematical details of GPR. The user is adviced to consult:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://www.gaussianprocess.org/gpml/">Gaussian Processes for Machine Learning</a></li>
+<li><a class="reference external" href="http://www.sciencedirect.com/science/article/pii/S0021999113000417">I. Bilionis, N. Zabaras, B. A. Konomi, and G. Lin. Multi-output separable Gaussian process: Towards an efficient, fully Bayesian paradigm for uncertainty quantification. Journal of Computational Physics, 241:212-239, 2013</a></li>
+</ul>
+</div></blockquote>
+<p>The main class for performing GPR is
+<tt class="xref py py-class docutils literal"><span class="pre">MultioutputGaussianProcess</span></tt>. It can be trained either via
+<a class="reference internal" href="random.html#mcmc"><em>Markov Chain Monte Carlo</em></a> or <a class="reference internal" href="random.html#smc"><em>Sequential Monte Carlo</em></a>. However, knowledge of these topics is not
+required at this point since the object can be trained by itself.
+The current version uses internally a <a class="reference internal" href="cov.html#cov-se"><em>Squared Exponential Covariance</em></a> with nuggets.
+In future versions, we will let the user supply the <a class="reference internal" href="cov.html#cov"><em>Covariance Functions</em></a>.
+Both the length scales of <a class="reference internal" href="cov.html#cov-se"><em>Squared Exponential Covariance</em></a> and the nuggets have
+Exponential prior distributions with parameters that can be specified.
+The mean of the model is assumed to be a <a class="reference internal" href="glm.html#glm"><em>Generalized Linear Model</em></a>. The user
+must provide the design matrix.</p>
+<dl class="class">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess">
+<em class="property">class </em><tt class="descclassname">best.gp.</tt><tt class="descname">MultioutputGaussianProcess</tt><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">best.random.MarkovChainMonteCarlo</span></tt></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.__init__">
+<tt class="descname">__init__</tt><big>(</big><span class="optional">[</span><em>mgp=None</em><span class="optional">[</span>, <em>name='MultioutputGaussianProcess'</em><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mgp</strong> (<a class="reference internal" href="#best.gp.best.gp.MultioutputGaussianProcess" title="best.gp.best.gp.MultioutputGaussianProcess"><tt class="xref py py-class docutils literal"><span class="pre">best.gp.MultioutputGaussianProcess</span></tt></a>) &#8211; If supplied then the object copies all the data from here.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.initialize">
+<tt class="descname">initialize</tt><big>(</big><em>hyp</em><span class="optional">[</span>, <em>eval=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>hyp</strong> (<em>1D numpy array</em>) &#8211; The initial hyper-parameters. It must be a 1D numpy array ordered so that the first k elements correspond to the length scales and the last s to the nuggets. The length scales are ordered so that the first k[0] correspond to the first group of input variables, the following k[1] to the second and so on.</li>
+<li><strong>eval_state</strong> &#8211; A dictionary that contains all the data required to start the MCMC algorithm from the specified hyper-parameters. If not given then these data are initialized from scratch. The correct format of <tt class="docutils literal"><span class="pre">eval_state</span></tt> is the one returned by <a class="reference internal" href="#best.gp.best.gp.MultioutputGaussianProcess.sample" title="best.gp.best.gp.MultioutputGaussianProcess.sample"><tt class="xref py py-func docutils literal"><span class="pre">best.gp.MultioutputGaussianProcess.sample()</span></tt></a>. So, do not try to improvise.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.sample">
+<tt class="descname">sample</tt><big>(</big><em>[x=None[, eval_state=None[,                 return_val_state=False[, steps=1]]]</em><big>)</big><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take samples from the posterior of the hyper-parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> &#8211; The initial state. If not specified, we attemp to use the previous state processed by this class.</li>
+<li><strong>eval_state</strong> &#8211; A dictionary containing the all the data required to initialize the object. Such a state is actually returned by this function if the option <tt class="docutils literal"><span class="pre">return_eval_sate</span></tt> is set to <tt class="docutils literal"><span class="pre">True</span></tt>. If not specified, then everything is calculated from scratch.</li>
+<li><strong>return_eval_state</strong> &#8211; If specified, then the routine returns  the <tt class="docutils literal"><span class="pre">evaluated_state</span></tt> of the sampler, which may be used to restart the MCMC sampling.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The current state of the MCMC (the hyper-parameters) and (optionally if <tt class="docutils literal"><span class="pre">return_eval_state</span></tt>) is set all data required to continue the algorithm.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>self</em>, <em>X</em>, <em>H</em><span class="optional">[</span>, <em>Y=None</em><span class="optional">[</span>, <em>C=None</em><span class="optional">[</span>, <em>compute_covariance=False</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the prediction at a given set of points.</p>
+<p>The result of this function, is basically the predictive
+distribution, encoded in terms of the mean <tt class="docutils literal"><span class="pre">Y</span></tt> and the
+covariance matrix <tt class="docutils literal"><span class="pre">C</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>X</strong> &#8211; The input points.</li>
+<li><strong>H</strong> &#8211; The design matrices.</li>
+<li><strong>Y</strong> &#8211; An array to store the mean. If <tt class="docutils literal"><span class="pre">None</span></tt>, then it is returned.</li>
+<li><strong>C</strong> &#8211; An array to store the covariance. If <tt class="docutils literal"><span class="pre">None</span></tt>, then
+the covariance is not computed or it is returned as specified by the <tt class="docutils literal"><span class="pre">compute_covariance</span></tt> option.</li>
+<li><strong>compute_covariance</strong> &#8211; If <tt class="docutils literal"><span class="pre">C</span></tt> is <tt class="docutils literal"><span class="pre">None</span></tt>, and the flag is set to <tt class="docutils literal"><span class="pre">True</span></tt>, then the covariance is calculated and returned. If <tt class="docutils literal"><span class="pre">C</span></tt> is not <tt class="docutils literal"><span class="pre">None</span></tt>, then it is ignored.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.sample_prediction">
+<tt class="descname">sample_prediction</tt><big>(</big><em>self</em>, <em>X</em>, <em>H</em><span class="optional">[</span>, <em>Y=None</em><span class="optional">[</span>, <em>C=None</em><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.sample_prediction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample from the predictive distribution of the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> &#8211; The input points.</li>
+<li><strong>H</strong> &#8211; The design matrices.</li>
+<li><strong>Y</strong> &#8211; An array to store the mean. If <tt class="docutils literal"><span class="pre">None</span></tt>, then it is returned.</li>
+<li><strong>C</strong> &#8211; An optional array that will store the covariance matrix. If not supplied, it will be allocated. On the output, the incomplete Cholesky decomposition is written on <tt class="docutils literal"><span class="pre">C</span></tt>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">If <tt class="docutils literal"><span class="pre">Y</span></tt> is None, then the sample will be returned. The trace of the covariance normalized by the number of spatial/time inputs and the outputs. This is a measure associated with the uncertainty of the given input point.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">add_data(self, X0, H0, Y0):</tt></dt>
+<dd><p>Add more observations to the data set.</p>
+<p>The routine currently only adds observations pertaining to the first component. Addition to the other components would ruin the Kronecker properties of the matrices.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>X0</strong> &#8211; The input variables.</li>
+<li><strong>H0</strong> &#8211; The design matrix.</li>
+<li><strong>Y0</strong> &#8211; The observations.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.sample_surrogate">
+<tt class="descname">sample_surrogate</tt><big>(</big><em>self</em>, <em>X_design</em>, <em>H_design</em><span class="optional">[</span>, <em>rel_tol=0.1</em><span class="optional">[</span>, <em>abs_tol=1e-3</em><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.sample_surrogate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample a surrogate surface.</p>
+<p>Samples a surrogate surface that can be evaluated analytically. The
+procedure adds the design point with the maximum uncertainty defined
+by Eq. (19) of the paper and assuming a uniform input distribution
+until:</p>
+<blockquote>
+<div><ul class="simple">
+<li>we run of design points,</li>
+<li>or the &lt;global&gt; uncertainty satisfies a stopping criterion.</li>
+</ul>
+</div></blockquote>
+<p>The global uncertainty is defined to be the average uncertainty of
+all design points. The stopping criterion is implemented as follows:</p>
+<blockquote>
+<div>STOP if <tt class="docutils literal"><span class="pre">global</span> <span class="pre">uncertainty</span> <span class="pre">&lt;</span> <span class="pre">rel_tol</span> <span class="pre">*</span> <span class="pre">init_unc</span> <span class="pre">or</span> <span class="pre">&lt;</span> <span class="pre">abs_tol</span></tt>,</div></blockquote>
+<p>where init_unc is the initial uncertainty and rel_tol is a relative
+reduction and <tt class="docutils literal"><span class="pre">abs_tol</span></tt> is the absolute uncertainty we are willing to
+accept.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>X_design</strong> &#8211; The design points to be used. This
+should be as dense as is computationally
+feasible.</li>
+<li><strong>rel_tol</strong> &#8211; We stop if the current uncertainty
+is rel_tol times the initial uncertainty.</li>
+<li><strong>abs_tol</strong> &#8211; We stop if the current uncertainty is
+less than abs_tol.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.evaluate_sparse">
+<tt class="descname">evaluate_sparse</tt><big>(</big><em>self</em>, <em>X</em>, <em>H</em><span class="optional">[</span>, <em>compute_covariance=False</em><span class="optional">[</span>, <em>sp_tol=0.1</em><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.evaluate_sparse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the prediction at a given set of points.</p>
+<p>Same as
+<a class="reference internal" href="#best.gp.best.gp.MultioutputGaussianProcess.__call__" title="best.gp.best.gp.MultioutputGaussianProcess.__call__"><tt class="xref py py-func docutils literal"><span class="pre">best.gp.MultioutputGaussianProcess.__call__()</span></tt></a>
+but we attemp to use sparse matrices.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.sample_g">
+<tt class="descname">sample_g</tt><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.sample_g" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set/See if the nuggets are going to be sampled.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.sample_r">
+<tt class="descname">sample_r</tt><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.sample_r" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set/See if the length scales are going to be sampled.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.log_like">
+<tt class="descname">log_like</tt><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.log_like" title="Permalink to this definition">¶</a></dt>
+<dd><p>The logarithm of the likelihood of the current state.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.cov">
+<tt class="descname">cov</tt><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.cov" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the covariance function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.num_mcmc">
+<tt class="descname">num_mcmc</tt><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.num_mcmc" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of MCMC steps per Gibbs setp.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.gamma">
+<tt class="descname">gamma</tt><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.gamma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the prior parameters for the length scales.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.delta">
+<tt class="descname">delta</tt><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.delta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the prior parameters for the nuggets.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.sigma_r">
+<tt class="descname">sigma_r</tt><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.sigma_r" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the proposal step for the length scales.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.sigma_g">
+<tt class="descname">sigma_g</tt><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.sigma_g" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the proposal step for the nuggets.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.g">
+<tt class="descname">g</tt><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.g" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the current nuggets.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.r">
+<tt class="descname">r</tt><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.r" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the current length scales.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.Sigma">
+<tt class="descname">Sigma</tt><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.Sigma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the output-correlation matrix.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.log_post_lk">
+<tt class="descname">log_post_lk</tt><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.log_post_lk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the logarithm of the posterior likelihood.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gp.best.gp.MultioutputGaussianProcess.acceptance_rate">
+<tt class="descname">acceptance_rate</tt><a class="headerlink" href="#best.gp.best.gp.MultioutputGaussianProcess.acceptance_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the MCMC acceptance rate.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="a-simple-1d-example">
+<h2>A simple 1D example<a class="headerlink" href="#a-simple-1d-example" title="Permalink to this headline">¶</a></h2>
+<p>Typically, you would like to pick the hyper-parameters, observe the
+convergence of <a class="reference internal" href="random.html#mcmc"><em>Markov Chain Monte Carlo</em></a> or even use <a class="reference internal" href="random.html#smc"><em>Sequential Monte Carlo</em></a> to train the model.
+However, here is the simplest possible case we could run that works
+just fine with the default parameters:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">best.gp</span> <span class="kn">import</span> <span class="n">MultioutputGaussianProcess</span>
+<span class="c"># Number of observations</span>
+<span class="n">num_obs</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="c"># The noise we will add to the data (std)</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="mf">1e-6</span>
+<span class="c"># Draw the observed input points randomly</span>
+<span class="n">X</span> <span class="o">=</span> <span class="o">-</span><span class="mf">10.</span> <span class="o">+</span> <span class="mf">20.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_obs</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+<span class="c"># Draw the observations</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">X</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">)</span> <span class="o">+</span> <span class="n">noise</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="c"># Construct the design matrix</span>
+<span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="c"># Construct an MGP object</span>
+<span class="n">gp</span> <span class="o">=</span> <span class="n">MultioutputGaussianProcess</span><span class="p">()</span>
+<span class="n">gp</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+<span class="c"># Pick the hyper-parameters (length scales, nuggets)</span>
+<span class="n">hyp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">])</span>
+<span class="n">gp</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">hyp</span><span class="p">)</span>
+<span class="c"># Run 2000 MCMC steps</span>
+<span class="n">gp</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+<span class="c"># Get a function object (subject to change in the future)</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">gp</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="s">&#39;+&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">fx</span><span class="p">,</span> <span class="n">Cx</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">compute_covariance</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">fx</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">),</span> <span class="s">&#39;r&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">s2</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">Cx</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">fx</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">fx</span> <span class="o">+</span> <span class="n">s2</span><span class="p">,</span> <span class="s">&#39;g&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">fx</span> <span class="o">-</span> <span class="n">s2</span><span class="p">,</span> <span class="s">&#39;g&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You should see something like the following figure:</p>
+<blockquote>
+<div><div class="figure align-center">
+<img alt="_images/gp_1d.png" src="_images/gp_1d.png" />
+<p class="caption">The crosses are the observed data points. The red line is the
+true function from which the data are drawn. The blue line
+is the mean of the GPR prediction and the green lines indicated
+the 95% confidence intervals.</p>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="treed-gaussian-process-regression">
+<span id="tgpr"></span><h2>Treed Gaussian Process Regression<a class="headerlink" href="#treed-gaussian-process-regression" title="Permalink to this headline">¶</a></h2>
+<p>The class <tt class="xref py py-class docutils literal"><span class="pre">TreedMultioutputGaussianProcess</span></tt> implements an
+extension of the model we developed in (PAPER REFERENCE). This model
+is not trained directly on data, but it requires a
+<tt class="xref py py-class docutils literal"><span class="pre">best.maps.Solver</span></tt> object. It is used to construct a surrogate
+of the solver.</p>
+</div>
+<div class="section" id="simple-treed-gaussian-process-regression-example">
+<h2>Simple Treed Gaussian Process Regression Example<a class="headerlink" href="#simple-treed-gaussian-process-regression-example" title="Permalink to this headline">¶</a></h2>
+<p>The following demo can be found in <tt class="file docutils literal"><span class="pre">best/demo/test_treed_gp.py</span></tt>.
+It learns the output of a dynamical system with a discontinuity with
+respect to the initial conditions (see <tt class="xref py py-class docutils literal"><span class="pre">examples.ko.KOSolver</span></tt>).
+It uses active learning (Bayesian Experimental Design) to select
+the observed inputs:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">fix_path</span>
+
+
+<span class="kn">from</span> <span class="nn">examples.ko</span> <span class="kn">import</span> <span class="n">KOSolver</span>
+<span class="kn">from</span> <span class="nn">best.gp</span> <span class="kn">import</span> <span class="n">TreedMultioutputGaussianProcess</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c"># Initialize the solver</span>
+    <span class="n">solver</span> <span class="o">=</span> <span class="n">KOSolver</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">n_t</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="c"># Initialize the treed GP</span>
+    <span class="n">tmgp</span> <span class="o">=</span> <span class="n">TreedMultioutputGaussianProcess</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">solver</span><span class="p">)</span>
+    <span class="n">tmgp</span><span class="o">.</span><span class="n">num_xi_init</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">tmgp</span><span class="o">.</span><span class="n">num_xi_test</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">tmgp</span><span class="o">.</span><span class="n">num_max</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">tmgp</span><span class="o">.</span><span class="n">num_elm_max</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">tmgp</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">tmgp</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">sample_g</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">tmgp</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">num_mcmc</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">tmgp</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">num_init</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="c"># Initialial hyper-parameters</span>
+    <span class="n">init_hyp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">.</span><span class="mi">1</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1e-1</span><span class="p">,</span> <span class="mf">1e-1</span><span class="p">])</span>
+    <span class="n">tmgp</span><span class="o">.</span><span class="n">init_hyp</span> <span class="o">=</span> <span class="n">init_hyp</span>
+    <span class="n">tmgp</span><span class="o">.</span><span class="n">num_mcmc</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="c"># Train</span>
+    <span class="n">tmgp</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="c"># Print the tree</span>
+    <span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">tmgp</span><span class="o">.</span><span class="n">tree</span><span class="p">)</span>
+    <span class="c"># A fine scale solver to test our predictions</span>
+    <span class="n">fine_solver</span> <span class="o">=</span> <span class="n">KOSolver</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">solver</span><span class="o">.</span><span class="n">k_of</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n_t</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+    <span class="c"># Make predictions</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="n">xi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">solver</span><span class="o">.</span><span class="n">k_of</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="p">[</span><span class="n">xi</span><span class="p">]</span> <span class="o">+</span> <span class="n">fine_solver</span><span class="o">.</span><span class="n">X_fixed</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="n">tmgp</span><span class="o">.</span><span class="n">mean_model</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="p">])</span>
+        <span class="n">Yp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">solver</span><span class="o">.</span><span class="n">q</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="s">&#39;F&#39;</span><span class="p">)</span>
+        <span class="n">Vp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">solver</span><span class="o">.</span><span class="n">q</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="s">&#39;F&#39;</span><span class="p">)</span>
+        <span class="n">tmgp</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">Yp</span><span class="p">,</span> <span class="n">Vp</span><span class="p">)</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">fine_solver</span><span class="p">(</span><span class="n">xi</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fine_solver</span><span class="o">.</span><span class="n">X_fixed</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Y</span><span class="p">)</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Vp</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">solver</span><span class="o">.</span><span class="n">q</span><span class="p">):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">fine_solver</span><span class="o">.</span><span class="n">X_fixed</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Yp</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">yerr</span><span class="o">=</span><span class="n">E</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The plots you will see will look like the following:</p>
+<div class="figure align-center">
+<img alt="_images/tgp_ko.png" src="_images/tgp_ko.png" />
+<p class="caption">The prediction of the treed Gaussian Process model for the response
+of the dynamical system as a function of time with error bars. This
+the prediction on a random input sample not used in the training
+data. The total number of observations was restricted to 100.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Gaussian Process Regression</a><ul>
+<li><a class="reference internal" href="#multi-output-separable-gaussian-process-regression">Multi-output Separable Gaussian Process Regression</a></li>
+<li><a class="reference internal" href="#a-simple-1d-example">A simple 1D example</a></li>
+<li><a class="reference internal" href="#treed-gaussian-process-regression">Treed Gaussian Process Regression</a></li>
+<li><a class="reference internal" href="#simple-treed-gaussian-process-regression-example">Simple Treed Gaussian Process Regression Example</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="rvm.html"
+                        title="previous chapter">Relevance Vector Machine</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="design.html"
+                        title="next chapter">Design of Experiments</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/gp.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="design.html" title="Design of Experiments"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="rvm.html" title="Relevance Vector Machine"
+             >previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" >Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Ilias Bilionis, Nicholas Zabaras.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,358 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Relevance Vector Machine &mdash; Bayesian Exploration Statistical Toolbox 0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Bayesian Exploration Statistical Toolbox 0 documentation" href="index.html" />
+    <link rel="up" title="Reference Guide" href="reference.html" />
+    <link rel="next" title="Gaussian Process Regression" href="gp.html" />
+    <link rel="prev" title="Generalized Linear Model" href="glm.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="gp.html" title="Gaussian Process Regression"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="glm.html" title="Generalized Linear Model"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" accesskey="U">Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-best.rvm">
+<span id="relevance-vector-machine"></span><span id="rvm"></span><h1>Relevance Vector Machine<a class="headerlink" href="#module-best.rvm" title="Permalink to this headline">¶</a></h1>
+<p>Relevance Vector Machine (RVM) trains a <a class="reference internal" href="glm.html#glm"><em>Generalized Linear Model</em></a>
+yielding sparse representation (i.e., many of the basis functions are
+not used at the end). The implementation in BEST is the
+Multi-dimensional Relevance Vector Machine (MRVM) as described in
+our <a class="reference external" href="http://epubs.siam.org/doi/pdf/10.1137/120861345">paper</a>.
+It uses the <a class="reference internal" href="linalg.html#linalg-gsvd"><em>Generalized Singular Value Decomposition</em></a> to train the
+model, which is considerably more stable than relying to Cholesky
+decompositions. This is achieved via the
+<tt class="xref py py-class docutils literal"><span class="pre">best.linalg.GeneralizedSVD</span></tt> class.</p>
+<p>As already said, we start with a <a class="reference internal" href="glm.html#glm"><em>Generalized Linear Model</em></a> (see <a href="#equation-glm">(1)</a>):</p>
+<blockquote>
+<div><div class="math" id="equation-glm">
+<p><span class="eqno">(1)</span><img src="_images/math/bc15581ff47db43751eb85a484ea2b1a4e76c125.png" alt="\mathbf{f}(\mathbf{x}; \mathbf{W}) =
+\boldsymbol{\phi}(\mathbf{x})^T\mathbf{W},"/></p>
+</div></div></blockquote>
+<dl class="docutils">
+<dt>where</dt>
+<dd><div class="first last math" id="equation-basis">
+<p><span class="eqno">(2)</span><img src="_images/math/6bb8b7c1a9c266c554fb19357d0054c1ab9ff43e.png" alt="\boldsymbol{\phi}(\mathbf{x}) =
+\left(\phi_1(\mathbf{x}), \dots, \phi_m(\mathbf{x})\right)"/></p>
+</div></dd>
+</dl>
+<p>forms a <a class="reference internal" href="maps.html#map-basis"><em>Basis</em></a>. The <a class="reference internal" href="#rvm"><em>Relevance Vector Machine</em></a> trains the model based on a set
+of <img class="math" src="_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> (noisy) observations of a <img class="math" src="_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/> dimensional process:</p>
+<blockquote>
+<div><div class="math" id="equation-data">
+<p><span class="eqno">(3)</span><img src="_images/math/586b293c906eef9f12dd77bd06b16ab2c6b46d0a.png" alt="\mathcal{D} = \left\{\left(\mathbf{x}^{(i)},
+                      \mathbf{y}^{(i)}\right) \right\}_{i=1}^n."/></p>
+</div></div></blockquote>
+<p>It assigns a Gaussian noise with precision (inverse noise) <img class="math" src="_images/math/fdb63b9e51abe6bbb16acfb5d7b773ddbb5bf4a8.png" alt="\beta"/>
+to the observations (this defines the likelihood) and the following
+prior on the weight matrix <img class="math" src="_images/math/3d297b08b2be3554447c92b5982773d47c0de100.png" alt="\mathbf{W}"/>:</p>
+<blockquote>
+<div><div class="math" id="equation-joint-prior">
+<p><span class="eqno">(4)</span><img src="_images/math/7fc4479fef70b20416f93028a9b2399dcdb52984.png" alt="p(\mathbf{W}|\boldsymbol{\alpha}) =
+\prod_{j=1}^qp(\mathbf{W}_j|\boldsymbol{\alpha}),"/></p>
+</div><div class="math" id="equation-joint-prior-2">
+<p><span class="eqno">(5)</span><img src="_images/math/06e7a440d254ad3cec942090d79b109989a4145b.png" alt="p(\mathbf{W}_j | \boldsymbol{\alpha}) =
+\prod_{i=1}^mp(W_{ij} | \alpha_i),"/></p>
+</div><div class="math" id="equation-rvm-prior">
+<p><span class="eqno">(6)</span><img src="_images/math/634e920f107a7bdc907d6cac351578155062762a.png" alt="p(W_{ij} | \alpha_i) \propto
+\exp\left\{-\alpha_{i}W_{ij}^2\right\},"/></p>
+</div></div></blockquote>
+<p>where <img class="math" src="_images/math/664bb0632f8b399c128c0ee39012aa694725f414.png" alt="\boldsymbol{\alpha}"/> is a set of <img class="math" src="_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> hyper-parameters,
+one for each basis function.
+The characteristic of <a href="#equation-rvm-prior">(6)</a> is that as if
+<img class="math" src="_images/math/542c17212b27b089eb2c5247dc9d13378949db37.png" alt="\alpha_i = \infty"/>, then the basis function
+<img class="math" src="_images/math/11d03852a8f435ffb55adf8dc7e92d9bd7ec0ca8.png" alt="\phi_i(\cdot)"/> can be removed for the model.
+The parameters <img class="math" src="_images/math/eb5f4ef7fcdb6e385431767ce66c7a720e6f95e5.png" alt="(\boldsymbol{\alpha}, \beta)"/> are found by
+maximizing the evidence of the data <img class="math" src="_images/math/36eee9eaded3a8c323d85046041a94a032ded392.png" alt="\mathcal{D}"/>.</p>
+<p>The model is realized via the class
+<a class="reference internal" href="#best.rvm.best.rvm.RelevanceVectorMachine" title="best.rvm.best.rvm.RelevanceVectorMachine"><tt class="xref py py-class docutils literal"><span class="pre">best.rvm.RelevanceVectorMachine</span></tt></a> which is described below:</p>
+<dl class="class">
+<dt id="best.rvm.best.rvm.RelevanceVectorMachine">
+<em class="property">class </em><tt class="descclassname">best.rvm.</tt><tt class="descname">RelevanceVectorMachine</tt><a class="headerlink" href="#best.rvm.best.rvm.RelevanceVectorMachine" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Relevance Vector Machine Class.</p>
+<dl class="method">
+<dt id="best.rvm.best.rvm.RelevanceVectorMachine.__init__">
+<tt class="descname">__init__</tt><big>(</big><big>)</big><a class="headerlink" href="#best.rvm.best.rvm.RelevanceVectorMachine.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct the object. It does nothing.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.rvm.best.rvm.RelevanceVectorMachine.set_data">
+<tt class="descname">set_data</tt><big>(</big><em>PHI</em>, <em>Y</em><big>)</big><a class="headerlink" href="#best.rvm.best.rvm.RelevanceVectorMachine.set_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the data <img class="math" src="_images/math/36eee9eaded3a8c323d85046041a94a032ded392.png" alt="\mathcal{D}"/> to the model.</p>
+<p><tt class="docutils literal"><span class="pre">PHI</span></tt> is the design matrix
+<img class="math" src="_images/math/509f5136716c2f03a5a7225cd7fb8e283ff38538.png" alt="\boldsymbol{\Phi}\in\mathbb{R}^{n\times m}"/>, where:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/f0664b1f8b42d79375740ab308b049f56afc629c.png" alt="\Phi_{ij} = \phi_j\left(\mathbf{x}^{(i)} \right),"/></p>
+</div></div></blockquote>
+<p>and <tt class="docutils literal"><span class="pre">Y</span></tt> is the data matrix
+<img class="math" src="_images/math/b98b1c63cba4f2775214e24c6f5ed6cb4beb210c.png" alt="\mathbf{Y}\in\mathbb{R}^{n\times q}"/> in which
+<img class="math" src="_images/math/eb58482e0042e2493ea08aba2d3306b13447ab3a.png" alt="Y_{ij}"/> is the <img class="math" src="_images/math/8122aa89ea6e80784c6513d22787ad86e36ad0cc.png" alt="j"/>-th dimension of the output
+of the <img class="math" src="_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i"/>-th observed input point.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>PHI</strong> (<em>2D numpy array</em>) &#8211; The design matrix.</li>
+<li><strong>Y</strong> (<em>2D numpy array</em>) &#8211; The data matrix.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.rvm.best.rvm.RelevanceVectorMachine.initialize">
+<tt class="descname">initialize</tt><big>(</big><span class="optional">[</span><em>beta=None</em><span class="optional">[</span>, <em>relevant=None</em><span class="optional">[</span>, <em>alpha=None</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.rvm.best.rvm.RelevanceVectorMachine.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the algorithm.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>beta</strong> (<em>float</em>) &#8211; The initial beta. If <tt class="docutils literal"><span class="pre">None</span></tt>, then we use the inverse of the observed variance of the data.</li>
+<li><strong>relevant</strong> (<em>array of int</em>) &#8211; A list of the basis function with which we wish to start the algorithm. For example, if <tt class="docutils literal"><span class="pre">relevant</span> <span class="pre">=</span> <span class="pre">[2,</span> <span class="pre">5,</span> <span class="pre">1]</span></tt>, then basis functions 2, 5 and 1 are in the model. The rest have a <img class="math" src="_images/math/10f32377ac67d94f764f12a15ea987e88c85d3e1.png" alt="\alpha"/> that is equal to <img class="math" src="_images/math/b671f1bb7e4ee86584347d5d22f1dc8abdb5bef2.png" alt="\infty"/>. If <tt class="docutils literal"><span class="pre">None</span></tt>, then the algorithm will start with a single basis function, the one whose inclusion maximizes the evidence.</li>
+<li><strong>alpha</strong> (<em>1D numpy array.</em>) &#8211; The values of the <img class="math" src="_images/math/10f32377ac67d94f764f12a15ea987e88c85d3e1.png" alt="\alpha"/>&#8216;s of the initial relevant basis functions specified by <tt class="docutils literal"><span class="pre">relevant</span></tt>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.rvm.best.rvm.RelevanceVectorMachine.train">
+<tt class="descname">train</tt><big>(</big><span class="optional">[</span><em>max_it=10000</em><span class="optional">[</span>, <em>tol=1e-6</em><span class="optional">[</span>, <em>verbose=False</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.rvm.best.rvm.RelevanceVectorMachine.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>max_it</strong> (<em>int</em>) &#8211; The maximum number of iterations of the algorithm.</li>
+<li><strong>tol</strong> (<em>float</em>) &#8211; The convergence tolerance. Convergence is monitored by looking at the change between consecutive <img class="math" src="_images/math/10f32377ac67d94f764f12a15ea987e88c85d3e1.png" alt="\alpha"/>&#8216;s.</li>
+<li><strong>verbose</strong> (<em>bool</em>) &#8211; Print something or not. The default is <tt class="docutils literal"><span class="pre">False</span></tt>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.rvm.best.rvm.RelevanceVectorMachine.get_generalized_linear_model">
+<tt class="descname">get_generalized_linear_model</tt><big>(</big><em>basis</em><big>)</big><a class="headerlink" href="#best.rvm.best.rvm.RelevanceVectorMachine.get_generalized_linear_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a <a class="reference internal" href="glm.html#glm"><em>Generalized Linear Model</em></a> from the result of the RVM algorithm.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>basis</strong> (<tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt>.) &#8211; The basis you used to construct the design matrix <tt class="docutils literal"><span class="pre">PHI</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.rvm.best.rvm.RelevanceVectorMachine.__str__">
+<tt class="descname">__str__</tt><big>(</big><big>)</big><a class="headerlink" href="#best.rvm.best.rvm.RelevanceVectorMachine.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a string representation of the object.</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="a-simple-1d-example">
+<h2>A Simple 1D Example<a class="headerlink" href="#a-simple-1d-example" title="Permalink to this headline">¶</a></h2>
+<p>Here we demonstrate how the model can be used with a simple 1D example.
+We first start with a basis based on Squared Exponential Covariance
+(see <a class="reference internal" href="cov.html#cov-se"><em>Squared Exponential Covariance</em></a>) constructed as described in <a class="reference internal" href="cov.html#cov-basis"><em>Constructing Basis from Covariance Functions</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">best</span>
+<span class="c"># Number of observations</span>
+<span class="n">num_obs</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="c"># The noise we will add to the data (std)</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="c"># Draw the observed input points randomly</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_obs</span><span class="p">)</span>
+<span class="c"># Draw the observations</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">X</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">)</span> <span class="o">+</span> <span class="n">noise</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="c"># The covariance function</span>
+<span class="n">k</span> <span class="o">=</span> <span class="n">best</span><span class="o">.</span><span class="n">maps</span><span class="o">.</span><span class="n">CovarianceFunctionSE</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="c"># Construct the basis</span>
+<span class="n">phi</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">to_basis</span><span class="p">(</span><span class="n">hyp</span><span class="o">=</span><span class="mf">2.</span><span class="p">)</span>
+<span class="c"># Construct the design matrix</span>
+<span class="n">PHI</span> <span class="o">=</span> <span class="n">phi</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="c"># Use RVM on the data</span>
+<span class="n">rvm</span> <span class="o">=</span> <span class="n">best</span><span class="o">.</span><span class="n">rvm</span><span class="o">.</span><span class="n">RelevanceVectorMachine</span><span class="p">()</span>
+<span class="n">rvm</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">PHI</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+<span class="n">rvm</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+<span class="n">rvm</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">rvm</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will result in an output similar to:</p>
+<div class="highlight-python"><pre>Relevant Vector Machine
+Y shape: (100, 1)
+PHI shape: (100, 100)
+Relevant: [ 0 98 59 16 58 65  2 57 68 84 36 93 55 83  3 45]
+Alpha: [  1.75921502   0.04998139   4.35007167   1.87751651   1.12641185
+          0.10809376   0.72398214  19.07217688   0.23016274   0.02142343
+          0.01976957   2.5164594    1.55757032   0.05801807   0.06522873
+          0.61174863]
+Beta: 209.805579349</pre>
+</div>
+<p>Now, you may get a <a class="reference internal" href="glm.html#glm"><em>Generalized Linear Model</em></a> from the model and plot its mean and
+predictive variance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span> <span class="o">=</span> <span class="n">rvm</span><span class="o">.</span><span class="n">get_generalized_lineal_model</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="s">&#39;+&#39;</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">fx</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">fx</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">),</span> <span class="s">&#39;r&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="c"># Plot +- 2 standard deviations</span>
+<span class="n">s2</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_predictive_variance</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">fx</span> <span class="o">+</span> <span class="n">s2</span><span class="p">,</span> <span class="s">&#39;g&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">fx</span> <span class="o">-</span> <span class="n">s2</span><span class="p">,</span> <span class="s">&#39;g&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">rvm</span><span class="o">.</span><span class="n">relevant</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">rvm</span><span class="o">.</span><span class="n">relevant</span><span class="p">],</span> <span class="s">&#39;om&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You should see something like:</p>
+<div class="figure align-center">
+<img alt="_images/rvm_se.png" src="_images/rvm_se.png" />
+<p class="caption">The fit of RVM on the sample problem with SE basis centered on the
+data. Thre magenta disks show the relevant vectors that are finally
+kept. The blue symbols are the observed data. The red line is the
+true function. The blue line is predictive mean of the <a class="reference internal" href="glm.html#glm"><em>Generalized Linear Model</em></a>.
+The green lines are the borders of the 95% confidence interval
+about the mean.</p>
+</div>
+<p>Now, let&#8217;s do the same problem with a <a class="reference internal" href="gpc.html#gpc"><em>Generalized Polynomial Chaos</em></a> basis, orthogonal
+with respect to a uniform distribution on <img class="math" src="_images/math/6064c48dbe7569d0efa8663bd6c9eb7d6fc62846.png" alt="[-10, 10]"/> and
+of total degree 20:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">phi_gpc</span> <span class="o">=</span> <span class="n">best</span><span class="o">.</span><span class="n">gpc</span><span class="o">.</span><span class="n">OrthogonalPolynomials</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="n">left</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">PHI_gpc</span> <span class="o">=</span> <span class="n">phi_gpc</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">rvm</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">PHI_gpc</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+<span class="n">rvm</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+<span class="n">rvm</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<span class="n">f_gpc</span> <span class="o">=</span> <span class="n">rvm</span><span class="o">.</span><span class="n">get_generalized_linear_model</span><span class="p">(</span><span class="n">phi_gpc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Relevance Vector Machine</a><ul>
+<li><a class="reference internal" href="#a-simple-1d-example">A Simple 1D Example</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="glm.html"
+                        title="previous chapter">Generalized Linear Model</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="gp.html"
+                        title="next chapter">Gaussian Process Regression</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/rvm.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="gp.html" title="Gaussian Process Regression"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="glm.html" title="Generalized Linear Model"
+             >previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" >Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Ilias Bilionis, Nicholas Zabaras.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

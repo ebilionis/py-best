@@ -1,0 +1,189 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Basic Objects &mdash; Bayesian Exploration Statistical Toolbox 0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Bayesian Exploration Statistical Toolbox 0 documentation" href="index.html" />
+    <link rel="up" title="Reference Guide" href="reference.html" />
+    <link rel="next" title="Miscellaneous" href="misc.html" />
+    <link rel="prev" title="Core" href="core.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="misc.html" title="Miscellaneous"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="core.html" title="Core"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" accesskey="U">Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="basic-objects">
+<span id="basic"></span><h1>Basic Objects<a class="headerlink" href="#basic-objects" title="Permalink to this headline">¶</a></h1>
+<p>There are a few things that every <a class="reference internal" href="reference.html#module-best" title="best: The main module of BEST."><tt class="xref py py-mod docutils literal"><span class="pre">best</span></tt></a> object needs to do.
+Most importantly we would like to be able to recognize that they are
+indeede <a class="reference internal" href="reference.html#module-best" title="best: The main module of BEST."><tt class="xref py py-mod docutils literal"><span class="pre">best</span></tt></a> objects.
+In addition, we want them to have a name that can be assinged at will
+and to be able to give a string representation of themselves.
+These requirements are met by forcing every object in <a class="reference internal" href="reference.html#module-best" title="best: The main module of BEST."><tt class="xref py py-mod docutils literal"><span class="pre">best</span></tt></a>
+to be a child of the class <a class="reference internal" href="#best.Object" title="best.Object"><tt class="xref py py-class docutils literal"><span class="pre">best.Object</span></tt></a>:</p>
+<dl class="class">
+<dt id="best.Object">
+<em class="property">class </em><tt class="descclassname">best.</tt><tt class="descname">Object</tt><a class="headerlink" href="#best.Object" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>A class that all <a class="reference internal" href="reference.html#module-best" title="best: The main module of BEST."><tt class="xref py py-mod docutils literal"><span class="pre">best</span></tt></a> objects should inherit.</p>
+<dl class="method">
+<dt id="best.Object.__init__">
+<tt class="descname">__init__</tt><big>(</big><span class="optional">[</span><em>name='Best Object'</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.Object.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<tt class="docutils literal"><span class="pre">str</span></tt>) &#8211; A name for the object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.Object.name">
+<tt class="descname">name</tt><a class="headerlink" href="#best.Object.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get/set the name of the object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.Object._to_string">
+<tt class="descname">_to_string</tt><big>(</big><em>pad</em><big>)</big><a class="headerlink" href="#best.Object._to_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a string representation of the object padding the
+beginning with <tt class="docutils literal"><span class="pre">pad</span></tt>.</p>
+<p>This can and should be overloaded by children.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pad</strong> (<tt class="docutils literal"><span class="pre">str</span></tt>) &#8211; The padding we will use.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A string representation of the object.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="docutils literal"><span class="pre">str</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.Object.__str__">
+<tt class="descname">__str__</tt><big>(</big><big>)</big><a class="headerlink" href="#best.Object.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a string representation of the object. It is equivalent
+to calling <tt class="docutils literal"><span class="pre">self._to_string('')</span></tt>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="core.html"
+                        title="previous chapter">Core</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="misc.html"
+                        title="next chapter">Miscellaneous</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/basic.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="misc.html" title="Miscellaneous"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="core.html" title="Core"
+             >previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" >Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Ilias Bilionis, Nicholas Zabaras.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

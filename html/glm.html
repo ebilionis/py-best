@@ -1,0 +1,317 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Generalized Linear Model &mdash; Bayesian Exploration Statistical Toolbox 0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Bayesian Exploration Statistical Toolbox 0 documentation" href="index.html" />
+    <link rel="up" title="Reference Guide" href="reference.html" />
+    <link rel="next" title="Relevance Vector Machine" href="rvm.html" />
+    <link rel="prev" title="Generalized Polynomial Chaos" href="gpc.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="rvm.html" title="Relevance Vector Machine"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="gpc.html" title="Generalized Polynomial Chaos"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" accesskey="U">Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="generalized-linear-model">
+<span id="glm"></span><h1>Generalized Linear Model<a class="headerlink" href="#generalized-linear-model" title="Permalink to this headline">¶</a></h1>
+<p>Let <img class="math" src="_images/math/8ceb16559e5941a9633ba9f43c529d3d07dae038.png" alt="\left\{\phi_i(\cdot)\right\}_{i=1}^m"/> be a set of basis
+functions (see <a class="reference internal" href="maps.html#map-basis"><em>Basis</em></a>). We think of a <strong>Generalized Linear Model</strong> (GLM) is a
+parametrization of a subspace of the functions
+<img class="math" src="_images/math/ce298bfc25c71088751d595b4f93fdb2244f64b9.png" alt="\mathbf{f}:\mathbb{R}^d\rightarrow \mathbb{R}^q"/>:</p>
+<blockquote>
+<div><div class="math" id="equation-glm">
+<p><span class="eqno">(1)</span><img src="_images/math/bc15581ff47db43751eb85a484ea2b1a4e76c125.png" alt="\mathbf{f}(\mathbf{x}; \mathbf{W}) =
+\boldsymbol{\phi}(\mathbf{x})^T\mathbf{W},"/></p>
+</div></div></blockquote>
+<p>where <img class="math" src="_images/math/e234428d74ed56181c77b0ac62dea16b0abd995a.png" alt="\mathbf{W}\in\mathbb{R}^{m\times q}"/> is the weight matrix,
+and</p>
+<blockquote>
+<div><div class="math" id="equation-basis">
+<p><span class="eqno">(2)</span><img src="_images/math/36a9bfaa0dddee8f20786c9541deac5e4c6290f9.png" alt="\boldsymbol{\phi}(\mathbf{x}) =
+\left(\phi_1(\mathbf{x}), \dots, \phi_m(\mathbf{x})\right)."/></p>
+</div></div></blockquote>
+<p>Usually, the weights <img class="math" src="_images/math/3d297b08b2be3554447c92b5982773d47c0de100.png" alt="\mathbf{W}"/> are not fixed, but its column
+is has a multi-variate Gaussian distribution:</p>
+<blockquote>
+<div><div class="math" id="equation-post-weights">
+<p><span class="eqno">(3)</span><img src="_images/math/92d49208430d2add89dcaf1cc2532dbeaa91718a.png" alt="\mathbf{W}_j \sim \mathcal{N}_m\left(\mathbf{W}_j |
+\mathbf{M}_j, \boldsymbol{\Sigma}\right),"/></p>
+</div></div></blockquote>
+<p>for <img class="math" src="_images/math/cb64338c65917082b1d3999fe8554d59a4d6e552.png" alt="j=1,\dots,q"/>, where <img class="math" src="_images/math/bdaa799a635f361f369480ca65909006827cd696.png" alt="\mathbf{A}_j"/> is the <img class="math" src="_images/math/8122aa89ea6e80784c6513d22787ad86e36ad0cc.png" alt="j"/>-th
+column of the matrix <img class="math" src="_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}"/>, <img class="math" src="_images/math/75ecc611328cb7872f941ba513e1684b433223ac.png" alt="\mathbf{M}_j"/> is the mean
+of <img class="math" src="_images/math/75ecc611328cb7872f941ba513e1684b433223ac.png" alt="\mathbf{M}_j"/> and semi-positive definite <img class="math" src="_images/math/848af9362ebb9f58ca65c91f5830b0da238f2790.png" alt="\boldsymbol{\Sigma}\in\mathbb{R}^{m\times m}"/>
+mean of column <img class="math" src="_images/math/8122aa89ea6e80784c6513d22787ad86e36ad0cc.png" alt="j"/> and the covariance matrix, respectively.
+Notice that we have restricted our attention to covariance
+matrices independent of the output dimension. This is very restrictive
+but in practice, there are ways around this problem. Giving a more
+general definition would make it extremely difficult to store all
+the required information (we would need a <img class="math" src="_images/math/f52f9423be5931b7cebf98c75fea0a26ffac4c56.png" alt="(qm)\times(qm)"/>
+covariance matrix). In any case, this is the model we use in our
+<a class="reference external" href="http://epubs.siam.org/doi/pdf/10.1137/120861345">RVM paper</a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The distribution of the weights is to be thought as the posterior
+distribution for the weights that occures when you attempt to fit
+the model to some data.</p>
+</div>
+<p>Allowing for the possibility of some Gaussian noise, the predictive
+distribution for the output <img class="math" src="_images/math/6c382eeb0dad017400c2bb6e32c2d5bdf4002c3e.png" alt="\mathbf{y}"/> at the input point
+<img class="math" src="_images/math/5f61118f2ae912f86e683687c005145b5eb54aec.png" alt="\mathbf{x}"/> is given by:</p>
+<blockquote>
+<div><div class="math" id="equation-pred-y">
+<p><span class="eqno">(4)</span><img src="_images/math/4cfc18e4e7cedfb38b3e6629fcf189c92beb0d61.png" alt="p(\mathbf{y} | \mathbf{x}) =
+\mathcal{N}_q\left(\mathbf{y} | \mathbf{m}(\mathbf{x}),
+\boldsymbol{\sigma}^2(\mathbf{x})\mathbf{I}_q\right),"/></p>
+</div></div></blockquote>
+<p>where <img class="math" src="_images/math/ff08886b804dbcd440731b05f56f674b78313769.png" alt="\mathbf{I}_q"/> is the <img class="math" src="_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/>-dimensional unit matrix,
+while the mean and the variance at <img class="math" src="_images/math/5f61118f2ae912f86e683687c005145b5eb54aec.png" alt="\mathbf{x}"/> are given by:</p>
+<blockquote>
+<div><div class="math" id="equation-pred-mean-var">
+<p><span class="eqno">(5)</span><img src="_images/math/b9bfc71646f73c0453a693895e0220bdd555cd5f.png" alt="\mathbf{m}(\mathbf{x}) = \boldsymbol{\phi}(\mathbf{x})^T
+\mathbf{W},\;\;
+\boldsymbol{\sigma}^2(\mathbf{x}) = \beta^{-1} +
+\boldsymbol{\phi}(\mathbf{x})^T\boldsymbol{\Sigma}
+\boldsymbol{\phi}(\mathbf{x}),"/></p>
+</div></div></blockquote>
+<p>with <img class="math" src="_images/math/fdb63b9e51abe6bbb16acfb5d7b773ddbb5bf4a8.png" alt="\beta"/> being the noise precision (i.e., the inverse variance).</p>
+<p>In BEST, we represent the GLM by a <tt class="xref py py-class docutils literal"><span class="pre">best.maps.GeneralizedLinearModel</span></tt>
+class which inherits from <tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt>. It is essentially
+a function that evaluates the predictive mean of the model.
+However, it also offers access to several other useful methods for
+uncertainty quantification.
+Here is the definition of <tt class="xref py py-class docutils literal"><span class="pre">best.maps.GeneralizedLinearModel</span></tt>:</p>
+<dl class="class">
+<dt id="GeneralizedLinearModel">
+<em class="property">class </em><tt class="descname">GeneralizedLinearModel</tt><a class="headerlink" href="#GeneralizedLinearModel" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>A class that represents a Generalized Linear Model.</p>
+<dl class="method">
+<dt id="GeneralizedLinearModel.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>basis</em><span class="optional">[</span>, <em>weights=None</em><span class="optional">[</span>, <em>sigma_sqrt=None</em><span class="optional">[</span>, <em>beta=None</em><span class="optional">[</span>, <em>name='Generalized Linear Model'</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#GeneralizedLinearModel.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Notice that instead of the covariance matrix
+<img class="math" src="_images/math/0eb46f66bd87d5f89dc598506e43730065d39583.png" alt="\boldsymbol{\Sigma}"/>, we initialize the object with
+its square root. The square root of
+<img class="math" src="_images/math/0eb46f66bd87d5f89dc598506e43730065d39583.png" alt="\boldsymbol{\Sigma}"/> is any matrix
+<img class="math" src="_images/math/05eb7c3edce2d0be76a962575312b2a84bb521a8.png" alt="\mathbf{R}\in \mathbb{R}^{k\times m}"/> such that:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/89b53fbab5f63b72d7663aa86e4cee2b4458b3f4.png" alt="\boldsymbol{\Sigma} = \mathbf{R}^T\mathbf{R}."/></p>
+</div></div></blockquote>
+<p class="last">This is usefull, because we allow for a the treatment of
+a semi-positive definite covariance (i.e., when
+<img class="math" src="_images/math/6235506923e67a38d6120d17d216a1273e9b389d.png" alt="k &lt; m"/>). It is up to the user to supply the right
+<img class="math" src="_images/math/4b93006f0bf4b46588ae2abb27feebf9488fdd8e.png" alt="\mathbf{R}"/> in there.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>basis</strong> (<tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt>) &#8211; A set of basis functions.</li>
+<li><strong>weights</strong> (2D numpy array of shape <img class="math" src="_images/math/b1c634ffa06645fd251f6ef6bddbfbcb1d4279b7.png" alt="m\times q"/>) &#8211; The mean weights <img class="math" src="_images/math/18523a009c970b5982cc76b50b4924454baaf597.png" alt="\mathbf{M}"/>. If <tt class="docutils literal"><span class="pre">None</span></tt>, then it is assumed to be all zeros.</li>
+<li><strong>sigma_sqrt</strong> (2D numpy array of shape <img class="math" src="_images/math/848485636901fbac9d37365e0299af7195d0e0c9.png" alt="k\times q, k\le q"/>) &#8211; The square root of the covariance materix. If <tt class="docutils literal"><span class="pre">None</span></tt>, then it is assumed to be all zeros.</li>
+<li><strong>beta</strong> (<tt class="docutils literal"><span class="pre">float</span></tt>) &#8211; The noise precision (inverse variance). If unspecified, it is assumed to be a very big number.</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; A name for the object.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="GeneralizedLinearModel.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>x</em><span class="optional">[</span>, <em>hyp=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#GeneralizedLinearModel.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function.__call__()</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>Evaluate the mean of the generalized model at <tt class="docutils literal"><span class="pre">x</span></tt>.</p>
+<p>Essentially computed <img class="math" src="_images/math/f4e336c093e091e97487b81b3c9e207ccfc92d27.png" alt="\mathbf{m}(\mathbf{x})"/>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="GeneralizedLinearModel.d">
+<tt class="descname">d</tt><big>(</big><em>x</em><span class="optional">[</span>, <em>hyp=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#GeneralizedLinearModel.d" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function.d()</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>Evaluate the Jacobian of the generalized model at <tt class="docutils literal"><span class="pre">x</span></tt>.</p>
+<p>This is <img class="math" src="_images/math/becb3fce8dc21ae84087085b9caff4768e299e0f.png" alt="\nabla \mathbf{m}(\mathbf{x})"/>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="GeneralizedLinearModel.get_predictive_covariance">
+<tt class="descname">get_predictive_covariance</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#GeneralizedLinearModel.get_predictive_covariance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the predictive covariance at <tt class="docutils literal"><span class="pre">x</span></tt>.</p>
+<p>Assume that <tt class="docutils literal"><span class="pre">x</span></tt> represents <img class="math" src="_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> input points
+<img class="math" src="_images/math/10e7948fab4627041f3c6ea2bbbe51b10791eb47.png" alt="\left\{\mathbf{x}^{(i)})\right\}_{i=1}^n"/>.
+Then, this method computes the semi-positive definite matrix
+<img class="math" src="_images/math/5b7619d138347b87178ef563736a175aa743aff1.png" alt="\mathbf{C}\in\mathbb{R}^n\times\mathbb{R}^n"/>, given by</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/ee76236f833388f144d6ac93f3960e5c84f92bd5.png" alt="C_{ij} = \phi_k\left(\mathbf{x}^{(i)}\right)
+\Sigma_{kl}
+\phi_l\left(\mathbf{x}^{(j)}\right)."/></p>
+</div></div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="GeneralizedLinearModel.get_predictive_variance">
+<tt class="descname">get_predictive_variance</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#GeneralizedLinearModel.get_predictive_variance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the predictive variance at <tt class="docutils literal"><span class="pre">x</span></tt>.</p>
+<p>This is the diagonal of <img class="math" src="_images/math/7e0a9fc10b6bc10de6dbcc290353e6321bd7067c.png" alt="\mathbf{C}"/> of
+<tt class="xref py py-func docutils literal"><span class="pre">best.maps.GeneralizedLinearModel.get_predictive_covariance()</span></tt>.
+However, it is computed without ever building <img class="math" src="_images/math/7e0a9fc10b6bc10de6dbcc290353e6321bd7067c.png" alt="\mathbf{C}"/>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedLinearModel.basis">
+<tt class="descname">basis</tt><a class="headerlink" href="#GeneralizedLinearModel.basis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the underlying basis.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedLinearModel.weights">
+<tt class="descname">weights</tt><a class="headerlink" href="#GeneralizedLinearModel.weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the weights.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedLinearModel.sigma_sqrt">
+<tt class="descname">sigma_sqrt</tt><a class="headerlink" href="#GeneralizedLinearModel.sigma_sqrt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the square root of the covariance matrix.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="GeneralizedLinearModel.beta">
+<tt class="descname">beta</tt><a class="headerlink" href="#GeneralizedLinearModel.beta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the inverse precision.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="gpc.html"
+                        title="previous chapter">Generalized Polynomial Chaos</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="rvm.html"
+                        title="next chapter">Relevance Vector Machine</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/glm.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="rvm.html" title="Relevance Vector Machine"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="gpc.html" title="Generalized Polynomial Chaos"
+             >previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" >Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Ilias Bilionis, Nicholas Zabaras.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,760 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Maps &mdash; Bayesian Exploration Statistical Toolbox 0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Bayesian Exploration Statistical Toolbox 0 documentation" href="index.html" />
+    <link rel="up" title="Reference Guide" href="reference.html" />
+    <link rel="next" title="Covariance Functions" href="cov.html" />
+    <link rel="prev" title="Serialization" href="serialization.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cov.html" title="Covariance Functions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="serialization.html" title="Serialization"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" accesskey="U">Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-best.maps">
+<span id="maps"></span><span id="map"></span><h1>Maps<a class="headerlink" href="#module-best.maps" title="Permalink to this headline">¶</a></h1>
+<p>The purpose of the <a class="reference internal" href="#module-best.maps" title="best.maps: Generic definition of multi-input/output functions and\ their allowed operations."><tt class="xref py py-mod docutils literal"><span class="pre">best.maps</span></tt></a> module is to define generic manner the
+concept of a multi-input/output function. Our goal is to have function
+objects that can be combined easily in arbitrary ways to create new
+functions. The complete details of the implementation can be found in the
+docstrings.</p>
+<div class="section" id="the-basic-concepts">
+<span id="map-basic"></span><h2>The basic concepts<a class="headerlink" href="#the-basic-concepts" title="Permalink to this headline">¶</a></h2>
+<p>We will say that an object is a <em>regular multi-input/output function</em> if
+it is a common python function that accepts as input a unique numpy array
+and returns a unique numpy array. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">x</span>
+</pre></div>
+</div>
+<p>is a <em>regular multi-input/output function</em>.</p>
+<p>However, we will give a stronger definition for what we are going to call
+a, simply, a <em>multi-input/output function</em>.
+So, by a <em>multi-input/output function</em> we refer to any
+object that inherits from the class <a class="reference internal" href="#best.maps.best.maps.Function" title="best.maps.best.maps.Function"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></a>.
+<tt class="xref py py-class docutils literal"><span class="pre">best.maps.Functions</span></tt> have be designed with the following points in
+mind:</p>
+<blockquote>
+<div><ul class="simple">
+<li>It needs to know the number of input/output dimensions.</li>
+<li>It needs to have a name.</li>
+<li>It should have a user-friendly string representation.</li>
+<li>It can represent a <em>regular multi-input/output function</em> as defined above.</li>
+<li>If the dimensions of two multi-input/output functions are compatible, then it should be easy to combine them in order to construct linear combinations of them.</li>
+</ul>
+</div></blockquote>
+<p>The most important idea is that anything in Best that can be
+thought as such a map, must be a child of <a class="reference internal" href="#best.maps.best.maps.Function" title="best.maps.best.maps.Function"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></a>.</p>
+</div>
+<div class="section" id="the-best-maps-function-class">
+<h2>The <a class="reference internal" href="#best.maps.best.maps.Function" title="best.maps.best.maps.Function"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></a> class.<a class="headerlink" href="#the-best-maps-function-class" title="Permalink to this headline">¶</a></h2>
+<p>We will not dwelve into the implementational details of
+<a class="reference internal" href="#best.maps.best.maps.Function" title="best.maps.best.maps.Function"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></a>. Our goal here is to document its functions
+that should/could be overloaded by its children and then demonstrate by
+a simple example what is the functionality it actually provides.</p>
+<dl class="class">
+<dt id="best.maps.best.maps.Function">
+<em class="property">class </em><tt class="descclassname">best.maps.</tt><tt class="descname">Function</tt><a class="headerlink" href="#best.maps.best.maps.Function" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><a class="reference internal" href="basic.html#best.Object" title="best.Object"><tt class="xref py py-class docutils literal"><span class="pre">best.Object</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<p>A class representing an arbitrary multi-input/output function.</p>
+<p>Everything in Best that can be though as such a function should be a
+child of this class.</p>
+<dl class="method">
+<dt id="best.maps.best.maps.Function.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>num_input</em>, <em>num_output</em><span class="optional">[</span>, <em>num_hyp=0</em><span class="optional">[</span>, <em>hyp=None</em><span class="optional">[</span>, <em>name=&quot;function&quot;</em><span class="optional">[</span>, <em>f_wrapped=None</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.maps.best.maps.Function.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the object.</p>
+<p>You do not have to overload this method. However, if you choose
+to do so, keep in mind that children of this class should call
+this constructor providing at least the first two arguments.
+This can be achieved with the following code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MyFunction</span><span class="p">(</span><span class="n">best</span><span class="o">.</span><span class="n">maps</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># Assuming here that we now the number of inputs and</span>
+        <span class="c"># outputs of the function (as well as its name).</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MyName</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;Super Function&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>num_input</strong> (<tt class="docutils literal"><span class="pre">int</span></tt>) &#8211; The number of input dimensions.</li>
+<li><strong>num_output</strong> (<tt class="docutils literal"><span class="pre">int</span></tt>) &#8211; The number of output dimensions.</li>
+<li><strong>num_hyp</strong> (<tt class="docutils literal"><span class="pre">int</span></tt>) &#8211; The number of hyper-parameters of the function. Zero by default.</li>
+<li><strong>hyp</strong> (<em>1D numpy array</em>) &#8211; The hyper-parameters of the function. If <tt class="docutils literal"><span class="pre">None</span></tt> they are left unspecified and must be provided when calling it.</li>
+<li><strong>name</strong> (<tt class="docutils literal"><span class="pre">str</span></tt>) &#8211; A name for the function you create.</li>
+<li><strong>f_wrapped</strong> (<em>A normal python function that is a multi-input/output function.</em>) &#8211; If specified, then this function is simply a f_wrapped.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>You would typically use the last option, in order to construct
+a <a class="reference internal" href="#best.maps.best.maps.Function" title="best.maps.best.maps.Function"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></a> out of an existing
+regular multi-input/output function. Assuming you have a function
+<tt class="xref py py-func docutils literal"><span class="pre">f()</span></tt> (as the one we defined above), then here is how you
+can actually do it:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">F</span> <span class="o">=</span> <span class="n">best</span><span class="o">.</span><span class="n">maps</span><span class="o">.</span><span class="n">Functions</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">f_wrapped</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where, of course, we have assumed that <tt class="xref py py-func docutils literal"><span class="pre">f()</span></tt> accepts a numpy
+array with 10 dimensions and response with one with 20.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.maps.best.maps.Function.num_input">
+<tt class="descname">num_input</tt><a class="headerlink" href="#best.maps.best.maps.Function.num_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of input dimensions.</p>
+<p>It cannot be changed directly.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.maps.best.maps.Function.num_output">
+<tt class="descname">num_output</tt><a class="headerlink" href="#best.maps.best.maps.Function.num_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of output dimensions.</p>
+<p>It cannot be changed directly.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.maps.best.maps.Function.num_hyp">
+<tt class="descname">num_hyp</tt><a class="headerlink" href="#best.maps.best.maps.Function.num_hyp" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of hyper-parameters.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.maps.best.maps.Function.hyp">
+<tt class="descname">hyp</tt><a class="headerlink" href="#best.maps.best.maps.Function.hyp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get/Set the hyper-parameters.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.maps.best.maps.Function.f_wrapped">
+<tt class="descname">f_wrapped</tt><a class="headerlink" href="#best.maps.best.maps.Function.f_wrapped" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the wrapped function (if any).</p>
+<p>It cannot be changed directly.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.maps.best.maps.Function.is_function_wrapper">
+<tt class="descname">is_function_wrapper</tt><a class="headerlink" href="#best.maps.best.maps.Function.is_function_wrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the object is a function wrapper, False otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">_eval(x, hyp):</tt></dt>
+<dd><p>Evaluate the function at <tt class="docutils literal"><span class="pre">x</span></tt> assuming that <tt class="docutils literal"><span class="pre">x</span></tt> has the
+right dimensions.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This must be re-implemented by children.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>1D numpy array of the right dimensions</em>) &#8211; The evaluation point.</li>
+<li><strong>hyp</strong> (<em>1D numpy array.</em>) &#8211; The hyper-parameters. Ignore it if your function does not have any.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">1D numpy array of the right dimensions or just a float</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Etype :</th><td class="field-body"><p class="first last">NotImplementedError</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">__call__(x[, hyp=None]):</tt></dt>
+<dd><p>Evaluate the function <tt class="docutils literal"><span class="pre">x</span></tt>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This calls <tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function._eval()</span></tt>.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>Can be a multi-dimensional numpy array whose last
+dimension corresponds to the number of inputs while
+the rest simply correspond to different evaluation
+points.</em>) &#8211; The evaluation point(s).</li>
+<li><strong>hyp</strong> (<em>1D numpy array.</em>) &#8211; The hyper-parameters. Ignore it if your function does not have any.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns y:</th><td class="field-body"><p class="first">The result.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">a numpy array of the right dimensions.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">_d_eval(x, hyp):</tt></dt>
+<dd><p>Evaluate the Jacobian of the function at <tt class="docutils literal"><span class="pre">x</span></tt>. The dimensions
+of the Jacobian are <tt class="docutils literal"><span class="pre">num_output</span> <span class="pre">x</span> <span class="pre">num_input</span></tt>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This must be re-implemented by children.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>1D numpy array of the right dimensions</em>) &#8211; The evaluation point.</li>
+<li><strong>hyp</strong> (<em>1D numpy array.</em>) &#8211; The hyper-parameters. Ignore it if your function does not have any.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The Jacobian at <tt class="docutils literal"><span class="pre">x</span></tt>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">2D numpy array of the right dimensions</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.best.maps.Function.d">
+<tt class="descname">d</tt><big>(</big><em>x</em><span class="optional">[</span>, <em>hyp=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.maps.best.maps.Function.d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the Jacobian of the function at <tt class="docutils literal"><span class="pre">x</span></tt>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This calls <tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function._d_eval()</span></tt>.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>Can be a multi-dimensional numpy array whose last
+dimension corresponds to the number of inputs while
+the rest simply correspond to different evaluation
+points.</em>) &#8211; The evaluation point(s).</li>
+<li><strong>hyp</strong> (<em>1D numpy array.</em>) &#8211; The hyper-parameters. Ignore it if your function does not have any.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns y:</th><td class="field-body"><p class="first">The result.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">a numpy array of the right dimensions.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.best.maps.Function.d_hyp">
+<tt class="descname">d_hyp</tt><big>(</big><em>x</em><span class="optional">[</span>, <em>hyp=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.maps.best.maps.Function.d_hyp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the Jacobian of the function at <tt class="docutils literal"><span class="pre">x</span></tt> with respect to
+the hyper-parameters.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This calls <tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function._d_hyp_eval()</span></tt>.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>Can be a multi-dimensional numpy array whose last
+dimension corresponds to the number of inputs while
+the rest simply correspond to different evaluation
+points.</em>) &#8211; The evaluation point(s).</li>
+<li><strong>hyp</strong> (<em>1D numpy array.</em>) &#8211; The hyper-parameters. Ignore it if your function does not have any.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns y:</th><td class="field-body"><p class="first">The result.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">a numpy array of the right dimensions.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">__add__(g):</tt></dt>
+<dd><p>Add two functions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>g</strong> (<a class="reference internal" href="#best.maps.best.maps.Function" title="best.maps.best.maps.Function"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></a> object, regular multi-input/output function or just a number.) &#8211; A function to be added to the current object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A function object that represents the addition of the
+current object and <tt class="docutils literal"><span class="pre">g</span></tt>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#best.maps.best.maps.Function" title="best.maps.best.maps.Function"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">__mul__(g):</tt></dt>
+<dd><p>Multiply two functions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>g</strong> (<a class="reference internal" href="#best.maps.best.maps.Function" title="best.maps.best.maps.Function"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></a> object, regular multi-input/output function or just a number.) &#8211; A function to be multiplied with the current object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A function object that represents the multiplication of the current object and <tt class="docutils literal"><span class="pre">g</span></tt>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#best.maps.best.maps.Function" title="best.maps.best.maps.Function"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">compose(g):</tt></dt>
+<dd><p>Compose two functions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>g</strong> (<a class="reference internal" href="#best.maps.best.maps.Function" title="best.maps.best.maps.Function"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></a>) &#8211; A function whose output has the same dimensions as the input of the current object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A function object that represents the composition of the current object and <tt class="docutils literal"><span class="pre">g</span></tt>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#best.maps.best.maps.Function" title="best.maps.best.maps.Function"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">join(g):</tt></dt>
+<dd><p>Joins the outputs of two functions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>g</strong> (<a class="reference internal" href="#best.maps.best.maps.Function" title="best.maps.best.maps.Function"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></a>) &#8211; A function whose output has the same dimensions as the input of the current object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A function object that represents jointly the outputs of the current object and <tt class="docutils literal"><span class="pre">g</span></tt> (fist <tt class="docutils literal"><span class="pre">f</span></tt> then <tt class="docutils literal"><span class="pre">g</span></tt>).</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#best.maps.best.maps.Function" title="best.maps.best.maps.Function"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.best.maps.Function.screen">
+<tt class="descname">screen</tt><big>(</big><span class="optional">[</span><em>in_idx=None</em><span class="optional">[</span>, <em>out_idx=None</em><span class="optional">[</span>, <em>default_inputs=None</em><span class="optional">[</span>, <em>name='Screened Function'</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.maps.best.maps.Function.screen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a screened version of the function.</p>
+<p>The parameters are
+as in the constructor of <a class="reference internal" href="#best.maps.best.maps.FunctionScreened" title="best.maps.best.maps.FunctionScreened"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.FunctionScreened</span></tt></a>.
+You may consult it for details.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">_to_string(pad):</tt></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><a class="reference internal" href="basic.html#best.Object._to_string" title="best.Object._to_string"><tt class="xref py py-func docutils literal"><span class="pre">best.Object._to_string()</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="some-examples">
+<span id="map-examples"></span><h2>Some Examples<a class="headerlink" href="#some-examples" title="Permalink to this headline">¶</a></h2>
+<p>The first example we consider is creating a <a class="reference internal" href="#best.maps.best.maps.Function" title="best.maps.best.maps.Function"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></a>
+wrapper of a regular multi-input/output function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">best.maps</span>
+
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">x</span>
+
+<span class="n">ff</span> <span class="o">=</span> <span class="n">best</span><span class="o">.</span><span class="n">maps</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="n">f_wrapped</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+<span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">ff</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&#39;Eval at&#39;</span><span class="p">,</span> <span class="n">x</span>
+<span class="k">print</span> <span class="n">ff</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you wish, you may create a new class that inherits
+<a class="reference internal" href="#best.maps.best.maps.Function" title="best.maps.best.maps.Function"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></a>. You are required to overload
+<tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function.__call__()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">best.maps</span> <span class="kn">import</span> <span class="n">Function</span>
+
+<span class="k">class</span> <span class="nc">MyFunction</span><span class="p">(</span><span class="n">Function</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>Now, assume that we have two functions with the same number of inputs
+and outputs <img class="math" src="_images/math/5acc5b41c9146612d0c74c5475748d26ae3c832d.png" alt="f(\cdot)"/> and <img class="math" src="_images/math/d796dbc8a8ad7847773eca4f05a25ea2e37f8170.png" alt="g(\cdot)"/>. Let also <img class="math" src="_images/math/3372c1cb6d68cf97c2d231acc0b47b95a9ed04cc.png" alt="c"/>
+be any floating point number. You may now define several functions:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">Sum of functions <img class="math" src="_images/math/83d21114558caa4cf06e5228836151574d060dd5.png" alt="h(\cdot) = f(\cdot) + g(\cdot)"/>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">h</span> <span class="o">=</span> <span class="n">f</span> <span class="o">+</span> <span class="n">g</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Sum of function with a constant <img class="math" src="_images/math/5ca949679a31cdf93690ca0b24d1bf0492280ca2.png" alt="h(\cdot) = f(\cdot) + c"/>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">h</span> <span class="o">=</span> <span class="n">f</span> <span class="o">+</span> <span class="n">c</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Note:</th><td class="field-body">The constant must always be on the right side of the operator.</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p class="first">Product of functions <img class="math" src="_images/math/e181380e325374ec1982208f6f15435552aeed71.png" alt="h(\cdot) = f(\cdot)g(\cdot)"/>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">h</span> <span class="o">=</span> <span class="n">f</span> <span class="o">*</span> <span class="n">g</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Product of function with a constant <img class="math" src="_images/math/7c835defdd115ce07ad9f2fa0438820d9065ba78.png" alt="h(\cdot) = f(\cdot)c"/>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">h</span> <span class="o">=</span> <span class="n">f</span> <span class="o">*</span> <span class="n">c</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Note:</th><td class="field-body">The constant must always be on the right side of the operator.</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</div></blockquote>
+<p>Assume that the two functions have compatible dimensions so
+that they can be composed (e.g., the number of outputs of
+<img class="math" src="_images/math/d796dbc8a8ad7847773eca4f05a25ea2e37f8170.png" alt="g(\cdot)"/> is the same as the number of inputs of <img class="math" src="_images/math/5acc5b41c9146612d0c74c5475748d26ae3c832d.png" alt="f(\cdot)"/>.
+Then, you can define <img class="math" src="_images/math/ceab4685248e60767a24d279edebf5f8eefb7977.png" alt="h(\cdot) = f(g(\cdot)"/> by:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">best.maps</span> <span class="kn">import</span> <span class="n">FunctionComposition</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">FunctionComposition</span><span class="p">((</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>It is also possible to raise a function to a particular power.
+For example, the following code defines <img class="math" src="_images/math/27d394333f60237d2314dd85f204395ce6631a16.png" alt="h(\cdot) = f(\cdot)^2"/>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">best.maps</span> <span class="kn">import</span> <span class="n">FunctionPower</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">FunctionPower</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mf">2.</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="screened-function">
+<span id="map-screened"></span><h2>Screened Function<a class="headerlink" href="#screened-function" title="Permalink to this headline">¶</a></h2>
+<p>A very useful class is the <a class="reference internal" href="#best.maps.best.maps.FunctionScreened" title="best.maps.best.maps.FunctionScreened"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.FunctionScreened</span></tt></a>. It
+implements a screened version of another class. We give a brief
+discreption of its functionality.</p>
+<dl class="class">
+<dt id="best.maps.best.maps.FunctionScreened">
+<em class="property">class </em><tt class="descclassname">best.maps.</tt><tt class="descname">FunctionScreened</tt><a class="headerlink" href="#best.maps.best.maps.FunctionScreened" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><a class="reference internal" href="#best.maps.best.maps.Function" title="best.maps.best.maps.Function"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<p>A function that serves as a screened version of another function.</p>
+<p>It is useful in applications when you want to fix certain inputs
+to given values and play with the rest and/or if you want to screen
+certain outputs. It is one of the basic building blocks for
+representing the High-Dimensional Representation (HDMR) of a function.</p>
+<dl class="method">
+<dt id="best.maps.best.maps.FunctionScreened.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>screened_function</em><span class="optional">[</span>, <em>in_idx=None</em><span class="optional">[</span>, <em>default_inputs=None</em><span class="optional">[</span>, <em>out_idx=None</em><span class="optional">[</span>, <em>name='Screened Function'</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.maps.best.maps.FunctionScreened.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>screened_func</strong> (<a class="reference internal" href="#best.maps.best.maps.Function" title="best.maps.best.maps.Function"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></a>) &#8211; The function to be screened.</li>
+<li><strong>in_idx</strong> (<em>tuple, list or NoneType</em>) &#8211; The input indices that are not screened.
+It must be a valid container.
+If None, then no inputs are screened. If
+a non-empty list is suplied, then the
+argument default_inputs must be suplied.</li>
+<li><strong>default_inputs</strong> (<em>1D numpy array</em>) &#8211; If in_idx is not None, then this can be
+suplied. It is a default set of inputs
+of the same size as the original input
+of the screened_func. If it is not
+given, then it is automatically set to
+zero. These values will be used to fill
+in the missing values of the screened
+inputs.</li>
+<li><strong>out_idx</strong> (<em>tuple, list or NoneType</em>) &#8211; The output indices that are not screened.
+If None, then no output is screened.</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; A name for the function.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.best.maps.FunctionScreened.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>x</em><span class="optional">[</span>, <em>hyp=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.maps.best.maps.FunctionScreened.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function.__call__()</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.best.maps.FunctionScreened.d">
+<tt class="descname">d</tt><big>(</big><em>x</em><span class="optional">[</span>, <em>hyp=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.maps.best.maps.FunctionScreened.d" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><a class="reference internal" href="#best.maps.best.maps.Function.d" title="best.maps.best.maps.Function.d"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function.d()</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.best.maps.FunctionScreened.d_hyp">
+<tt class="descname">d_hyp</tt><big>(</big><em>x</em><span class="optional">[</span>, <em>hyp=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.maps.best.maps.FunctionScreened.d_hyp" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><a class="reference internal" href="#best.maps.best.maps.Function.d_hyp" title="best.maps.best.maps.Function.d_hyp"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function.d_hyp()</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<p>Let us give a simple example of how it is to be used. Suppose that you
+have a function <img class="math" src="_images/math/5acc5b41c9146612d0c74c5475748d26ae3c832d.png" alt="f(\cdot)"/> that takes 10 inputs and responds with
+10 outputs. Assume that you wish to fix all the inputs to 0.5 with the
+exception of the first one and the fifth one and that you only want to
+look at the fourth and the sixth outputs. Here is how you can achieve
+this using the <a class="reference internal" href="#best.maps.best.maps.FunctionScreened" title="best.maps.best.maps.FunctionScreened"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.FunctionScreened</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">best.maps</span> <span class="kn">import</span> <span class="n">FunctionScreened</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">FunctionScreened</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">in_idx</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+                     <span class="n">default_inputs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">num_input</span><span class="p">)</span> <span class="o">*</span> <span class="o">.</span><span class="mi">5</span><span class="p">,</span>
+                     <span class="n">out_idx</span><span class="o">=</span><span class="p">[[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">]])</span>
+<span class="k">print</span> <span class="s">&#39;Evaluate h at x = [0.3, -1.]:&#39;</span>
+<span class="k">print</span> <span class="n">h</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]))</span>
+<span class="k">print</span> <span class="s">&#39;It should be equivalent to evaluating: &#39;</span>
+<span class="n">x_full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">num_input</span><span class="p">)</span> <span class="o">*</span> <span class="o">.</span><span class="mi">5</span>
+<span class="n">x_full</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">])</span>
+<span class="k">print</span> <span class="n">f</span><span class="p">(</span><span class="n">x_full</span><span class="p">)[[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="basis">
+<span id="map-basis"></span><h2>Basis<a class="headerlink" href="#basis" title="Permalink to this headline">¶</a></h2>
+<p>A <strong>basis</strong> is simply a collection of multi-input functions
+<img class="math" src="_images/math/11d03852a8f435ffb55adf8dc7e92d9bd7ec0ca8.png" alt="\phi_i(\cdot)"/>. Therefore, it can be represented by a child of
+<a class="reference internal" href="#best.maps.best.maps.Function" title="best.maps.best.maps.Function"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></a>. We offer several basis functions.
+In particular, Orthogonal Polynomials can be constructed using the
+functionality of <a class="reference internal" href="gpc.html#module-best.gpc" title="best.gpc: Classes and methods for the construction of Generalized Polynomial Chaos (gPC) with arbitrary probability distributions."><tt class="xref py py-mod docutils literal"><span class="pre">best.gpc</span></tt></a>. Furthermore, bases can be constructed
+from Radial Basis Functions using <tt class="xref py py-func docutils literal"><span class="pre">best.maps.RadialBasisFunction.to_basis()</span></tt>.
+You should go through the corresponding documentation. Here, we will
+simply state a few examples that exploit the functionality of
+<a class="reference internal" href="#module-best.maps" title="best.maps: Generic definition of multi-input/output functions and\ their allowed operations."><tt class="xref py py-mod docutils literal"><span class="pre">best.maps</span></tt></a>.</p>
+<div class="section" id="joining-two-bases">
+<span id="map-basis-join"></span><h3>Joining two bases<a class="headerlink" href="#joining-two-bases" title="Permalink to this headline">¶</a></h3>
+<p>Assume that we are given two bases, say <tt class="docutils literal"><span class="pre">phi</span></tt> and <tt class="docutils literal"><span class="pre">psi</span></tt>.
+We can create a basis that contains the bases functions
+of <tt class="docutils literal"><span class="pre">phi</span></tt> and <tt class="docutils literal"><span class="pre">psi</span></tt> simultaneously by
+using the function <tt class="xref py py-meth docutils literal"><span class="pre">best.maps.Function.join()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">phipsi</span> <span class="o">=</span> <span class="n">phi</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span>
+<span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">phipsi</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="getting-rid-of-some-of-the-basis-functions">
+<span id="map-basis-sparse"></span><h3>Getting rid of some of the basis functions<a class="headerlink" href="#getting-rid-of-some-of-the-basis-functions" title="Permalink to this headline">¶</a></h3>
+<p>Now, assume that we are given a basis <tt class="docutils literal"><span class="pre">phi</span></tt> and that we want to
+construct an other one that contains only the first and the fifth
+basis functions of <tt class="docutils literal"><span class="pre">phi</span></tt>. We can do this as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">sparse_phi</span> <span class="o">=</span> <span class="n">phi</span><span class="o">.</span><span class="n">screen</span><span class="p">(</span><span class="n">out_idx</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">sparse_phi</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Maps</a><ul>
+<li><a class="reference internal" href="#the-basic-concepts">The basic concepts</a></li>
+<li><a class="reference internal" href="#the-best-maps-function-class">The <tt class="docutils literal"><span class="pre">best.maps.Function</span></tt> class.</a></li>
+<li><a class="reference internal" href="#some-examples">Some Examples</a></li>
+<li><a class="reference internal" href="#screened-function">Screened Function</a></li>
+<li><a class="reference internal" href="#basis">Basis</a><ul>
+<li><a class="reference internal" href="#joining-two-bases">Joining two bases</a></li>
+<li><a class="reference internal" href="#getting-rid-of-some-of-the-basis-functions">Getting rid of some of the basis functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="serialization.html"
+                        title="previous chapter">Serialization</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cov.html"
+                        title="next chapter">Covariance Functions</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/maps.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cov.html" title="Covariance Functions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="serialization.html" title="Serialization"
+             >previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" >Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Ilias Bilionis, Nicholas Zabaras.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

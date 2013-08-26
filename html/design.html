@@ -1,0 +1,195 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Design of Experiments &mdash; Bayesian Exploration Statistical Toolbox 0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Bayesian Exploration Statistical Toolbox 0 documentation" href="index.html" />
+    <link rel="up" title="Reference Guide" href="reference.html" />
+    <link rel="next" title="Inverse Problems" href="inverse.html" />
+    <link rel="prev" title="Gaussian Process Regression" href="gp.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="inverse.html" title="Inverse Problems"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="gp.html" title="Gaussian Process Regression"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" accesskey="U">Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-best.design">
+<span id="design-of-experiments"></span><span id="design"></span><h1>Design of Experiments<a class="headerlink" href="#module-best.design" title="Permalink to this headline">¶</a></h1>
+<p>This module implements functionality related to the design of
+(computer) experiments.</p>
+<div class="section" id="latin-hyper-cube-designs">
+<h2>Latin Hyper-cube Designs<a class="headerlink" href="#latin-hyper-cube-designs" title="Permalink to this headline">¶</a></h2>
+<p>Latin hyper-cube designs approximate samples from a uniform distribution
+attempting to keep the degeneracy of the samples low.</p>
+<dl class="function">
+<dt id="best.design.lhs">
+<tt class="descclassname">best.design.</tt><tt class="descname">lhs</tt><big>(</big><em>n</em>, <em>k</em><span class="optional">[</span>, <em>seed=lhs_seed()</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.design.lhs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fill an <img class="math" src="_images/math/fa58979ec0dfb0484cbc233a89bf9d79eebbc24b.png" alt="n\times k"/> matrix with a latin hyper-cube design.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>n</strong> (<em>int</em>) &#8211; The number of samples.</li>
+<li><strong>k</strong> (<em>int</em>) &#8211; The number of dimensions.</li>
+<li><strong>seed</strong> (<em>int</em>) &#8211; A random seed. If not specified then it is taken from <a class="reference internal" href="#best.design.lhs_seed" title="best.design.lhs_seed"><tt class="xref py py-func docutils literal"><span class="pre">best.design.lhs_seed()</span></tt></a>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A latin hyper-cube design.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">2D numpy array.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Here is an example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">best.design</span> <span class="kn">import</span> <span class="n">lhs</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">lhs</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">X</span>
+</pre></div>
+</div>
+<p>This should print something similar to:</p>
+<div class="highlight-python"><pre>[[ 0.55  0.65]
+ [ 0.25  0.75]
+ [ 0.85  0.95]
+ [ 0.05  0.45]
+ [ 0.15  0.35]
+ [ 0.65  0.45]
+ [ 0.25  0.15]
+ [ 0.05  0.75]
+ [ 0.35  0.55]
+ [ 0.85  0.95]]</pre>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="best.design.lhs_seed">
+<tt class="descclassname">best.design.</tt><tt class="descname">lhs_seed</tt><big>(</big><big>)</big><a class="headerlink" href="#best.design.lhs_seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce a random seed to be used in <a class="reference internal" href="#best.design.lhs" title="best.design.lhs"><tt class="xref py py-func docutils literal"><span class="pre">best.design.lhs()</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A random seed.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Design of Experiments</a><ul>
+<li><a class="reference internal" href="#latin-hyper-cube-designs">Latin Hyper-cube Designs</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="gp.html"
+                        title="previous chapter">Gaussian Process Regression</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="inverse.html"
+                        title="next chapter">Inverse Problems</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/design.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="inverse.html" title="Inverse Problems"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="gp.html" title="Gaussian Process Regression"
+             >previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" >Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Ilias Bilionis, Nicholas Zabaras.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

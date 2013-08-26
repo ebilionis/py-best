@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Domain &mdash; Bayesian Exploration Statistical Toolbox 0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Bayesian Exploration Statistical Toolbox 0 documentation" href="index.html" />
+    <link rel="up" title="Reference Guide" href="reference.html" />
+    <link rel="next" title="Random" href="random.html" />
+    <link rel="prev" title="Covariance Functions" href="cov.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="random.html" title="Random"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cov.html" title="Covariance Functions"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" accesskey="U">Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="domain">
+<span id="id1"></span><h1>Domain<a class="headerlink" href="#domain" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-best.domain"></span><p>The <a class="reference internal" href="#module-best.domain" title="best.domain: Represents a domain of a Euclidean space."><tt class="xref py py-mod docutils literal"><span class="pre">best.domain</span></tt></a> is used to represent domains of a Euclidean space.
+It is used to represent the support of a
+<tt class="xref py py-class docutils literal"><span class="pre">best.random.RandomVector</span></tt>.</p>
+<dl class="class">
+<dt id="best.domain.best.domain.Domain">
+<em class="property">class </em><tt class="descclassname">best.domain.</tt><tt class="descname">Domain</tt><a class="headerlink" href="#best.domain.best.domain.Domain" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><a class="reference internal" href="basic.html#best.Object" title="best.Object"><tt class="xref py py-class docutils literal"><span class="pre">best.Object</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<p>A class that represents a domain of a Euclidean space.</p>
+<dl class="method">
+<dt id="best.domain.best.domain.Domain.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>num_dim</em><span class="optional">[</span>, <em>name='Domain'</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.domain.best.domain.Domain.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num_dim</strong> (<em>int</em>) &#8211; The number of dimensions.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.domain.best.domain.Domain.num_dim">
+<tt class="descname">num_dim</tt><a class="headerlink" href="#best.domain.best.domain.Domain.num_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of dimensions</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.domain.best.domain.Domain.is_in">
+<tt class="descname">is_in</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#best.domain.best.domain.Domain.is_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if <tt class="docutils literal"><span class="pre">x</span></tt> is inside the domain.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Note :</th><td class="field-body">This must be implemented by the children of this class.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>1D numpy array</em>) &#8211; An point.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Throws :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">NotImplementedError</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">_to_string(pad):</tt></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><a class="reference internal" href="basic.html#best.Object._to_string" title="best.Object._to_string"><tt class="xref py py-func docutils literal"><span class="pre">best.Object._to_string()</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="best.domain.best.domain.Rectangle">
+<em class="property">class </em><tt class="descclassname">best.domain.</tt><tt class="descname">Rectangle</tt><a class="headerlink" href="#best.domain.best.domain.Rectangle" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><a class="reference internal" href="#best.domain.best.domain.Domain" title="best.domain.best.domain.Domain"><tt class="xref py py-class docutils literal"><span class="pre">best.domain.Domain</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<p>A class that represents a rectangular domain.</p>
+<dl class="method">
+<dt id="best.domain.best.domain.Rectangle.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>rectangle[name='Rectangular Domain']</em><big>)</big><a class="headerlink" href="#best.domain.best.domain.Rectangle.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>rectangle</strong> (2D numpy array or list/tuple of list/tuples of <tt class="docutils literal"><span class="pre">float</span></tt>) &#8211; This must be a <tt class="docutils literal"><span class="pre">num_dim</span> <span class="pre">x</span> <span class="pre">2</span></tt> array representing a rectangle.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.domain.best.domain.Rectangle.rectangle">
+<tt class="descname">rectangle</tt><a class="headerlink" href="#best.domain.best.domain.Rectangle.rectangle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the rectangle.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="best.domain.best.domain.UnitCube">
+<em class="property">class </em><tt class="descclassname">best.domain.</tt><tt class="descname">UnitCube</tt><a class="headerlink" href="#best.domain.best.domain.UnitCube" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><a class="reference internal" href="#best.domain.best.domain.Rectangle" title="best.domain.best.domain.Rectangle"><tt class="xref py py-class docutils literal"><span class="pre">best.domain.Rectangle</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<p>A class that represents a unit cube domain.</p>
+<dl class="method">
+<dt id="best.domain.best.domain.UnitCube.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>num_dim</em><span class="optional">[</span>, <em>self='Unit Cube Domain'</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.domain.best.domain.UnitCube.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num_dim</strong> (<tt class="docutils literal"><span class="pre">int</span></tt>) &#8211; The number of dimensions.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="best.domain.best.domain.AllSpace">
+<em class="property">class </em><tt class="descclassname">best.domain.</tt><tt class="descname">AllSpace</tt><a class="headerlink" href="#best.domain.best.domain.AllSpace" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><a class="reference internal" href="#best.domain.best.domain.Rectangle" title="best.domain.best.domain.Rectangle"><tt class="xref py py-class docutils literal"><span class="pre">best.domain.Rectangle</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<p>A class that represents all space.</p>
+<dl class="method">
+<dt id="best.domain.best.domain.AllSpace.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>num_dim</em><span class="optional">[</span>, <em>self='All Space Domain'</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.domain.best.domain.AllSpace.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num_dim</strong> (<tt class="docutils literal"><span class="pre">int</span></tt>) &#8211; The number of dimensions.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cov.html"
+                        title="previous chapter">Covariance Functions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="random.html"
+                        title="next chapter">Random</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/domain.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="random.html" title="Random"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cov.html" title="Covariance Functions"
+             >previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" >Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Ilias Bilionis, Nicholas Zabaras.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

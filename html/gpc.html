@@ -1,0 +1,643 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Generalized Polynomial Chaos &mdash; Bayesian Exploration Statistical Toolbox 0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Bayesian Exploration Statistical Toolbox 0 documentation" href="index.html" />
+    <link rel="up" title="Reference Guide" href="reference.html" />
+    <link rel="next" title="Generalized Linear Model" href="glm.html" />
+    <link rel="prev" title="Random" href="random.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="glm.html" title="Generalized Linear Model"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="random.html" title="Random"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" accesskey="U">Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-best.gpc">
+<span id="generalized-polynomial-chaos"></span><span id="gpc"></span><h1>Generalized Polynomial Chaos<a class="headerlink" href="#module-best.gpc" title="Permalink to this headline">¶</a></h1>
+<p>The module <a class="reference internal" href="#module-best.gpc" title="best.gpc: Classes and methods for the construction of Generalized Polynomial Chaos (gPC) with arbitrary probability distributions."><tt class="xref py py-mod docutils literal"><span class="pre">best.gpc</span></tt></a> implements functionality related to the
+construction and manipulation of orthogonal polynomials with respect
+to arbitrary probability distributions. Mathematically, let
+<img class="math" src="_images/math/5acc5b41c9146612d0c74c5475748d26ae3c832d.png" alt="f(\cdot)"/> be a probability distribution. Then it allows the
+construction of polynomials <img class="math" src="_images/math/a52ce756077c53fa06ecf81baecb47bfe61f5d88.png" alt="\phi_n(\cdot)"/> such that:</p>
+<div class="math">
+<p><img src="_images/math/c1b08f51af857a11a5c69e464bf83fed028cefe0.png" alt="\int \phi_n(\mathbf{x})\phi_m(\mathbf{x})f(\mathbf{x})d\mathbf{x}
+= \delta_{nm}."/></p>
+</div><p>It is largly based on the legacy Fortran code ORTHPOL.</p>
+<div class="section" id="d-orthogonal-polynomials">
+<h2>1D Orthogonal Polynomials<a class="headerlink" href="#d-orthogonal-polynomials" title="Permalink to this headline">¶</a></h2>
+<p>We start with the construction of polynomials in one dimension. This
+can be achieved via the class <a class="reference internal" href="#best.gpc.best.gpc.OrthogonalPolynomial" title="best.gpc.best.gpc.OrthogonalPolynomial"><tt class="xref py py-class docutils literal"><span class="pre">best.gpc.OrthogonalPolynomial</span></tt></a>
+which is described below.</p>
+<dl class="class">
+<dt id="best.gpc.best.gpc.OrthogonalPolynomial">
+<em class="property">class </em><tt class="descclassname">best.gpc.</tt><tt class="descname">OrthogonalPolynomial</tt><a class="headerlink" href="#best.gpc.best.gpc.OrthogonalPolynomial" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class representing a 1D orthogonal polynomial with respect to a particular probability density.</p>
+<p>The polynomials are described internally via the recursive relations:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/cdf04b1f55bf3bd014b5911fc67e577f230bff22.png" alt="\phi_n(x) = \left((x - \alpha_{n-1})\phi_{n-1}(x)
+- \beta_{n-1}\phi_{n-2}(x)\right) / \gamma_{n},"/></p>
+</div></div></blockquote>
+<p>with</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/9daddef043632a62be2c29246a78c57a2ab0430c.png" alt="\phi_0(x) = 1 / \gamma_0"/></p>
+</div></div></blockquote>
+<p>and</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/2ff07dcd2f57dbdcece9a3f00239760a22062f78.png" alt="\phi_1(x) = (x - \alpha_0)\phi_0(x) / \gamma_1."/></p>
+</div></div></blockquote>
+<p>They are always properly normalized. Keep in mind that it inherits
+from <tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt>, so it is a multi-output function.
+The number of outputs is essentially equal to the number of
+polynomials represented by the class.</p>
+<dl class="method">
+<dt id="best.gpc.best.gpc.OrthogonalPolynomial.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>degree</em><span class="optional">[</span>, <em>rv=None</em><span class="optional">[</span>, <em>left=-1</em><span class="optional">[</span>, <em>right=1</em><span class="optional">[</span>, <em>wf=lambda(x): 1.</em><span class="optional">[</span>, <em>ncap=50</em><span class="optional">[</span>, <em>quad=QuadratureRule</em><span class="optional">[</span>, <em>name='Orthogonal Polynomial'</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.gpc.best.gpc.OrthogonalPolynomial.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<p>The polynomial is constructed on an interval <img class="math" src="_images/math/da2e551d2ca2155b8d8f4935d2e9757722c9bab6.png" alt="[a, b]"/>,
+where <img class="math" src="_images/math/cbee74baed354d3750fb14922042b3c2f9f68e16.png" alt="-\infty \le a &lt; b \le +\infty"/>. The construction
+of the polynomial uses the Lanczos procedure
+(see <tt class="xref py py-func docutils literal"><span class="pre">best.gpc.lancz()</span></tt>) which relies on a quadrature
+rule. The default quadrature rule is the n-point Fejer rule
+(see <tt class="xref py py-func docutils literal"><span class="pre">best.gpc.fejer()</span></tt>). These default can, of course,
+be bypassed by overloading this class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>degree</strong> (<em>int</em>) &#8211; The degree of the polynomial.</li>
+<li><strong>rv</strong> (<tt class="docutils literal"><span class="pre">scipy.stats.rv_continuous</span></tt>) &#8211; A 1D random variable. It can be anything that inherits from <tt class="docutils literal"><span class="pre">scipy.stats.rv_continuous</span></tt>. If this is specified, the rest of the keyword arguments are ignored.</li>
+<li><strong>left</strong> (<em>float</em>) &#8211; The left side of the interval over which the polynomial is defined. <img class="math" src="_images/math/afac538740054d4786c170ef0123850adea5cdf9.png" alt="-\infty"/> may be
+specified by <tt class="docutils literal"><span class="pre">-float('inf')</span></tt>.</li>
+<li><strong>right</strong> (<em>float</em>) &#8211; The right side of the interval over which the polynomial is defined. <img class="math" src="_images/math/b671f1bb7e4ee86584347d5d22f1dc8abdb5bef2.png" alt="\infty"/> may be
+specified by <tt class="docutils literal"><span class="pre">float('inf')</span></tt>.</li>
+<li><strong>f</strong> &#8211; The probability density serving as weight.</li>
+<li><strong>ncap</strong> (<em>int</em>) &#8211; The number of quadrature points to be used.</li>
+<li><strong>quad</strong> (<tt class="xref py py-class docutils literal"><span class="pre">best.gpc.QuadratureRule</span></tt>) &#8211; A quadrature rule. See the description below.</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; A name for the polynomials.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gpc.best.gpc.OrthogonalPolynomial.degree">
+<tt class="descname">degree</tt><a class="headerlink" href="#best.gpc.best.gpc.OrthogonalPolynomial.degree" title="Permalink to this definition">¶</a></dt>
+<dd><p>The maximum degree of the polynomials.
+The number of polynomials is <tt class="docutils literal"><span class="pre">degree</span> <span class="pre">+</span> <span class="pre">1</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gpc.best.gpc.OrthogonalPolynomial.alpha">
+<tt class="descname">alpha</tt><a class="headerlink" href="#best.gpc.best.gpc.OrthogonalPolynomial.alpha" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <img class="math" src="_images/math/b8dce18730751bc41471a415625e265bbb8ea1ee.png" alt="\alpha_n"/> coefficients of the recursive relation.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gpc.best.gpc.OrthogonalPolynomial.beta">
+<tt class="descname">beta</tt><a class="headerlink" href="#best.gpc.best.gpc.OrthogonalPolynomial.beta" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <img class="math" src="_images/math/21d85b545968fada10f48d2b1f8f393b5e3db852.png" alt="\beta_n"/> coefficients of the recursive relation.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gpc.best.gpc.OrthogonalPolynomial.gamma">
+<tt class="descname">gamma</tt><a class="headerlink" href="#best.gpc.best.gpc.OrthogonalPolynomial.gamma" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <img class="math" src="_images/math/55f6b5380d462f954b65d7a2cd05e02ff8cc832e.png" alt="\gamma_n"/> coefficients of the recursive relation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">_eval(x):</tt></dt>
+<dd><p>Evaluate the function at <tt class="docutils literal"><span class="pre">x</span></tt> assuming that <tt class="docutils literal"><span class="pre">x</span></tt> has the
+right dimensions.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Overloaded version of <tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function._eval()</span></tt></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>1D numpy array of the right dimensions</em>) &#8211; The evaluation point.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The result.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">1D numpy array of the right dimensions or just a float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">_d_eval(x):</tt></dt>
+<dd><p>Evaluate the Jacobian of the function at <tt class="docutils literal"><span class="pre">x</span></tt>. The dimensions
+of the Jacobian are <tt class="docutils literal"><span class="pre">num_output</span> <span class="pre">x</span> <span class="pre">num_input</span></tt>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Overloaded version of <tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function._d_eval()</span></tt></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>1D numpy array of the right dimensions</em>) &#8211; The evaluation point.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The Jacobian at x.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">2D numpy array of the right dimensions</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="product-basis">
+<h2>Product Basis<a class="headerlink" href="#product-basis" title="Permalink to this headline">¶</a></h2>
+<p>1D polynomials can be combined to create multi-input polynomials.
+The class <a class="reference internal" href="#best.gpc.best.gpc.ProductBasis" title="best.gpc.best.gpc.ProductBasis"><tt class="xref py py-class docutils literal"><span class="pre">best.gpc.ProductBasis</span></tt></a> constructs multi-input
+orthogonal polynomials up to a given degree by combining 1D orthogonal
+polynomials. Here is its definition:</p>
+<dl class="class">
+<dt id="best.gpc.best.gpc.ProductBasis">
+<em class="property">class </em><tt class="descclassname">best.gpc.</tt><tt class="descname">ProductBasis</tt><a class="headerlink" href="#best.gpc.best.gpc.ProductBasis" title="Permalink to this definition">¶</a></dt>
+<dd><p>A multi-input orthogonal polynomial basis.</p>
+<p>It inherits from <tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt>.</p>
+<dl class="method">
+<dt id="best.gpc.best.gpc.ProductBasis.__init__">
+<tt class="descname">__init__</tt><big>(</big><span class="optional">[</span><em>rv=None</em><span class="optional">[</span>, <em>degree=1</em><span class="optional">[</span>, <em>polynomials=None</em><span class="optional">[</span>, <em>ncap=50</em><span class="optional">[</span>, <em>quad=None</em><span class="optional">[</span>, <em>name='Product Basis'</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.gpc.best.gpc.ProductBasis.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>rv</strong> (<tt class="xref py py-class docutils literal"><span class="pre">best.random.RandomVectorIndependent</span></tt>) &#8211; A random vector of independent random variables. If not <tt class="docutils literal"><span class="pre">None</span></tt>, then the keyword argument
+<tt class="docutils literal"><span class="pre">polynomials</span></tt> is ignored.</li>
+<li><strong>degree</strong> (<em>int</em>) &#8211; The total degree of the basis. Each one of the 1D polynomials will have this degree. It is ignored if <tt class="docutils literal"><span class="pre">rv</span></tt> is <tt class="docutils literal"><span class="pre">None</span></tt>.</li>
+<li><strong>polynomials</strong> (tuple or list of <a class="reference internal" href="#best.gpc.best.gpc.OrthogonalPolynomial" title="best.gpc.best.gpc.OrthogonalPolynomial"><tt class="xref py py-class docutils literal"><span class="pre">best.gpc.OrthogonalPolynomial</span></tt></a>) &#8211; We only look at this if <tt class="docutils literal"><span class="pre">rv</span></tt> is <tt class="docutils literal"><span class="pre">None</span></tt>. It is a collection of 1D orthogonal polynomials.</li>
+<li><strong>ncap</strong> (<em>int</em>) &#8211; The number of quadrature points for each dimension.</li>
+<li><strong>quad</strong> &#8211; The quadrature rule you might want to use.</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; A name for the basis.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gpc.best.gpc.ProductBasis.degree">
+<tt class="descname">degree</tt><a class="headerlink" href="#best.gpc.best.gpc.ProductBasis.degree" title="Permalink to this definition">¶</a></dt>
+<dd><p>The total order of the basis.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gpc.best.gpc.ProductBasis.polynomials">
+<tt class="descname">polynomials</tt><a class="headerlink" href="#best.gpc.best.gpc.ProductBasis.polynomials" title="Permalink to this definition">¶</a></dt>
+<dd><p>The container of 1D polynomials.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gpc.best.gpc.ProductBasis.terms">
+<tt class="descname">terms</tt><a class="headerlink" href="#best.gpc.best.gpc.ProductBasis.terms" title="Permalink to this definition">¶</a></dt>
+<dd><p>An array representing the basis terms.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.gpc.best.gpc.ProductBasis.num_terms">
+<tt class="descname">num_terms</tt><a class="headerlink" href="#best.gpc.best.gpc.ProductBasis.num_terms" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of of terms up to each order</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">_eval(x):</tt></dt>
+<dd><p>Evaluate the function at <tt class="docutils literal"><span class="pre">x</span></tt> assuming that <tt class="docutils literal"><span class="pre">x</span></tt> has the
+right dimensions.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Overloaded version of <tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function._eval()</span></tt></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>1D numpy array of the right dimensions</em>) &#8211; The evaluation point.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The result.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">1D numpy array of the right dimensions or just a float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="constructing-polynomials">
+<h2>Constructing Polynomials<a class="headerlink" href="#constructing-polynomials" title="Permalink to this headline">¶</a></h2>
+<p>We now show how to construct several of the standar orthogonal
+polynomials used in the literature. For convenience, assume that in all
+examples we have imported the <tt class="docutils literal"><span class="pre">matplotlib.pyplot</span></tt> of the
+<a class="reference external" href="http://matplotlib.org/">matplotlib library</a> by:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+<div class="section" id="hermite-polynomials">
+<h3>Hermite polynomials<a class="headerlink" href="#hermite-polynomials" title="Permalink to this headline">¶</a></h3>
+<p>The Hermite polynomials are defined on <img class="math" src="_images/math/57f240143a85a508de7721a7548b3b3c545547bc.png" alt="(-\infty, \infty)"/> are
+orthogonal with respect to the probability density:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/cf33c4b2c7cbc690aa05810fba7006992c40b2f6.png" alt="f(x) = \frac{1}{\sqrt{2\pi}}e^{-x^2/2}."/></p>
+</div></div></blockquote>
+<p>Here is how you can construct them up to degree 10:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">best.gpc</span> <span class="kn">import</span> <span class="n">OrthogonalPolynomial</span>
+<span class="n">infty</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;inf&#39;</span><span class="p">)</span>    <span class="c"># A number representing infinty.</span>
+<span class="n">degree</span> <span class="o">=</span> <span class="mi">10</span>             <span class="c"># The degree of the polynomials</span>
+<span class="n">wf</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">OrthogonalPolynomial</span><span class="p">(</span><span class="n">degree</span><span class="p">,</span> <span class="n">left</span><span class="o">=-</span><span class="n">infty</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="n">infty</span><span class="p">,</span> <span class="n">wf</span><span class="o">=</span><span class="n">wf</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Notice the definition of the probability density function. This could
+be a regular function or a <tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt>. Here we have
+opted for the much quicker lambda structure.</p>
+<p>You may look at the coefficients of the recursive formula by:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which should produce the following text:</p>
+<div class="highlight-python"><pre>Orthogonal Polynomial:R^1 --&gt; R^11
+ alpha: [  8.24721933e-17   3.00634774e-16  -1.87973171e-16   3.50005961e-16
+  -5.28859926e-16   4.05750024e-16  -6.69888614e-16  -8.13357045e-16
+   8.06209016e-16  -2.21298838e-15   7.45252594e-16]
+ beta: [ 1.00000012  1.00000151  1.41419988  1.73184818  2.0000218   2.24118187
+   2.45731915  2.59905334  2.71187277  3.16796779  3.68960306]
+ gamma: [ 1.00000012  1.00000151  1.41419988  1.73184818  2.0000218   2.24118187
+   2.45731915  2.59905334  2.71187277  3.16796779  3.68960306]
+ normalized: True</pre>
+</div>
+<p>You can see the polynomials by:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>which should produce the following figure:</p>
+<blockquote>
+<div><div class="figure align-center">
+<img alt="_images/hermite.png" src="_images/hermite.png" />
+<p class="caption">The Hermite polynomials up to degree 10.</p>
+</div>
+</div></blockquote>
+<p>Similarly you may visualize their derivatives by:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">d</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>which should produce the following figure:</p>
+<blockquote>
+<div><div class="figure align-center">
+<img alt="_images/hermite_der.png" src="_images/hermite_der.png" />
+<p class="caption">The derivative of the Hermite polynomials up to degree 10.</p>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="laguerre-polynomials">
+<h3>Laguerre polynomials<a class="headerlink" href="#laguerre-polynomials" title="Permalink to this headline">¶</a></h3>
+<p>The Laguerre polynomials are defined on <img class="math" src="_images/math/2b0e4940d43e6b6313ba59e160cf570f79483a9b.png" alt="(0, \infty)"/> are
+orthogonal with respect to the probability density:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/39c602f074ef3971da888d91eab62288df1a993e.png" alt="f(x) = e^{-x}."/></p>
+</div></div></blockquote>
+<p>Up to degree 10, they may be constructed by:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">best.gpc</span> <span class="kn">import</span> <span class="n">OrthogonalPolynomial</span>
+<span class="n">infty</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;inf&#39;</span><span class="p">)</span>    <span class="c"># A number representing infinty.</span>
+<span class="n">degree</span> <span class="o">=</span> <span class="mi">10</span>             <span class="c"># The degree of the polynomials</span>
+<span class="n">wf</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">OrthogonalPolynomial</span><span class="p">(</span><span class="n">degree</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="n">infty</span><span class="p">,</span> <span class="n">wf</span><span class="o">=</span><span class="n">wf</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here is how they look:</p>
+<blockquote>
+<div><div class="figure align-center">
+<img alt="_images/laguerre.png" src="_images/laguerre.png" />
+<p class="caption">The Laguerre polynomials up to degree 10.</p>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="exploiting-scipy-stats">
+<h3>Exploiting <tt class="xref py py-mod docutils literal"><span class="pre">scipy.stats</span></tt><a class="headerlink" href="#exploiting-scipy-stats" title="Permalink to this headline">¶</a></h3>
+<p>It is also possible to use functionality from scipy to define the
+probability density. For example, you may construct the Laguerre
+polynomials by:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">scipy.stats</span>
+<span class="c"># Define the random variable</span>
+<span class="n">rv</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">expon</span><span class="p">()</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">OrthogonalPolynomial</span><span class="p">(</span><span class="n">degree</span><span class="p">,</span> <span class="n">rv</span><span class="o">=</span><span class="n">rv</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is a nice trick, because you can immediately construct any
+orthogonal polynomial you wish making use of the probability
+distributions that can be found in
+<a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/stats.html">scipy.stats</a>.
+All you need to do is:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Construct a random variable <tt class="docutils literal"><span class="pre">rv</span></tt>.</li>
+<li>USe <tt class="docutils literal"><span class="pre">rv.pdf</span></tt> as the weight function when constructing the
+<a class="reference internal" href="#best.gpc.best.gpc.OrthogonalPolynomial" title="best.gpc.best.gpc.OrthogonalPolynomial"><tt class="xref py py-class docutils literal"><span class="pre">best.gpc.OrthogonalPolynomial</span></tt></a>.</li>
+</ol>
+</div></blockquote>
+<p>Here are for example orthogonal polynomials with respect to the Beta
+distribution:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/fa65f8e392169220aca5861747cd908faa0f14d2.png" alt="f(x) = \frac{\Gamma(a + b)}{\Gamma(a)\Gamma(b)} x^{a - 1}
+       (1 - x)^{b - 1},"/></p>
+</div></div></blockquote>
+<p>with <img class="math" src="_images/math/07122aaa488627d09f6a3217be0f64703465547f.png" alt="a, b&gt;0"/> and <img class="math" src="_images/math/b1379c16f720b564638ab95585c2a7aac8c1a7db.png" alt="x \in (0, 1)"/>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">scipy.stats</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mf">0.3</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mf">0.8</span>
+<span class="n">rv</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">beta</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">best</span><span class="o">.</span><span class="n">gpc</span><span class="o">.</span><span class="n">OrthogonalPolynomial</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">rv</span><span class="o">=</span><span class="n">rv</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here are the first six:</p>
+<blockquote>
+<div><div class="figure align-center">
+<img alt="_images/beta.png" src="_images/beta.png" />
+<p class="caption">The first six orthogonal polynomials with respect to the Beta distribution with <img class="math" src="_images/math/71de22fd3249d45d3ed02dfe1dd9384f55b5b810.png" alt="a = 0.3, b = 0.8"/>.</p>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="exploiting-best-random">
+<h3>Exploiting <a class="reference internal" href="random.html#module-best.random" title="best.random: Classes and functions related to random number generation."><tt class="xref py py-mod docutils literal"><span class="pre">best.random</span></tt></a><a class="headerlink" href="#exploiting-best-random" title="Permalink to this headline">¶</a></h3>
+<p>Let us take the Exponential random variable of the previous example,
+condition it to live in a small interval (say <img class="math" src="_images/math/69273482bff8727194f6407e55ac1bfa94d9c555.png" alt="(1, 2)"/>) and
+construct some orthogonal polynomials there. Here is how:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">scipy.stats</span>
+<span class="kn">from</span> <span class="nn">best.random</span> <span class="kn">import</span> <span class="n">RandomVariableConditional</span>
+<span class="c"># Define the random variable</span>
+<span class="n">rv</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">expon</span><span class="p">()</span>
+<span class="c"># The conditioned random variable</span>
+<span class="n">rv_cond</span> <span class="o">=</span> <span class="n">RandomVariableConditional</span><span class="p">(</span><span class="n">rv</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">OrthogonalPolynomial</span><span class="p">(</span><span class="n">degree</span><span class="p">,</span> <span class="n">rv</span><span class="o">=</span><span class="n">rv_cond</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This produces the following figure:</p>
+<blockquote>
+<div><div class="figure align-center">
+<img alt="_images/expon_conditioned.png" src="_images/expon_conditioned.png" />
+<p class="caption">The first six orthogonal polynomials with respect to an
+Exponential distribution restricted to live on <img class="math" src="_images/math/69273482bff8727194f6407e55ac1bfa94d9c555.png" alt="(1, 2)"/>.</p>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="constructing-product-basis">
+<h3>Constructing Product Basis<a class="headerlink" href="#constructing-product-basis" title="Permalink to this headline">¶</a></h3>
+<p>Let&#8217;s construct now a product basis of degree six based on a random
+vector of independent random variables. This can be achieved by:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">scipy.stats</span>
+<span class="kn">from</span> <span class="nn">best.random</span> <span class="kn">import</span> <span class="n">RandomVectorIndependent</span>
+<span class="kn">from</span> <span class="nn">best.gpc</span> <span class="kn">import</span> <span class="n">ProductBasis</span>
+<span class="c"># Construct the random vector (exponential, beta and normal)</span>
+<span class="n">rv</span> <span class="o">=</span> <span class="n">RandomVectorIndependent</span><span class="p">((</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">expon</span><span class="p">(),</span>
+                              <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">beta</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">),</span>
+                              <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">()))</span>
+<span class="c"># Construct the product basis</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">ProductBasis</span><span class="p">(</span><span class="n">rv</span><span class="o">=</span><span class="n">rv</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The output is as follows:</p>
+<div class="highlight-python"><pre>Product basis:R^3 --&gt; R^84
+sz = 84
+0: 0 0 0
+1: 1 0 0
+2: 0 1 0
+3: 0 0 1
+4: 2 0 0
+5: 1 1 0
+6: 1 0 1
+7: 0 2 0
+8: 0 1 1
+9: 0 0 2
+10: 3 0 0
+11: 2 1 0
+12: 2 0 1
+13: 1 2 0
+14: 1 1 1
+15: 1 0 2
+16: 0 3 0
+17: 0 2 1
+18: 0 1 2
+19: 0 0 3
+20: 4 0 0
+21: 3 1 0
+22: 3 0 1
+23: 2 2 0
+24: 2 1 1
+25: 2 0 2
+26: 1 3 0
+27: 1 2 1
+28: 1 1 2
+29: 1 0 3
+30: 0 4 0
+31: 0 3 1
+32: 0 2 2
+33: 0 1 3
+34: 0 0 4
+35: 5 0 0
+36: 4 1 0
+37: 4 0 1
+38: 3 2 0
+39: 3 1 1
+40: 3 0 2
+41: 2 3 0
+42: 2 2 1
+43: 2 1 2
+44: 2 0 3
+45: 1 4 0
+46: 1 3 1
+47: 1 2 2
+48: 1 1 3
+49: 1 0 4
+50: 0 5 0
+51: 0 4 1
+52: 0 3 2
+53: 0 2 3
+54: 0 1 4
+55: 0 0 5
+56: 6 0 0
+57: 5 1 0
+58: 5 0 1
+59: 4 2 0
+60: 4 1 1
+61: 4 0 2
+62: 3 3 0
+63: 3 2 1
+64: 3 1 2
+65: 3 0 3
+66: 2 4 0
+67: 2 3 1
+68: 2 2 2
+69: 2 1 3
+70: 2 0 4
+71: 1 5 0
+72: 1 4 1
+73: 1 3 2
+74: 1 2 3
+75: 1 1 4
+76: 1 0 5
+77: 0 6 0
+78: 0 5 1
+79: 0 4 2
+80: 0 3 3
+81: 0 2 4
+82: 0 1 5
+83: 0 0 6
+num_terms = 1 4 10 20 35 56 84</pre>
+</div>
+<p>Let&#8217;s evaluate the basis at a few points:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">x</span> <span class="o">=</span> <span class="n">rv</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">phi</span> <span class="o">=</span> <span class="n">p</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">phi</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">phi</span></tt> is the design matrix.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Generalized Polynomial Chaos</a><ul>
+<li><a class="reference internal" href="#d-orthogonal-polynomials">1D Orthogonal Polynomials</a></li>
+<li><a class="reference internal" href="#product-basis">Product Basis</a></li>
+<li><a class="reference internal" href="#constructing-polynomials">Constructing Polynomials</a><ul>
+<li><a class="reference internal" href="#hermite-polynomials">Hermite polynomials</a></li>
+<li><a class="reference internal" href="#laguerre-polynomials">Laguerre polynomials</a></li>
+<li><a class="reference internal" href="#exploiting-scipy-stats">Exploiting <tt class="docutils literal"><span class="pre">scipy.stats</span></tt></a></li>
+<li><a class="reference internal" href="#exploiting-best-random">Exploiting <tt class="docutils literal"><span class="pre">best.random</span></tt></a></li>
+<li><a class="reference internal" href="#constructing-product-basis">Constructing Product Basis</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="random.html"
+                        title="previous chapter">Random</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="glm.html"
+                        title="next chapter">Generalized Linear Model</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/gpc.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="glm.html" title="Generalized Linear Model"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="random.html" title="Random"
+             >previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" >Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Ilias Bilionis, Nicholas Zabaras.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

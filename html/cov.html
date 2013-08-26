@@ -1,0 +1,575 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Covariance Functions &mdash; Bayesian Exploration Statistical Toolbox 0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Bayesian Exploration Statistical Toolbox 0 documentation" href="index.html" />
+    <link rel="up" title="Reference Guide" href="reference.html" />
+    <link rel="next" title="Domain" href="domain.html" />
+    <link rel="prev" title="Maps" href="maps.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="domain.html" title="Domain"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="maps.html" title="Maps"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" accesskey="U">Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="covariance-functions">
+<span id="cov"></span><h1>Covariance Functions<a class="headerlink" href="#covariance-functions" title="Permalink to this headline">¶</a></h1>
+<p>Covariance functions are a special choice of a multi-input
+single-output functions that are treated separately from common
+functions. A covariance function is a function:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/1b11b362e8eddb299bad2a44996e6a947d42d836.png" alt="k:\mathbb{R}^d\times\mathbb{R}^d\rightarrow\mathbb{R},"/></p>
+</div></div></blockquote>
+<p>that is <strong>semi-positive definite</strong>. That is, for all
+<img class="math" src="_images/math/2c3c3ac2b4ebd362fe97ce6c9431f6e0cde862b0.png" alt="\mathbf{x}^{(i)}"/> we have:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/2a32872f12e1d132dfe31d490318ebc17312593c.png" alt="\sum_i\sum_j
+    k\left(\mathbf{x}^{(i)}, \mathbf{x}^{(j)}\right) \ge 0."/></p>
+</div></div></blockquote>
+<div class="section" id="the-best-maps-covariancefunction-class">
+<h2>The <a class="reference internal" href="#best.maps.CovarianceFunction" title="best.maps.CovarianceFunction"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.CovarianceFunction</span></tt></a> class<a class="headerlink" href="#the-best-maps-covariancefunction-class" title="Permalink to this headline">¶</a></h2>
+<p>All covariance functions must inherit from <a class="reference internal" href="#best.maps.CovarianceFunction" title="best.maps.CovarianceFunction"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.CovarianceFunction</span></tt></a>:</p>
+<dl class="class">
+<dt id="best.maps.CovarianceFunction">
+<em class="property">class </em><tt class="descclassname">best.maps.</tt><tt class="descname">CovarianceFunction</tt><a class="headerlink" href="#best.maps.CovarianceFunction" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><a class="reference internal" href="basic.html#best.Object" title="best.Object"><tt class="xref py py-class docutils literal"><span class="pre">best.Object</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<p>A class representing a covariance function. This is any
+funciton <img class="math" src="_images/math/b33ce30845029e1b65e247c1a7ae224960ec085b.png" alt="k(\mathbf{x}, \mathbf{x}'; \boldsymbol{\theta})"/>.
+The parameters <img class="math" src="_images/math/53562832a57c975fa59c0c276a8767b092552bed.png" alt="\boldsymbol{\theta}"/> are parameters
+of the covariance function that can be set. Within the class
+documentation, we call them <tt class="docutils literal"><span class="pre">hyp</span></tt> (from hyper-parameters).
+The hyper-parameters should always be represented by a 1D
+numpy array.</p>
+<dl class="method">
+<dt id="best.maps.CovarianceFunction.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>num_input</em><span class="optional">[</span>, <em>num_hyp=0</em><span class="optional">[</span>, <em>hyp=None</em><span class="optional">[</span>, <em>k_wrapped=None</em><span class="optional">[</span>, <em>name='Covariance Function'</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.maps.CovarianceFunction.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>num_input</strong> (<em>int</em>) &#8211; The dimensionality of the input points.</li>
+<li><strong>num_hyp</strong> (<em>int</em>) &#8211; The number of hyper-parameters of the covariance function. The default value is zero.</li>
+<li><strong>hyp</strong> (<em>1D numpy array</em>) &#8211; A vector of hyper-parameters. If None, then the object stores no hyper-parameters and cannot be evaluated without providing a value for them. If set to a valid hyper-parameter object, then the object can be evaluated without any additional info.</li>
+<li><strong>k_wrapped</strong> &#8211; A common python function defined by of two variables returning a real number. Ignored if None.</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; A name for the covariance function.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.maps.CovarianceFunction.num_input">
+<tt class="descname">num_input</tt><a class="headerlink" href="#best.maps.CovarianceFunction.num_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the dimensionality of the input.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.maps.CovarianceFunction.k_wrapped">
+<tt class="descname">k_wrapped</tt><a class="headerlink" href="#best.maps.CovarianceFunction.k_wrapped" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the wrapped function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.maps.CovarianceFunction.is_wrapped">
+<tt class="descname">is_wrapped</tt><a class="headerlink" href="#best.maps.CovarianceFunction.is_wrapped" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <tt class="docutils literal"><span class="pre">True</span></tt> if there is a wrapped function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.maps.CovarianceFunction.hyp">
+<tt class="descname">hyp</tt><a class="headerlink" href="#best.maps.CovarianceFunction.hyp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get/Set the hyper-parameters. If the hyper-parameters
+have not been set, then this returns <tt class="docutils literal"><span class="pre">None</span></tt>.
+You might want to check
+<tt class="xref py py-func docutils literal"><span class="pre">best.maps.CovarianceFunction.is_hyp_set()</span></tt> before
+calling this one.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.maps.CovarianceFunction.num_hyp">
+<tt class="descname">num_hyp</tt><a class="headerlink" href="#best.maps.CovarianceFunction.num_hyp" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of hyper-parameters.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.CovarianceFunction.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>x</em>, <em>y</em><span class="optional">[</span>, <em>hyp=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.maps.CovarianceFunction.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the covariance function at <tt class="docutils literal"><span class="pre">x</span></tt> and <tt class="docutils literal"><span class="pre">y</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Note :</th><td class="field-body"><p class="first">If <tt class="docutils literal"><span class="pre">hyp</span></tt> has already been set, then you do not have provide. If you do, then the value you have set should be ignored. If it is not set and you pass <tt class="docutils literal"><span class="pre">None</span></tt>, then it should throw a <tt class="docutils literal"><span class="pre">ValueError()</span></tt>.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>1D or 2D numpy array.</em>) &#8211; Input points for <tt class="docutils literal"><span class="pre">x</span></tt>.</li>
+<li><strong>y</strong> (<em>1D or 2D numpy array.</em>) &#8211; Input points for <tt class="docutils literal"><span class="pre">y</span></tt>.</li>
+<li><strong>hyp</strong> (<em>1D array.</em>) &#8211; The hyper-parameters.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The return type depends on what <tt class="docutils literal"><span class="pre">x</span></tt> and <tt class="docutils literal"><span class="pre">y</span></tt> are.
+Let <img class="math" src="_images/math/c5be19edae9196ae8f8106e8133e0bf69ca909c8.png" alt="n, m"/> be
+the dimension of <tt class="docutils literal"><span class="pre">x</span></tt> and <tt class="docutils literal"><span class="pre">y</span></tt>, respectively. Then the function
+should return a 2D numpy array with shape <img class="math" src="_images/math/bed4cafeded4bdf622cee8198b01a198f5d635f6.png" alt="n \times m"/> with:</p>
+<div class="math">
+<p><img src="_images/math/8d1f3478db6b1f7cb7c2ea3d25ee3550b67d001c.png" alt="K_{ij} = k\left(\mathbf{x}^{(i)}, \mathbf{y}^{(j)}; \boldsymbol{\theta}\right)."/></p>
+</div><p>This is known as the <strong>cross covariance matrix</strong> of <tt class="docutils literal"><span class="pre">x</span></tt> and <tt class="docutils literal"><span class="pre">y</span></tt>.
+If <tt class="docutils literal"><span class="pre">x</span></tt> and <tt class="docutils literal"><span class="pre">y</span></tt> are the same, then it is semi-positive definite
+and it is known as the <strong>covariance matrix</strong> of <tt class="docutils literal"><span class="pre">x</span></tt>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">You do not have to overload this function when creating
+your own covariance function. However, doing so might
+yield a big performance gain. When you do so, you must
+conform with the types that must be returned for each
+special case of <tt class="docutils literal"><span class="pre">x</span></tt> and <tt class="docutils literal"><span class="pre">y</span></tt>.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.CovarianceFunction.d">
+<tt class="descname">d</tt><big>(</big><em>x</em>, <em>y</em><span class="optional">[</span>, <em>hyp=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.maps.CovarianceFunction.d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the Jacobian of the cross covariance matrix
+with respect to the inputs.</p>
+<p>Parameters as in
+<a class="reference internal" href="#best.maps.CovarianceFunction.__call__" title="best.maps.CovarianceFunction.__call__"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.CovarianceFunction.__call__()</span></tt></a>.</p>
+<p>The return type depends on <tt class="docutils literal"><span class="pre">x</span></tt> and <tt class="docutils literal"><span class="pre">y</span></tt>. Let <img class="math" src="_images/math/c5be19edae9196ae8f8106e8133e0bf69ca909c8.png" alt="n, m"/>
+be as before anb assume that the dimensionality of
+the input is <img class="math" src="_images/math/96ab646de7704969b91c76a214126b45f2b07b25.png" alt="d"/>. Then, this should
+return a 3D numpy array with shape <img class="math" src="_images/math/def4cd6bc36d22431aec0fca8d325256e8ee7c96.png" alt="n \times m \times d"/>
+containing:</p>
+<div class="math">
+<p><img src="_images/math/f4a4fd30206e520cf12ff9ff94e65002cd062640.png" alt="D_{ijl} = \frac{\partial k\left(\mathbf{x}^{(i)}, \mathbf{y}^{(j)}; \boldsymbol{\theta}\right)}{\partial y_l}."/></p>
+</div><p>The same warning as in <a class="reference internal" href="#best.maps.CovarianceFunction.__call__" title="best.maps.CovarianceFunction.__call__"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.CovarianceFunction.__call__()</span></tt></a>
+applies here in case you choose to overload it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.CovarianceFunction.d_hyp">
+<tt class="descname">d_hyp</tt><big>(</big><em>x</em>, <em>y</em><span class="optional">[</span>, <em>hyp=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.maps.CovarianceFunction.d_hyp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the Jacobian of the cross covariance matrix
+with respect to the hyper-parameters.</p>
+<p>Parameters as in
+<a class="reference internal" href="#best.maps.CovarianceFunction.__call__" title="best.maps.CovarianceFunction.__call__"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.CovarianceFunction.__call__()</span></tt></a>.</p>
+<p>The return type depends on <tt class="docutils literal"><span class="pre">x</span></tt> and <tt class="docutils literal"><span class="pre">y</span></tt>. Let <img class="math" src="_images/math/c5be19edae9196ae8f8106e8133e0bf69ca909c8.png" alt="n, m"/>
+be as before anb assume that the dimensionality of
+the hyper-parameters is <img class="math" src="_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/>. Then, this should
+return a 3D numpy array with shape <img class="math" src="_images/math/86afb8c1b22185496a5588073eb8f19d8514fc39.png" alt="n \times m \times q"/>
+containing:</p>
+<div class="math">
+<p><img src="_images/math/760d2a56ad3231919de8b21e638cec01cf323791.png" alt="E_{ijl} = \frac{\partial k\left(\mathbf{x}^{(i)}, \mathbf{y}^{(j)}; \boldsymbol{\theta}\right)}{\partial \theta_l}."/></p>
+</div><p>The same warning as in <a class="reference internal" href="#best.maps.CovarianceFunction.__call__" title="best.maps.CovarianceFunction.__call__"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.CovarianceFunction.__call__()</span></tt></a>
+applies here in case you choose to overload it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.CovarianceFunction._eval">
+<tt class="descname">_eval</tt><big>(</big><em>x</em>, <em>y</em>, <em>hyp</em><big>)</big><a class="headerlink" href="#best.maps.CovarianceFunction._eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the covariance function at two single inputs given <tt class="docutils literal"><span class="pre">hyp</span></tt>.
+This is the function that you can overload to access to
+the calculation of the cross covariance matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.CovarianceFunction._d_eval">
+<tt class="descname">_d_eval</tt><big>(</big><em>x</em>, <em>y</em>, <em>hyp</em><big>)</big><a class="headerlink" href="#best.maps.CovarianceFunction._d_eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the Jacobian of the covariance function at two single
+inputs given <tt class="docutils literal"><span class="pre">hyp</span></tt>. The result should be a 1D numpy
+array of <tt class="docutils literal"><span class="pre">num_input</span></tt> elements. You can overloaded this
+to gain access to
+<a class="reference internal" href="#best.maps.CovarianceFunction.d" title="best.maps.CovarianceFunction.d"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.CovarianceFunction.d()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.CovarianceFunction._d_hyp_eval">
+<tt class="descname">_d_hyp_eval</tt><big>(</big><em>x</em>, <em>y</em>, <em>hyp</em><big>)</big><a class="headerlink" href="#best.maps.CovarianceFunction._d_hyp_eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the Jacobian of the covariance function at two
+single inputs given <tt class="docutils literal"><span class="pre">hyp</span></tt>. The result should be a 1D numpy
+array of <tt class="docutils literal"><span class="pre">num_hyp</span></tt> elements. You can overload this to gain
+access to
+<a class="reference internal" href="#best.maps.CovarianceFunction.d_hyp" title="best.maps.CovarianceFunction.d_hyp"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.CovarianceFunction.d_hyp()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.CovarianceFunction.__mul__">
+<tt class="descname">__mul__</tt><big>(</big><em>g</em><big>)</big><a class="headerlink" href="#best.maps.CovarianceFunction.__mul__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new covariance function that is the product of the
+current one and <tt class="docutils literal"><span class="pre">g</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>g</strong> (<a class="reference internal" href="#best.maps.CovarianceFunction" title="best.maps.CovarianceFunction"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.CovarianceFunction</span></tt></a>) &#8211; A covariance function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.CovarianceFunction.__add__">
+<tt class="descname">__add__</tt><big>(</big><em>g</em><big>)</big><a class="headerlink" href="#best.maps.CovarianceFunction.__add__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new covariance function that is the sum of the
+current one and <tt class="docutils literal"><span class="pre">g</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>g</strong> (<a class="reference internal" href="#best.maps.CovarianceFunction" title="best.maps.CovarianceFunction"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.CovarianceFunction</span></tt></a>) &#8211; A covariance function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.CovarianceFunction.to_basis">
+<tt class="descname">to_basis</tt><big>(</big><em>X</em><big>)</big><a class="headerlink" href="#best.maps.CovarianceFunction.to_basis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a basis object from a covariance function.</p>
+<p>The parameters are as in
+<a class="reference internal" href="#best.maps.CovarianceFunctionBasis" title="best.maps.CovarianceFunctionBasis"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.CovarianceFunctionBasis</span></tt></a>.
+See the documentation there for more details.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.CovarianceFunction._to_string">
+<tt class="descname">_to_string</tt><big>(</big><em>pad</em><big>)</big><a class="headerlink" href="#best.maps.CovarianceFunction._to_string" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><a class="reference internal" href="basic.html#best.Object._to_string" title="best.Object._to_string"><tt class="xref py py-func docutils literal"><span class="pre">best.Object._to_string()</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="examples-of-covariance-functions">
+<span id="cov-example"></span><h2>Examples of Covariance Functions<a class="headerlink" href="#examples-of-covariance-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="squared-exponential-covariance">
+<span id="cov-se"></span><h3>Squared Exponential Covariance<a class="headerlink" href="#squared-exponential-covariance" title="Permalink to this headline">¶</a></h3>
+<p>The class <tt class="xref py py-class docutils literal"><span class="pre">best.maps.CovarianceFunctionSE</span></tt> implements a
+particular case of a <a class="reference internal" href="#best.maps.CovarianceFunction" title="best.maps.CovarianceFunction"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.CovarianceFunction</span></tt></a>:
+the <strong>Squared Exponential</strong> (SE) covariance function:</p>
+<div class="math">
+<p><img src="_images/math/cab640e415e0b24b2dec53001dad8e6b6d6f7319.png" alt="k\left(\mathbf{x}, \mathbf{y}; \boldsymbol{\theta}
+\right) =
+\exp\left\{
+    -\frac{1}{2}
+    \frac{\sum_{i=1}^d\left(x_i - y_i\right)^2}{\theta_i^2}
+\right\}."/></p>
+</div><p>Let&#8217;s plot it in 1D:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">best.maps</span> <span class="kn">import</span> <span class="n">CovarianceFunctionSE</span>
+<span class="n">k</span> <span class="o">=</span> <span class="n">CovarianceFunctionSE</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">hyp</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You should see the following:</p>
+<blockquote>
+<div><div class="figure align-center">
+<img alt="_images/cov_se.png" src="_images/cov_se.png" />
+<p class="caption">Plot of <img class="math" src="_images/math/983293f8a8f1f6a02ab16ce04c8293d28cd18be0.png" alt="k(0, x; 1)"/>.</p>
+</div>
+</div></blockquote>
+<p>Here is how you can get the derivative with respect to the input:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">D</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">d</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">hyp</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">D</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You should see:</p>
+<blockquote>
+<div><div class="figure align-center">
+<img alt="_images/cov_se_der.png" src="_images/cov_se_der.png" />
+<p class="caption">Plot of <img class="math" src="_images/math/1a6ff5d68039e0cafa607c6e4fa166d51b3a0d9e.png" alt="\frac{\partial k(0, x; 1)}{\partial x}"/>.</p>
+</div>
+</div></blockquote>
+<p>Here is how you can get the derivative with respect to the hyper-parameters:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">E</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">d_hyp</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">hyp</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="constructing-basis-from-covariance-functions">
+<span id="cov-basis"></span><h2>Constructing Basis from Covariance Functions<a class="headerlink" href="#constructing-basis-from-covariance-functions" title="Permalink to this headline">¶</a></h2>
+<p>Given a covariance function <img class="math" src="_images/math/88fd5488adbd018a33bf6a754b8abca0d52f20de.png" alt="k(\cdot, \cdot; \boldsymbol{\theta})"/>, we
+can construct a basis to be used in generalized linear models
+(see <tt class="xref py py-class docutils literal"><span class="pre">best.maps.GeneralizedLinearModel</span></tt>).
+All we need is a set of input points
+<img class="math" src="_images/math/b59c439414916c174f72c1145f47ced7e5bdc95e.png" alt="\left\{\mathbf{x}^{(i))}\right\}_{i=1}^n"/> and we can get
+a set of basis functions
+<img class="math" src="_images/math/0b77874ce02d1dc0d049c295c711e0f9b46fbc94.png" alt="\left\{\phi_i(\cdot; \boldsymbol{\theta})\right\}_{i=1}^n"/>
+Here is how:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="_images/math/9c0d83e014d07fb6eeb4ab19af7e056b02b8d2ad.png" alt="\phi_i(\mathbf{x}; \boldsymbol{\theta}) =
+k(\mathbf{x}^{(i)}, \mathbf{x}; \boldsymbol{\theta})."/></p>
+</div></div></blockquote>
+<p>If the covariance function depends only on the distance between
+<img class="math" src="_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> and <img class="math" src="_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/>, it is known
+as <a class="reference external" href="http://en.wikipedia.org/wiki/Radial_basis_function">Radial Basis Function</a> (RBF).
+Usually the <img class="math" src="_images/math/b59c439414916c174f72c1145f47ced7e5bdc95e.png" alt="\left\{\mathbf{x}^{(i))}\right\}_{i=1}^n"/> are the
+observed input points. Such a basis can be used to train a
+<tt class="xref py py-class docutils literal"><span class="pre">best.rvm.RelevanceVectorMachine</span></tt> or other types of
+<tt class="xref py py-class docutils literal"><span class="pre">best.maps.GeneralizedLinearModel</span></tt>.</p>
+<p>It is quite simple to construct this basis in Best.
+Let <tt class="docutils literal"><span class="pre">X</span></tt> be a 2D array of input points and <tt class="docutils literal"><span class="pre">k</span></tt> a covariance function.
+Then, you can construct the basis by:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">phi</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">to_basis</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">hyp</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here is how this looks in the previous example for
+a random selection of 10 input points:</p>
+<blockquote>
+<div><div class="figure align-center">
+<img alt="_images/cov_se_basis.png" src="_images/cov_se_basis.png" />
+<p class="caption">Plot of the <img class="math" src="_images/math/c50bc892ae89c25a75e972c93b6fbcb05cd6554f.png" alt="\phi_i(x)"/> for the 1D example.</p>
+</div>
+</div></blockquote>
+<p>This functionality is offered via the following class:</p>
+<dl class="class">
+<dt id="best.maps.CovarianceFunctionBasis">
+<em class="property">class </em><tt class="descclassname">best.maps.</tt><tt class="descname">CovarianceFunctionBasis</tt><a class="headerlink" href="#best.maps.CovarianceFunctionBasis" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>Represents a basis constructed from a covariance function.
+The class inherits (as every basis) from
+<tt class="xref py py-class docutils literal"><span class="pre">best.maps.Function</span></tt>. So, there is no need to give here
+the complete documentation. Simply, use a function!</p>
+<dl class="method">
+<dt id="best.maps.CovarianceFunctionBasis.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>k</em>, <em>X</em><span class="optional">[</span>, <em>hyp=None</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.maps.CovarianceFunctionBasis.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>k</strong> (<a class="reference internal" href="#best.maps.CovarianceFunction" title="best.maps.CovarianceFunction"><tt class="xref py py-class docutils literal"><span class="pre">best.maps.CovarianceFunction</span></tt></a>) &#8211; A covariance function.</li>
+<li><strong>X</strong> (<em>2D numpy array</em>) &#8211; A collection of input points that serve as centers.</li>
+<li><strong>hyp</strong> (<em>1D numpy array</em>) &#8211; A set of hyper-parameters that will remain fixed. If <tt class="docutils literal"><span class="pre">None</span></tt>, then we will copy the parameters that are already in <tt class="docutils literal"><span class="pre">k</span></tt>. We will throw an exception if we find nothing there.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.maps.CovarianceFunctionBasis.hyp">
+<tt class="descname">hyp</tt><a class="headerlink" href="#best.maps.CovarianceFunctionBasis.hyp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the hyper-parameters.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.maps.CovarianceFunctionBasis.cov">
+<tt class="descname">cov</tt><a class="headerlink" href="#best.maps.CovarianceFunctionBasis.cov" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the underlying covariance function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.maps.CovarianceFunctionBasis.X">
+<tt class="descname">X</tt><a class="headerlink" href="#best.maps.CovarianceFunctionBasis.X" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the centers.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.CovarianceFunctionBasis._eval">
+<tt class="descname">_eval</tt><big>(</big><em>x</em>, <em>hyp</em><big>)</big><a class="headerlink" href="#best.maps.CovarianceFunctionBasis._eval" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function._eval()</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.CovarianceFunctionBasis._d_eval">
+<tt class="descname">_d_eval</tt><big>(</big><em>x</em>, <em>hyp</em><big>)</big><a class="headerlink" href="#best.maps.CovarianceFunctionBasis._d_eval" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function._d_eval()</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.CovarianceFunctionBasis._d_hyp_eval">
+<tt class="descname">_d_hyp_eval</tt><big>(</big><em>x</em>, <em>hyp</em><big>)</big><a class="headerlink" href="#best.maps.CovarianceFunctionBasis._d_hyp_eval" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function._d_hyp_eval()</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="best.maps.CovarianceFunctionBasis._to_string">
+<tt class="descname">_to_string</tt><big>(</big><em>pad</em><big>)</big><a class="headerlink" href="#best.maps.CovarianceFunctionBasis._to_string" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Overloads :</th><td class="field-body"><tt class="xref py py-func docutils literal"><span class="pre">best.maps.Function._to_string()</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Covariance Functions</a><ul>
+<li><a class="reference internal" href="#the-best-maps-covariancefunction-class">The <tt class="docutils literal"><span class="pre">best.maps.CovarianceFunction</span></tt> class</a></li>
+<li><a class="reference internal" href="#examples-of-covariance-functions">Examples of Covariance Functions</a><ul>
+<li><a class="reference internal" href="#squared-exponential-covariance">Squared Exponential Covariance</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#constructing-basis-from-covariance-functions">Constructing Basis from Covariance Functions</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="maps.html"
+                        title="previous chapter">Maps</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="domain.html"
+                        title="next chapter">Domain</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/cov.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="domain.html" title="Domain"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="maps.html" title="Maps"
+             >previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" >Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Ilias Bilionis, Nicholas Zabaras.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

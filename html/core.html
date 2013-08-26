@@ -1,0 +1,159 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Core &mdash; Bayesian Exploration Statistical Toolbox 0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Bayesian Exploration Statistical Toolbox 0 documentation" href="index.html" />
+    <link rel="up" title="Reference Guide" href="reference.html" />
+    <link rel="next" title="Basic Objects" href="basic.html" />
+    <link rel="prev" title="Reference Guide" href="reference.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="basic.html" title="Basic Objects"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="reference.html" title="Reference Guide"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" accesskey="U">Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="core">
+<span id="id1"></span><h1>Core<a class="headerlink" href="#core" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-best.core"></span><p>The module <a class="reference internal" href="#module-best.core" title="best.core: Several C++/C and Fortran libraries."><tt class="xref py py-mod docutils literal"><span class="pre">best.core</span></tt></a> contains several C++/C and Fortran libraries
+that are interfaced via Python. We provide a brief description of this
+functionality here. The functions in <a class="reference internal" href="#module-best.core" title="best.core: Several C++/C and Fortran libraries."><tt class="xref py py-mod docutils literal"><span class="pre">best.core</span></tt></a> are used internally
+by the rest of the modules in <a class="reference internal" href="reference.html#module-best" title="best: The main module of BEST."><tt class="xref py py-mod docutils literal"><span class="pre">best</span></tt></a>.</p>
+<dl class="function">
+<dt id="best.core._lhs">
+<tt class="descclassname">best.core.</tt><tt class="descname">_lhs</tt><big>(</big><big>)</big><a class="headerlink" href="#best.core._lhs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Latin hyper-cube sampling.</p>
+<p>This is an interface to John Burkardt&#8217;s
+<a class="reference external" href="http://people.sc.fsu.edu/~jburkardt/cpp_src/latin_center/latin_center.html">latin_center</a>
+written in C++.</p>
+<p>You should probably use the high-level class
+<tt class="xref py py-class docutils literal"><span class="pre">best.random.LatinHyperCubeDesign</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="best.core._ggsvd">
+<tt class="descclassname">best.core.</tt><tt class="descname">_ggsvd</tt><big>(</big><em>jobU</em>, <em>jobV</em>, <em>jobQ</em>, <em>kl</em>, <em>A</em>, <em>B</em>, <em>alpha</em>, <em>beta</em>, <em>U</em>, <em>V</em>, <em>Q</em>, <em>work</em>, <em>iwork</em><big>)</big><a class="headerlink" href="#best.core._ggsvd" title="Permalink to this definition">¶</a></dt>
+<dd><p>An interface to the LAPACK Fortan routine
+<a class="reference external" href="http://www.netlib.no/netlib/lapack/double/dggsvd.f">dggsvd</a>
+which performs a
+<a class="reference external" href="http://en.wikipedia.org/wiki/Generalized_singular_value_decomposition">Generalized Singular Value Decomposition </a>.</p>
+<p>You should probably use the high-level class
+<tt class="xref py py-class docutils literal"><span class="pre">best.linalg.GeneralizedSVD</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="best.core._pstrf">
+<tt class="descclassname">best.core.</tt><tt class="descname">_pstrf</tt><big>(</big><big>)</big><a class="headerlink" href="#best.core._pstrf" title="Permalink to this definition">¶</a></dt>
+<dd><p>An interface to the LAPACK Fortran routine
+<a class="reference external" href="http://www.netlib.org/lapack/explore-html/dd/dad/dpstrf_8f.html">dpstrf</a>
+which performs
+an holesky factorization with complete
+pivoting of a real symmetric positive semidefinite matrix A.</p>
+<p>You should probably use the high-level class
+<tt class="xref py py-class docutils literal"><span class="pre">best.linalg.IncompleteCholesky</span></tt>.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="reference.html"
+                        title="previous chapter">Reference Guide</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="basic.html"
+                        title="next chapter">Basic Objects</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/core.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="basic.html" title="Basic Objects"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="reference.html" title="Reference Guide"
+             >previous</a> |</li>
+        <li><a href="index.html">Bayesian Exploration Statistical Toolbox 0 documentation</a> &raquo;</li>
+          <li><a href="reference.html" >Reference Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Ilias Bilionis, Nicholas Zabaras.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
