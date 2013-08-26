@@ -1631,3 +1631,24 @@ We are going to use :ref:`smc` to sample from a mixture of Gaussians::
             ax2.set_ylabel('pdf')
             plt.savefig('smc_step=%d.png' % step)
             step += 1
+
+The code will produce a sequence of ``*.png`` files showing the evolution
+of the algorithm:
+
+    .. figure:: images/smc_step=0.png
+        :align: center
+
+    .. figure:: images/smc_step=1.png
+        :align: center
+
+    .. figure:: images/smc_step=2.png
+        :align: center
+
+    .. figure:: images/smc_step=3.png
+        :align: center
+
+    .. figure:: images/smc_step=4.png
+        :align: center
+
+    .. figure:: images/smc_step=5.png
+        :align: center
