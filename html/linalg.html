@@ -313,12 +313,20 @@ required for <tt class="xref py py-class docutils literal"><span class="pre">bes
 Here is a class that interfaces LAPACK&#8217;s
 <a class="reference external" href="http://www.netlib.no/netlib/lapack/double/dggsvd.f">dggsvd</a>:</p>
 <dl class="class">
-<dt id="GeneralizedSVD">
-<em class="property">class </em><tt class="descname">GeneralizedSVD</tt><a class="headerlink" href="#GeneralizedSVD" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class that represents the generalized svd decomposition of A and B.</p>
+<dt id="best.linalg.GeneralizedSVD">
+<em class="property">class </em><tt class="descclassname">best.linalg.</tt><tt class="descname">GeneralizedSVD</tt><a class="headerlink" href="#best.linalg.GeneralizedSVD" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><a class="reference internal" href="basic.html#best.Object" title="best.Object"><tt class="xref py py-class docutils literal"><span class="pre">best.Object</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<p>A class that represents the generalized svd decomposition of A and B.</p>
 <dl class="method">
-<dt id="GeneralizedSVD.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>A</em>, <em>B</em><span class="optional">[</span>, <em>do_U=True</em><span class="optional">[</span>, <em>do_V=True</em><span class="optional">[</span>, <em>do_Q=True</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#GeneralizedSVD.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="best.linalg.GeneralizedSVD.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>A</em>, <em>B</em><span class="optional">[</span>, <em>do_U=True</em><span class="optional">[</span>, <em>do_V=True</em><span class="optional">[</span>, <em>do_Q=True</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.linalg.GeneralizedSVD.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the object and perform the decomposition.</p>
 <p>A copy of <tt class="docutils literal"><span class="pre">A</span></tt> and <tt class="docutils literal"><span class="pre">B</span></tt> will be made.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -344,109 +352,229 @@ of <tt class="docutils literal"><span class="pre">U,</span> <span class="pre">V<
 </dd></dl>
 
 <dl class="attribute">
-<dt id="GeneralizedSVD.A">
-<tt class="descname">A</tt><a class="headerlink" href="#GeneralizedSVD.A" title="Permalink to this definition">¶</a></dt>
+<dt id="best.linalg.GeneralizedSVD.A">
+<tt class="descname">A</tt><a class="headerlink" href="#best.linalg.GeneralizedSVD.A" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the final form of the copy of <tt class="docutils literal"><span class="pre">A</span></tt>.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="GeneralizedSVD.B">
-<tt class="descname">B</tt><a class="headerlink" href="#GeneralizedSVD.B" title="Permalink to this definition">¶</a></dt>
+<dt id="best.linalg.GeneralizedSVD.B">
+<tt class="descname">B</tt><a class="headerlink" href="#best.linalg.GeneralizedSVD.B" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the final form of the copy of <tt class="docutils literal"><span class="pre">B</span></tt>.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="GeneralizedSVD.alpha">
-<tt class="descname">alpha</tt><a class="headerlink" href="#GeneralizedSVD.alpha" title="Permalink to this definition">¶</a></dt>
+<dt id="best.linalg.GeneralizedSVD.alpha">
+<tt class="descname">alpha</tt><a class="headerlink" href="#best.linalg.GeneralizedSVD.alpha" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the vector of singular values of <tt class="docutils literal"><span class="pre">A</span></tt>.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="GeneralizedSVD.beta">
-<tt class="descname">beta</tt><a class="headerlink" href="#GeneralizedSVD.beta" title="Permalink to this definition">¶</a></dt>
+<dt id="best.linalg.GeneralizedSVD.beta">
+<tt class="descname">beta</tt><a class="headerlink" href="#best.linalg.GeneralizedSVD.beta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the vector of singular values of <tt class="docutils literal"><span class="pre">B</span></tt>.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="GeneralizedSVD.U">
-<tt class="descname">U</tt><a class="headerlink" href="#GeneralizedSVD.U" title="Permalink to this definition">¶</a></dt>
+<dt id="best.linalg.GeneralizedSVD.U">
+<tt class="descname">U</tt><a class="headerlink" href="#best.linalg.GeneralizedSVD.U" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the orthogonal matrix <img class="math" src="_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U"/>.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="GeneralizedSVD.V">
-<tt class="descname">V</tt><a class="headerlink" href="#GeneralizedSVD.V" title="Permalink to this definition">¶</a></dt>
+<dt id="best.linalg.GeneralizedSVD.V">
+<tt class="descname">V</tt><a class="headerlink" href="#best.linalg.GeneralizedSVD.V" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the orthogonal matrix <img class="math" src="_images/math/12d58aa29201da09d8e620f8698e3a37547f6b4a.png" alt="V"/>.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="GeneralizedSVD.Q">
-<tt class="descname">Q</tt><a class="headerlink" href="#GeneralizedSVD.Q" title="Permalink to this definition">¶</a></dt>
+<dt id="best.linalg.GeneralizedSVD.Q">
+<tt class="descname">Q</tt><a class="headerlink" href="#best.linalg.GeneralizedSVD.Q" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the orthogonal matrix <img class="math" src="_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q"/>.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="GeneralizedSVD.m">
-<tt class="descname">m</tt><a class="headerlink" href="#GeneralizedSVD.m" title="Permalink to this definition">¶</a></dt>
+<dt id="best.linalg.GeneralizedSVD.m">
+<tt class="descname">m</tt><a class="headerlink" href="#best.linalg.GeneralizedSVD.m" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the number of rows of <img class="math" src="_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A"/>.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="GeneralizedSVD.n">
-<tt class="descname">n</tt><a class="headerlink" href="#GeneralizedSVD.n" title="Permalink to this definition">¶</a></dt>
+<dt id="best.linalg.GeneralizedSVD.n">
+<tt class="descname">n</tt><a class="headerlink" href="#best.linalg.GeneralizedSVD.n" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the number of columns of <img class="math" src="_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A"/>.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="GeneralizedSVD.p">
-<tt class="descname">p</tt><a class="headerlink" href="#GeneralizedSVD.p" title="Permalink to this definition">¶</a></dt>
+<dt id="best.linalg.GeneralizedSVD.p">
+<tt class="descname">p</tt><a class="headerlink" href="#best.linalg.GeneralizedSVD.p" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the number of rows of <img class="math" src="_images/math/ff5fb3d775862e2123b007eb4373ff6cc1a34d4e.png" alt="B"/>.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="GeneralizedSVD.k">
-<tt class="descname">k</tt><a class="headerlink" href="#GeneralizedSVD.k" title="Permalink to this definition">¶</a></dt>
+<dt id="best.linalg.GeneralizedSVD.k">
+<tt class="descname">k</tt><a class="headerlink" href="#best.linalg.GeneralizedSVD.k" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get <img class="math" src="_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/>.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="GeneralizedSVD.l">
-<tt class="descname">l</tt><a class="headerlink" href="#GeneralizedSVD.l" title="Permalink to this definition">¶</a></dt>
+<dt id="best.linalg.GeneralizedSVD.l">
+<tt class="descname">l</tt><a class="headerlink" href="#best.linalg.GeneralizedSVD.l" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get <img class="math" src="_images/math/9b25f8e64b484493fda944d25cad453423041fe6.png" alt="l"/>.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="GeneralizedSVD.R">
-<tt class="descname">R</tt><a class="headerlink" href="#GeneralizedSVD.R" title="Permalink to this definition">¶</a></dt>
+<dt id="best.linalg.GeneralizedSVD.R">
+<tt class="descname">R</tt><a class="headerlink" href="#best.linalg.GeneralizedSVD.R" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the non-singular, upper triangular matrix <img class="math" src="_images/math/eff43e84f8a3bcf7b6965f0a3248bc4d3a9d0cd4.png" alt="R"/>.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="GeneralizedSVD.C">
-<tt class="descname">C</tt><a class="headerlink" href="#GeneralizedSVD.C" title="Permalink to this definition">¶</a></dt>
+<dt id="best.linalg.GeneralizedSVD.C">
+<tt class="descname">C</tt><a class="headerlink" href="#best.linalg.GeneralizedSVD.C" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the diagonal <img class="math" src="_images/math/c3355896da590fc491a10150a50416687626d7cc.png" alt="C"/> matrix. See doc of <tt class="docutils literal"><span class="pre">dggsvd</span></tt>.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="GeneralizedSVD.S">
-<tt class="descname">S</tt><a class="headerlink" href="#GeneralizedSVD.S" title="Permalink to this definition">¶</a></dt>
+<dt id="best.linalg.GeneralizedSVD.S">
+<tt class="descname">S</tt><a class="headerlink" href="#best.linalg.GeneralizedSVD.S" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the diagonal <img class="math" src="_images/math/ad28c83c99a8fd0dd2e2e594c9d02ee532765a0a.png" alt="S"/> matrix. See doc of <tt class="docutils literal"><span class="pre">ggsvd</span></tt>.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="GeneralizedSVD.D1">
-<tt class="descname">D1</tt><a class="headerlink" href="#GeneralizedSVD.D1" title="Permalink to this definition">¶</a></dt>
+<dt id="best.linalg.GeneralizedSVD.D1">
+<tt class="descname">D1</tt><a class="headerlink" href="#best.linalg.GeneralizedSVD.D1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the &#8220;diagonal&#8221; <img class="math" src="_images/math/88c7f79185a0b48d33454e85f44b4bfdf81d2420.png" alt="D_1"/> matrix.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="GeneralizedSVD.D2">
-<tt class="descname">D2</tt><a class="headerlink" href="#GeneralizedSVD.D2" title="Permalink to this definition">¶</a></dt>
+<dt id="best.linalg.GeneralizedSVD.D2">
+<tt class="descname">D2</tt><a class="headerlink" href="#best.linalg.GeneralizedSVD.D2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the &#8220;diagonal&#8221; <img class="math" src="_images/math/4d01cc94a123a0c2b5239d4342be2e6ce7f3fc53.png" alt="D_2"/> matrix.</p>
 </dd></dl>
 
 </dd></dl>
 
+</div>
+<div class="section" id="incomplete-cholesky-decomposition">
+<span id="linalg-ic"></span><h2>Incomplete Cholesky Decomposition<a class="headerlink" href="#incomplete-cholesky-decomposition" title="Permalink to this headline">¶</a></h2>
+<p>Let <img class="math" src="_images/math/6ca89eed9dcd3db4912a895b734e10caa9bb7a18.png" alt="A\in\mathbb{R}^{n\times n}"/> be a positive semi-definite
+matrix. The class <a class="reference internal" href="#best.linalg.IncompleteCholesky" title="best.linalg.IncompleteCholesky"><tt class="xref py py-class docutils literal"><span class="pre">best.linalg.IncompleteCholesky</span></tt></a> computes
+the Cholesky factorization with complete pivoting of <img class="math" src="_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A"/>.</p>
+<p>The factorization has the form:</p>
+<blockquote>
+<div><div class="math" id="equation-ic-upper">
+<p><span class="eqno">(1)</span><img src="_images/math/f9edb1a9afdbf16d55c8de7580d41b9a65a6e4f7.png" alt="P^T A P = U^T U,"/></p>
+</div></div></blockquote>
+<p>or</p>
+<blockquote>
+<div><div class="math" id="equation-ic-lower">
+<p><span class="eqno">(2)</span><img src="_images/math/52ed1b4af83298f8cc22e11f9f78b09e7c087dfe.png" alt="P^T A P = L L^T,"/></p>
+</div></div></blockquote>
+<p>where <img class="math" src="_images/math/d16a8096fa1bca4aaf8c0b3163f31ab4539748b5.png" alt="U\in\mathbb{R}^{k\times n}"/> is an upper triangular matrix,
+<img class="math" src="_images/math/1e732e8e9774ba8e0fd8e9ac318bd9c8ab88464c.png" alt="L\in\mathbb{R}^{n\times k}"/> is a lower triangular matrix,
+<img class="math" src="_images/math/7019d0d68e3dbd56c21c05b450b0f162b55c0cea.png" alt="P\in\mathbb{R}^{n\times n}"/> is a permutation matrix and
+<img class="math" src="_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> is the (numerical) rank of matrix <img class="math" src="_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A"/>.</p>
+<dl class="class">
+<dt id="best.linalg.IncompleteCholesky">
+<em class="property">class </em><tt class="descclassname">best.linalg.</tt><tt class="descname">IncompleteCholesky</tt><a class="headerlink" href="#best.linalg.IncompleteCholesky" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits :</th><td class="field-body"><a class="reference internal" href="basic.html#best.Object" title="best.Object"><tt class="xref py py-class docutils literal"><span class="pre">best.Object</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<p>An interface to the LAPACK Fortran routine
+<a class="reference external" href="http://www.netlib.org/lapack/explore-html/dd/dad/dpstrf_8f.html">?pstrf</a>
+which performs
+an Cholesky factorization with complete
+pivoting of a real symmetric positive semidefinite matrix A.</p>
+<dl class="method">
+<dt id="best.linalg.IncompleteCholesky.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>A</em><span class="optional">[</span>, <em>lower=True</em><span class="optional">[</span>, <em>tol=-1.</em><span class="optional">[</span>, <em>name='Incomplete Cholesky'</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#best.linalg.IncompleteCholesky.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>A</strong> (<em>2D numpy array</em>) &#8211; The matrix whose decomposition you seek. It will
+be copied internally.</li>
+<li><strong>lower</strong> (<tt class="docutils literal"><span class="pre">bool</span></tt>) &#8211; If <tt class="docutils literal"><span class="pre">True</span></tt>, then compute the lower incomplete
+Cholesky. Otherwise compute the upper
+incomplete Cholesky.</li>
+<li><strong>tol</strong> (<tt class="docutils literal"><span class="pre">float</span></tt>) &#8211; The desired tolerance (<tt class="docutils literal"><span class="pre">float</span></tt>). If a negative
+tolerance is specified, then
+<img class="math" src="_images/math/b7633aad890adaaa61dc5569f2960d194d24da5c.png" alt="n U \max\{A_{kk}\}"/> will be used.</li>
+<li><strong>name</strong> (<cite>str</cite>) &#8211; A name for the object.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.linalg.IncompleteCholesky.A">
+<tt class="descname">A</tt><a class="headerlink" href="#best.linalg.IncompleteCholesky.A" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the matrix <tt class="docutils literal"><span class="pre">A</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.linalg.IncompleteCholesky.L">
+<tt class="descname">L</tt><a class="headerlink" href="#best.linalg.IncompleteCholesky.L" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the lower Cholesky factor (Returns <tt class="docutils literal"><span class="pre">None</span></tt> if not computed).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.linalg.IncompleteCholesky.U">
+<tt class="descname">U</tt><a class="headerlink" href="#best.linalg.IncompleteCholesky.U" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the upper Cholesky factor (Returns <tt class="docutils literal"><span class="pre">None</span></tt> if not computed).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.linalg.IncompleteCholesky.rank">
+<tt class="descname">rank</tt><a class="headerlink" href="#best.linalg.IncompleteCholesky.rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the numerical rank of <tt class="docutils literal"><span class="pre">A</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.linalg.IncompleteCholesky.piv">
+<tt class="descname">piv</tt><a class="headerlink" href="#best.linalg.IncompleteCholesky.piv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a vector representing the permutation matrix <tt class="docutils literal"><span class="pre">P</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="best.linalg.IncompleteCholesky.P">
+<tt class="descname">P</tt><a class="headerlink" href="#best.linalg.IncompleteCholesky.P" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the permutation matrix <tt class="docutils literal"><span class="pre">P</span></tt>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>Here is an example of how the class can be used:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">best.maps</span> <span class="kn">import</span> <span class="n">CovarianceFunctionSE</span>
+<span class="kn">from</span> <span class="nn">best.linalg</span> <span class="kn">import</span> <span class="n">IncompleteCholesky</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">CovarianceFunctionSE</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">hyp</span><span class="o">=</span><span class="mf">10.</span><span class="p">)</span>
+<span class="c">#np.linalg.cholesky # This will fail to compute the normal</span>
+                    <span class="c"># Cholesky decomposition.</span>
+<span class="n">ic</span> <span class="o">=</span> <span class="n">IncompleteCholesky</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&#39;rank: &#39;</span><span class="p">,</span> <span class="n">ic</span><span class="o">.</span><span class="n">rank</span>
+<span class="k">print</span> <span class="s">&#39;piv: &#39;</span><span class="p">,</span> <span class="n">ic</span><span class="o">.</span><span class="n">piv</span>
+<span class="n">LL</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ic</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="n">ic</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">((</span><span class="n">LL</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ic</span><span class="o">.</span><span class="n">P</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">ic</span><span class="o">.</span><span class="n">P</span><span class="p">))))</span>
+</pre></div>
+</div>
+<p>This should produce the following text:</p>
+<div class="highlight-python"><pre>rank:  9
+piv:  [0 9 4 7 2 8 1 5 6 3]
+3.33066907388e-16</pre>
+</div>
 </div>
 </div>
 
@@ -461,6 +589,7 @@ of <tt class="docutils literal"><span class="pre">U,</span> <span class="pre">V<
 <li><a class="reference internal" href="#">Linear Algebra</a><ul>
 <li><a class="reference internal" href="#manipulating-kronecker-products">Manipulating Kronecker Products</a></li>
 <li><a class="reference internal" href="#generalized-singular-value-decomposition">Generalized Singular Value Decomposition</a></li>
+<li><a class="reference internal" href="#incomplete-cholesky-decomposition">Incomplete Cholesky Decomposition</a></li>
 </ul>
 </li>
 </ul>

@@ -243,7 +243,9 @@ required for :class:`best.rvm.RelevantVectorMachine`.
 Here is a class that interfaces LAPACK's
 `dggsvd <http://www.netlib.no/netlib/lapack/double/dggsvd.f>`_:
 
-.. class:: GeneralizedSVD
+.. class:: best.linalg.GeneralizedSVD
+
+    :inherits: :class:`best.Object`
 
     A class that represents the generalized svd decomposition of A and B.
 
@@ -335,3 +337,106 @@ Here is a class that interfaces LAPACK's
     .. attribute:: D2
 
         Get the "diagonal" :math:`D_2` matrix.
+
+
+.. _linalg-ic:
+
+Incomplete Cholesky Decomposition
+---------------------------------
+
+Let :math:`A\in\mathbb{R}^{n\times n}` be a positive semi-definite
+matrix. The class :class:`best.linalg.IncompleteCholesky` computes
+the Cholesky factorization with complete pivoting of :math:`A`.
+
+The factorization has the form:
+
+    .. math::
+        P^T A P = U^T U,
+        :label: ic-upper
+
+or
+
+    .. math::
+        P^T A P = L L^T,
+        :label: ic-lower
+
+where :math:`U\in\mathbb{R}^{k\times n}` is an upper triangular matrix,
+:math:`L\in\mathbb{R}^{n\times k}` is a lower triangular matrix,
+:math:`P\in\mathbb{R}^{n\times n}` is a permutation matrix and
+:math:`k` is the (numerical) rank of matrix :math:`A`.
+
+.. class:: best.linalg.IncompleteCholesky
+
+    :inherits: :class:`best.Object`
+
+    An interface to the LAPACK Fortran routine
+    `?pstrf <http://www.netlib.org/lapack/explore-html/dd/dad/dpstrf_8f.html>`_
+    which performs
+    an Cholesky factorization with complete
+    pivoting of a real symmetric positive semidefinite matrix A.
+
+    .. method:: __init__(A[, lower=True[, tol=-1.[, \
+                         name='Incomplete Cholesky']]])
+
+        Initialize the object.
+
+        :param A: The matrix whose decomposition you seek. It will
+                be copied internally.
+        :type A: 2D numpy array
+        :param lower: If ``True``, then compute the lower incomplete
+                      Cholesky. Otherwise compute the upper
+                      incomplete Cholesky.
+        :type lower: ``bool``
+        :param tol: The desired tolerance (``float``). If a negative
+                    tolerance is specified, then
+                    :math:`n U \max\{A_{kk}\}` will be used.
+        :type tol: ``float``
+        :param name: A name for the object.
+        :type name: `str`
+
+    .. attribute:: A
+
+        Get the matrix ``A``.
+
+    .. attribute:: L
+
+        Get the lower Cholesky factor (Returns ``None`` if not computed).
+
+    .. attribute:: U
+
+        Get the upper Cholesky factor (Returns ``None`` if not computed).
+
+    .. attribute:: rank
+
+        Get the numerical rank of ``A``.
+
+    .. attribute:: piv
+
+        Get a vector representing the permutation matrix ``P``.
+
+    .. attribute:: P
+
+        Get the permutation matrix ``P``.
+
+
+Here is an example of how the class can be used::
+
+    import numpy as np
+    from best.maps import CovarianceFunctionSE
+    from best.linalg import IncompleteCholesky
+    x = np.linspace(-5, 5, 10)
+    f = CovarianceFunctionSE(1)
+    A = f(x, x, hyp=10.)
+    #np.linalg.cholesky # This will fail to compute the normal
+                        # Cholesky decomposition.
+    ic = IncompleteCholesky(A)
+    print 'rank: ', ic.rank
+    print 'piv: ', ic.piv
+    LL = np.dot(ic.L, ic.L.T)
+    print np.linalg.norm((LL - np.dot(ic.P.T, np.dot(A, ic.P))))
+
+This should produce the following text::
+
+    rank:  9
+    piv:  [0 9 4 7 2 8 1 5 6 3]
+    3.33066907388e-16

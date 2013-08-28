@@ -81,16 +81,16 @@ written in C++.</p>
 which performs a
 <a class="reference external" href="http://en.wikipedia.org/wiki/Generalized_singular_value_decomposition">Generalized Singular Value Decomposition </a>.</p>
 <p>You should probably use the high-level class
-<tt class="xref py py-class docutils literal"><span class="pre">best.linalg.GeneralizedSVD</span></tt>.</p>
+<a class="reference internal" href="linalg.html#best.linalg.GeneralizedSVD" title="best.linalg.GeneralizedSVD"><tt class="xref py py-class docutils literal"><span class="pre">best.linalg.GeneralizedSVD</span></tt></a>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="best.core._pstrf">
-<tt class="descclassname">best.core.</tt><tt class="descname">_pstrf</tt><big>(</big><big>)</big><a class="headerlink" href="#best.core._pstrf" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">best.core.</tt><tt class="descname">_pstrf</tt><big>(</big><em>uplo</em>, <em>A</em>, <em>P</em>, <em>tol</em>, <em>work</em><big>)</big><a class="headerlink" href="#best.core._pstrf" title="Permalink to this definition">¶</a></dt>
 <dd><p>An interface to the LAPACK Fortran routine
-<a class="reference external" href="http://www.netlib.org/lapack/explore-html/dd/dad/dpstrf_8f.html">dpstrf</a>
+<a class="reference external" href="http://www.netlib.org/lapack/explore-html/dd/dad/dpstrf_8f.html">?pstrf</a>
 which performs
-an holesky factorization with complete
+an Cholesky factorization with complete
 pivoting of a real symmetric positive semidefinite matrix A.</p>
 <p>You should probably use the high-level class
 <tt class="xref py py-class docutils literal"><span class="pre">best.linalg.IncompleteCholesky</span></tt>.</p>
