@@ -12,10 +12,11 @@ __all__ = ['GeneralizedSVD']
 
 
 import numpy as np
+from .. import Object
 from ..core import ggsvd
 
 
-class GeneralizedSVD(object):
+class GeneralizedSVD(Object):
 
     """A class that represents the generalized svd decomposition of A and B."""
 
@@ -143,7 +144,8 @@ class GeneralizedSVD(object):
     def D2(self):
         return self._D2
 
-    def __init__(self, A, B, do_U=True, do_V=True, do_Q=True):
+    def __init__(self, A, B, do_U=True, do_V=True, do_Q=True,
+                 name='Generalized SVD'):
         """Initialize the object and perform the decomposition.
 
         Arguments:
@@ -154,7 +156,9 @@ class GeneralizedSVD(object):
             do_U    ---     Compute U if True.
             do_V    ---     Compute V if True.
             do_Q    ---     Compute Q if True.
+            name    ---     A name for the class.
         """
+        super(GeneralizedSVD, self).__init__(name=name)
         if A.dtype == 'float32' or A.dtype == 'float64':
             dtype = A.dtype
         else:

@@ -16,3 +16,8 @@ add_library(_ggsvd SHARED _ggsvd.cpp)
 target_link_libraries(_ggsvd ${Boost_LIBRARIES} lapack)
 set_target_properties(_ggsvd PROPERTIES
                       LIBRARY_OUTPUT_DIRECTORY "../best/core")
+
+add_library(_pstrf SHARED _pstrf.cpp)
+target_link_libraries(_pstrf ${Boost_LIBRARIES} lapack)
+set_target_properties(_pstrf PROPERTIES
+                      LIBRARY_OUTPUT_DIRECTORY "../best/core")

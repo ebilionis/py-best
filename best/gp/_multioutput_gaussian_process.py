@@ -22,7 +22,7 @@ from scipy.stats import lognorm
 import scipy.sparse as sp
 import itertools as iter
 from ..linalg import kron_prod
-from ..linalg import incomplete_cholesky
+from ..linalg import IncompleteCholesky
 from ..linalg import kron_solve
 from ..linalg import update_cholesky
 from ..linalg import update_cholesky_linear_system
@@ -1119,7 +1119,10 @@ class MultioutputGaussianProcess(MarkovChainMonteCarlo):
             C = np.ndarray((n, n), order='F')
         # Evaluate the posterior
         self(X, H, Y=Y, C=C)
-        P, k = incomplete_cholesky(C, in_place=True)
+        ic = IncompleteCholesky(C)
+        C = ic.L
+        P = ic.P
+        k = ic.k
         PC = np.dot(P, C[:, :k])
         unc = np.trace(PC) * np.trace(self.Sigma) / (n *
                 np.prod(self.n_of[1:] * self.q))
