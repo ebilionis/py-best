@@ -10,8 +10,9 @@ Date:
 """
 
 
-__all__ = ['lhs', 'ggsvd']
+__all__ = ['lhs', 'dggsvd', 'sggsvd']
 
 
 from .lib_lhs import *
 from .lib_ggsvd import *
+from ._ggsvd import *

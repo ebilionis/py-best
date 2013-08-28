@@ -12,7 +12,7 @@ __all__ = ['GeneralizedSVD']
 
 
 import numpy as np
-from best.core import ggsvd
+from ..core import ggsvd
 
 
 class GeneralizedSVD(object):
@@ -155,31 +155,39 @@ class GeneralizedSVD(object):
             do_V    ---     Compute V if True.
             do_Q    ---     Compute Q if True.
         """
-        self._A = np.ndarray(A.shape, order='F')
+        if A.dtype == 'float32' or A.dtype == 'float64':
+            dtype = A.dtype
+        else:
+            dtype = 'float64'
+        self._A = np.ndarray(A.shape, order='F', dtype=dtype)
         self._A[:] = A
-        self._B = np.ndarray(B.shape, order='F')
+        self._B = np.ndarray(B.shape, order='F', dtype=dtype)
         self._B[:] = B
-        self._alpha = np.ndarray(self.n)
-        self._beta = np.ndarray(self.n)
+        self._alpha = np.ndarray(self.n, dtype=dtype)
+        self._beta = np.ndarray(self.n, dtype=dtype)
         if do_U:
-            self._U = np.ndarray((self.m, self.m), order='F')
+            self._U = np.ndarray((self.m, self.m), order='F',
+                                 dtype=dtype)
             jobU = 'U'
         else:
             self._U = np.ndarray(())
             jobU = 'N'
         if do_V:
-            self._V = np.ndarray((self.p, self.p), order='F')
+            self._V = np.ndarray((self.p, self.p), order='F',
+                                 dtype=dtype)
             jobV = 'V'
         else:
             self._V = np.ndarray(())
             jobV = 'N'
         if do_Q:
-            self._Q = np.ndarray((self.n, self.n), order='F')
+            self._Q = np.ndarray((self.n, self.n), order='F',
+                                 dtype=dtype)
             jobQ = 'Q'
         else:
             self._Q = np.ndarray(())
             self.Q = 'N'
-        self._work = np.ndarray(max(3 * self.n, self.m, self.p) + self.n)
+        self._work = np.ndarray(max(3 * self.n, self.m, self.p) + self.n,
+                                dtype=dtype)
         self._iwork = np.ndarray(self.n, dtype='i')
         kl = np.ndarray(2, dtype='i')
         ierr = ggsvd(jobU, jobV, jobQ, kl, self._A, self._B,

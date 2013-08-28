@@ -21,8 +21,8 @@ import best.linalg
 class GGSVDTest(unittest.TestCase):
 
     def test_ggsvd(self):
-        A = np.arange(50).reshape((10, 5))
-        B = np.arange(15).reshape((3, 5))
+        A = np.arange(50, dtype='float32').reshape((10, 5))
+        B = np.arange(15, dtype='float32').reshape((3, 5))
         print 'A: '
         print A
         print 'B: '
