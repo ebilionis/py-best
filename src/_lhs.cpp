@@ -6,16 +6,14 @@
 #include <boost/python.hpp>
 #include <numpyconfig.h>
 #include <arrayobject.h>
+#include <numpy_interface.hpp>
 
 using namespace boost::python;
 
 inline void lhs(numeric::array& X, int seed)
 {
-    const PyObject* pX = PyArray_FROM_OTF(X.ptr(), NPY_FLOAT64,
-                                          NPY_OUT_FARRAY);
-    double* dX = (double*)PyArray_DATA(pX);
-    const npy_intp* dimsX = PyArray_DIMS(pX);
-    latin_center(dimsX[0], dimsX[1], &seed, dX);
+    numpy_array<double> nX(X);
+    latin_center(nX.shape[0], nX.shape[1], &seed, nX.data);
 }
 
 BOOST_PYTHON_MODULE(lib_lhs)

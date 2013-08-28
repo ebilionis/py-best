@@ -33,6 +33,6 @@ def lhs(n, k, seed=lhs_seed()):
         seed    ---     The random seed.
 
     """
-    X = np.ndarray((k, n), order='F')
+    X = np.ndarray((k, n), order='F', dtype='float64')
     _lhs(X, seed)
     return X.T
