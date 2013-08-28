@@ -36,12 +36,12 @@ by the rest of the modules in :mod:`best`.
     You should probably use the high-level class
     :class:`best.linalg.GeneralizedSVD`.
 
-.. function:: _pstrf()
+.. function:: _pstrf(uplo, A, P, tol, work)
 
     An interface to the LAPACK Fortran routine
-    `dpstrf <http://www.netlib.org/lapack/explore-html/dd/dad/dpstrf_8f.html>`_
+    `?pstrf <http://www.netlib.org/lapack/explore-html/dd/dad/dpstrf_8f.html>`_
     which performs
-    an holesky factorization with complete
+    an Cholesky factorization with complete
     pivoting of a real symmetric positive semidefinite matrix A.
 
     You should probably use the high-level class
