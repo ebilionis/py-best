@@ -15,6 +15,7 @@ if __name__ == '__main__':
 import unittest
 import numpy as np
 import best.core
+import best.linalg
 
 
 class GGSVDTest(unittest.TestCase):
@@ -26,7 +27,7 @@ class GGSVDTest(unittest.TestCase):
         print A
         print 'B: '
         print B
-        gsvd = best.core.GeneralizedSVD(A, B)
+        gsvd = best.linalg.GeneralizedSVD(A, B)
         print gsvd.A.flags
         print gsvd.A
         print 'U: '

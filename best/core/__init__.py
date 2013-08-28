@@ -13,5 +13,5 @@ Date:
 __all__ = ['lhs', 'ggsvd']
 
 
-from ._lhs import *
-from ._ggsvd import *
+from .lib_lhs import *
+from .lib_ggsvd import *

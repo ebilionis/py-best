@@ -63,76 +63,51 @@ int ggsvd(const char jobu, const char jobv, const char jobq,
            numeric::array& work, numeric::array& iwork)
 {
     // Data from A
-    const PyObject* pA = PyArray_FROM_OTF(A.ptr(), NPY_FLOAT64,
-                                          NPY_INOUT_FARRAY);
-    double* dA = (double*)PyArray_DATA(pA);
-    const npy_intp* dimsA = PyArray_DIMS(pA);
-    const int ldA = leading_dimension(pA);
-    const int m = dimsA[0];
-    const int n = dimsA[1];
+    numpy_array<double, NPY_FLOAT64, NPY_INOUT_FARRAY> nA(A);
 
     // Data from B
-    const PyObject* pB = PyArray_FROM_OTF(B.ptr(), NPY_FLOAT64,
-                                          NPY_INOUT_FARRAY);
-    double* dB = (double*)PyArray_DATA(pB);
-    const npy_intp* dimsB = PyArray_DIMS(pB);
-    const int ldB = leading_dimension(pB);
-    const int p = dimsB[0];
+    numpy_array<double, NPY_FLOAT64, NPY_INOUT_FARRAY> nB(B);
 
     // Access to alpha
-    const PyObject* palpha = PyArray_FROM_OTF(alpha.ptr(), NPY_FLOAT64,
-                                              NPY_INOUT_FARRAY);
-    double* dalpha = (double *)PyArray_DATA(palpha);
+    numpy_array<double, NPY_FLOAT64, NPY_INOUT_FARRAY> nalpha(alpha);
 
     // Access to beta
-    const PyObject* pbeta = PyArray_FROM_OTF(beta.ptr(), NPY_FLOAT64,
-                                              NPY_INOUT_FARRAY);
-    double* dbeta = (double *)PyArray_DATA(pbeta);
+    numpy_array<double, NPY_FLOAT64, NPY_INOUT_FARRAY> nbeta(beta);
 
     // Access to U
-    const PyObject* pU = PyArray_FROM_OTF(U.ptr(), NPY_FLOAT64,
-                                          NPY_INOUT_FARRAY);
-    double* dU = (double*)PyArray_DATA(pU);
-    const int ldU = leading_dimension(pU);
+    numpy_array<double, NPY_FLOAT64, NPY_INOUT_FARRAY> nU(U);
 
     // Access to V
-    const PyObject* pV = PyArray_FROM_OTF(V.ptr(), NPY_FLOAT64,
-                                          NPY_INOUT_FARRAY);
-    double* dV = (double*)PyArray_DATA(pV);
-    const int ldV = leading_dimension(pV);
+    numpy_array<double, NPY_FLOAT64, NPY_INOUT_FARRAY> nV(V);
 
     // Access to Q
-    const PyObject* pQ = PyArray_FROM_OTF(Q.ptr(), NPY_FLOAT64,
-                                          NPY_INOUT_FARRAY);
-    double* dQ = (double*)PyArray_DATA(pQ);
-    const int ldQ = leading_dimension(pQ);
+    numpy_array<double, NPY_FLOAT64, NPY_INOUT_FARRAY> nQ(Q);
 
     // Access to work
-    const PyObject* pwork = PyArray_FROM_OTF(work.ptr(), NPY_FLOAT64,
-                                              NPY_INOUT_FARRAY);
-    double* dwork = (double *)PyArray_DATA(pwork);
+    numpy_array<double, NPY_FLOAT64, NPY_INOUT_FARRAY> nwork(work);
 
     // Access to iwork
-    const PyObject* piwork = PyArray_FROM_OTF(iwork.ptr(), NPY_INT32,
-                                              NPY_INOUT_FARRAY);
-    int* diwork = (int *)PyArray_DATA(piwork);
+    numpy_array<int, NPY_INT32, NPY_INOUT_FARRAY> niwork(iwork);
 
     // Access to kl
-    const PyObject* pkl = PyArray_FROM_OTF(kl.ptr(), NPY_INT32,
-                                              NPY_INOUT_FARRAY);
-    int* dkl = (int *)PyArray_DATA(pkl);
+    numpy_array<int, NPY_INT32, NPY_INOUT_FARRAY> nkl(kl);
 
     // Call the function
     int ierr;
-    lapack_ggsvd(jobu, jobv, jobq, m, n, p, dkl[0], dkl[1],
-          dA, ldA, dB, ldB,
-          dalpha, dbeta, dU, ldU, dV, ldV, dQ, ldQ,
-          dwork, diwork, ierr);
+    lapack_ggsvd(jobu, jobv, jobq, nA.shape[0], nA.shape[1],
+          nB.shape[0], nkl[0], nkl[1],
+          nA.data, nA.leading_dimension,
+          nB.data, nB.leading_dimension,
+          nalpha.data, nbeta.data,
+          nU.data, nU.leading_dimension,
+          nV.data, nV.leading_dimension,
+          nQ.data, nQ.leading_dimension,
+          nwork.data, niwork.data, ierr);
 
     return ierr;
 }
 
-BOOST_PYTHON_MODULE(_ggsvd)
+BOOST_PYTHON_MODULE(lib_ggsvd)
 {
     import_array();
     numeric::array::set_module_and_type("numpy", "ndarray");

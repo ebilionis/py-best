@@ -15,10 +15,10 @@ inline void lhs(numeric::array& X, int seed)
                                           NPY_OUT_FARRAY);
     double* dX = (double*)PyArray_DATA(pX);
     const npy_intp* dimsX = PyArray_DIMS(pX);
-    latin_center(dimsX[0], dimsX[1], &seed, dX); 
+    latin_center(dimsX[0], dimsX[1], &seed, dX);
 }
 
-BOOST_PYTHON_MODULE(_lhs)
+BOOST_PYTHON_MODULE(lib_lhs)
 {
     import_array();
     numeric::array::set_module_and_type("numpy", "ndarray");
