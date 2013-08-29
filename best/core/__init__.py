@@ -10,12 +10,11 @@ Date:
 """
 
 
-__all__ = ['lhs', 'sggsvd', 'dggsvd', 'ggsvd',
+__all__ = ['orthpol', 'lhs', 'sggsvd', 'dggsvd', 'ggsvd',
            'spstrf', 'dpstrf', 'pstrf']
 
 
-from .lib_lhs import *
-from .lib_ggsvd import *
-from .lib_pstrf import *
-from ._ggsvd import *
-from ._pstrf import *
+import orthpol
+from ._lhs import *
+from ._wrap_ggsvd import *
+from ._wrap_pstrf import *

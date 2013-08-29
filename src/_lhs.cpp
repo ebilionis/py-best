@@ -16,7 +16,7 @@ inline void lhs(numeric::array& X, int seed)
     latin_center(nX.shape[0], nX.shape[1], &seed, nX.data);
 }
 
-BOOST_PYTHON_MODULE(lib_lhs)
+BOOST_PYTHON_MODULE(_lhs)
 {
     import_array();
     numeric::array::set_module_and_type("numpy", "ndarray");

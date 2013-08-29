@@ -65,7 +65,7 @@ DEF_PYTHON_PSTRF(spstrf, float);
 DEF_PYTHON_PSTRF(dpstrf, double);
 
 
-BOOST_PYTHON_MODULE(lib_pstrf)
+BOOST_PYTHON_MODULE(_pstrf)
 {
     import_array();
     numeric::array::set_module_and_type("numpy", "ndarray");

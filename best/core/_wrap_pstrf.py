@@ -8,12 +8,11 @@ Date:
 """
 
 
-__all__ = ['pstrf']
+__all__ = ['pstrf', 'spstrf', 'dpstrf']
 
 
 import numpy as np
-from . import spstrf
-from . import dpstrf
+from ._pstrf import *
 
 
 def pstrf(uplo, A, P, tol, work):

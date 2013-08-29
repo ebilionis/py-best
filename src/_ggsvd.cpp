@@ -98,7 +98,7 @@ DEF_PYTHON_GGSVD(sggsvd, float);
 DEF_PYTHON_GGSVD(dggsvd, double);
 
 
-BOOST_PYTHON_MODULE(lib_ggsvd)
+BOOST_PYTHON_MODULE(_ggsvd)
 {
     import_array();
     numeric::array::set_module_and_type("numpy", "ndarray");

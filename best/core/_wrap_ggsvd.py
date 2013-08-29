@@ -8,12 +8,11 @@ Date:
 """
 
 
-__all__ = ['ggsvd']
+__all__ = ['ggsvd', 'sggsvd', 'dggsvd']
 
 
 import numpy as np
-from . import sggsvd
-from . import dggsvd
+from ._ggsvd import *
 
 
 def ggsvd(jobu, jobv, jobq, kl, A, B, alpha, beta, U, V, Q,

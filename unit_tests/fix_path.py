@@ -11,4 +11,4 @@ Date:
 import sys
 import os
 
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../build/lib.linux-x86_64-2.7'))
