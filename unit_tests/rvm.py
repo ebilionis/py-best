@@ -39,6 +39,7 @@ class RVMTest(unittest.TestCase):
         phi = best.gpc.OrthogonalPolynomial(20, left=-10, right=10)
         # Construct the design matrix
         PHI = phi(X)
+        print PHI.shape
         # Use RVM on the data
         rvm = best.rvm.RelevanceVectorMachine()
         rvm.set_data(PHI, Y)

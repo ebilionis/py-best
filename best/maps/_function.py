@@ -170,6 +170,9 @@ class Function(Object):
             if res.shape[1] == 1:
                 return res[0, 0, :]
             return res[0, :]
+        else:
+            if res.shape[1] == 1:
+                return res[:, 0, :]
         return res
 
     def __call__(self, x, hyp=None):

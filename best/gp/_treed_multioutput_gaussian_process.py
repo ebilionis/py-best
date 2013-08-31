@@ -21,7 +21,7 @@ from . import MeanModel
 from . import ConstantMeanModel
 from . import SeparableMeanModel
 from ..maps import Solver
-from ..design import lhs
+from ..design import latin_center
 
 
 class TreedMultioutputGaussianProcess(object):
@@ -196,7 +196,7 @@ class TreedMultioutputGaussianProcess(object):
         """Initialize the model."""
         if self.verbose:
             print 'Gathering initial data...'
-        Xi_init = lhs(self.num_xi_init, self.solver.k_of[0])
+        Xi_init = latin_center(self.num_xi_init, self.solver.k_of[0])
         #x = np.linspace(0, 1, int(math.sqrt(self.num_xi_init)))
         #X1, X2 = np.meshgrid(x, x)
         #Xi_init = np.hstack([X1.reshape((x.shape[0] ** 2, 1)),
@@ -265,7 +265,7 @@ class TreedMultioutputGaussianProcess(object):
         """
         if self.verbose:
             print 'Active Learning.'
-        Xi_test = lhs(self.num_xi_test, self.solver.k_of[0])
+        Xi_test = latin_center(self.num_xi_test, self.solver.k_of[0])
         #Xi_test = np.random.rand(self.num_xi_test, self.solver.k_of[0])
         unc_tot = 0.
         unc_max = -1.
