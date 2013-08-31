@@ -9,7 +9,8 @@ Date:
 """
 
 
-__all__ = ['latin_center', 'latin_edge', 'latin_random', 'lhs', 'lhs_seed']
+__all__ = ['latin_center', 'latin_edge', 'latin_random', 'latinize',
+           'lhs', 'lhs_seed']
 
 
 from ..core import design
@@ -119,6 +120,31 @@ def latin_random(num_points, num_dim, seed=None):
     """
     num_points, num_dim, seed = _check_args(num_points, num_dim, seed)
     return design.latin_random(num_dim, num_points, seed).T
+
+
+def latinize(table):
+    """
+    Adjust an D dimensional dataset of N points so that it forms a
+    Latin hypercube.
+
+    Parameters
+    ----------
+    table : (N, D) array_like
+            The dataset to be adjusted. A copy is made.
+
+    Returns
+    -------
+    table : (N, D) ndarray
+            The adjusted dataset.
+
+    Examples
+    --------
+    >>> X = np.random.rand(100, 2)
+    >>> X_adj = best.design.latinize(table)
+    >>> plt.plot(X[:, 0], X[:, 1], '+', X_adj[:, 0], X_adj[:, 1], 'o')
+    >>> plt.show()
+    """
+    return design.latinize(table.T.copy()).T
 
 
 def lhs_seed():

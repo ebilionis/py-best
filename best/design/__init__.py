@@ -8,7 +8,7 @@ Date:
 """
 
 
-__all__ = ['latin_center', 'latin_edge', 'latin_random',
+__all__ = ['latin_center', 'latin_edge', 'latin_random', 'latinize',
            'lhs', 'lhs_seed']
 
 
