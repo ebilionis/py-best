@@ -9,12 +9,18 @@ Date:
 """
 
 
-__all__ = ['lhs_seed', 'lhs']
+__all__ = ['latin_center', 'lhs', 'lhs_seed']
 
 
+from ..core import design
 import numpy as np
 from ..core import lhs as _lhs
 from ..core import get_seed
+
+
+def latin_center(num_points, num_dim, seed=None):
+    seed = design.get_seed()
+    return design.latin_center(num_dim, num_points, seed).T
 
 
 def lhs_seed():
