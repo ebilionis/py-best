@@ -32,11 +32,61 @@ def _check_args(num_points, num_dim, seed):
 
 
 def latin_center(num_points, num_dim, seed=None):
+    """
+    Construct a centered Latin Square design.
+
+    This is a wrapper of the fortran code:
+    `latin_center() <http://people.sc.fsu.edu/~jburkardt/f_src/latin_center/latin_center.html>`_.
+
+    Parameters
+    ----------
+    num_points : int
+                 The number of design points.
+    num_dim : int
+              The number of dimensions
+    seed : int
+           A random seed. If ``None``, then it is initialized
+           automatically.
+
+    Returns
+    -------
+    x : (num_points, num_dim) ndarray
+
+    Examples
+    --------
+    >>> x = best.design.latin_center(10, 2)
+    >>> print x
+    """
     num_points, num_dim, seed = _check_args(num_points, num_dim, seed)
     return design.latin_center(num_dim, num_points, seed).T
 
 
 def latin_edge(num_points, num_dim, seed=None):
+    """
+    Construct a Latin Edge Square design.
+
+    This is a wrapper of the fortran code:
+    `latin_center() <http://people.sc.fsu.edu/~jburkardt/f_src/latin_edge/latin_edge.html>`_.
+
+    Parameters
+    ----------
+    num_points : int
+                 The number of design points.
+    num_dim : int
+              The number of dimensions
+    seed : int
+           A random seed. If ``None``, then it is initialized
+           automatically.
+
+    Returns
+    -------
+    x : (num_points, num_dim) ndarray
+
+    Examples
+    --------
+    >>> x = best.design.latin_center(10, 2)
+    >>> print x
+    """
     num_points, num_dim, seed = _check_args(num_points, num_dim, seed)
     return design.latin_edge(num_dim, num_points, seed).T
 
