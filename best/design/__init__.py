@@ -8,7 +8,7 @@ Date:
 """
 
 
-__all__ = ['lhs_seed', 'lhs']
+__all__ = ['latin_center', 'latin_edge', 'lhs', 'lhs_seed']
 
 
 from ._latin_hyper_cube import *

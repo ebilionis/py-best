@@ -9,7 +9,7 @@ Date:
 """
 
 
-__all__ = ['latin_center', 'lhs', 'lhs_seed']
+__all__ = ['latin_center', 'latin_edge', 'lhs', 'lhs_seed']
 
 
 from ..core import design
@@ -18,9 +18,27 @@ from ..core import lhs as _lhs
 from ..core import get_seed
 
 
+def _check_args(num_points, num_dim, seed):
+    """Check if the arguments to the latin_*() functions are ok."""
+    if seed is None:
+        seed = design.get_seed()
+    seed = int(seed)
+    num_points = int(num_points)
+    num_dim = int(num_dim)
+    assert seed > 0
+    assert num_points >= 1
+    assert num_dim >= 1
+    return num_points, num_dim, seed
+
+
 def latin_center(num_points, num_dim, seed=None):
-    seed = design.get_seed()
+    num_points, num_dim, seed = _check_args(num_points, num_dim, seed)
     return design.latin_center(num_dim, num_points, seed).T
+
+
+def latin_edge(num_points, num_dim, seed=None):
+    num_points, num_dim, seed = _check_args(num_points, num_dim, seed)
+    return design.latin_edge(num_dim, num_points, seed).T
 
 
 def lhs_seed():
