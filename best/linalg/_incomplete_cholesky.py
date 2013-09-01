@@ -14,7 +14,7 @@ __all__ = ['IncompleteCholesky']
 
 import numpy as np
 from .. import Object
-from ..core import pstrf
+from ..core import lapack
 
 
 class IncompleteCholesky(Object):
@@ -92,20 +92,17 @@ class IncompleteCholesky(Object):
             name    ---     A name for the object.
         """
         super(IncompleteCholesky, self).__init__(name=name)
-        if A.dtype == 'float32' or A.dtype == 'float64':
-            dtype = A.dtype
+        if A.dtype == 'float32':
+            pstrf = lapack.wspstrf
         else:
-            dtype = 'float64'
-        self._A = np.ndarray(A.shape, order='F', dtype=dtype)
-        self._A[:] = A
+            pstrf = lapack.wdpstrf
         if lower:
             uplo = 'L'
         else:
             uplo = 'U'
         n = A.shape[0]
-        work = np.ndarray(2 * n, dtype=dtype)
-        self._piv = np.ndarray(n, dtype='int32')
-        self._rank, info = pstrf(uplo, self.A, self.piv, tol, work)
+        self._A, self._piv, self._rank, info = pstrf(A, uplo=uplo,
+                                                     tol=tol)
         self._P = np.zeros((n, n), dtype='int32')
         self.P[self.piv, range(n)] = 1
         if lower:

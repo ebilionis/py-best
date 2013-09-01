@@ -10,11 +10,10 @@ Date:
 """
 
 
-__all__ = ['orthpol', 'design', 'sggsvd', 'dggsvd', 'ggsvd',
-           'spstrf', 'dpstrf', 'pstrf']
+__all__ = ['orthpol', 'design', 'lapack', 'sggsvd', 'dggsvd', 'ggsvd']
 
 
 import orthpol
 import design
+import lapack
 from ._wrap_ggsvd import *
-from ._wrap_pstrf import *
