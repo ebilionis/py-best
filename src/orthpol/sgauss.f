@@ -1,6 +1,6 @@
 c
 c
-      subroutine gauss(n,alpha,beta,eps,zero,weight,ierr,e)
+      subroutine sgauss(n,alpha,beta,eps,zero,weight,ierr,e)
 c
 c Given  n  and a measure  dlambda, this routine generates the n-point
 c Gaussian quadrature formula

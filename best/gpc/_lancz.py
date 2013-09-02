@@ -22,7 +22,7 @@ def lancz(x, w, n):
     Wrapper from ORTHPOL.
     """
     if x.dtype == 'float32':
-        func = orthpol.lancz
+        func = orthpol.slancz
     else:
         func = orthpol.dlancz
     alpha, beta, ierr = func(n, x, w)

@@ -1,19 +1,19 @@
 c
 c
-      subroutine dsti(n,ncap,dx,dw,dalpha,dbeta,ierr,dp0,dp1,dp2)
+      subroutine dsti(n,ncap,x,w,alpha,beta,ierr,dp0,dp1,dp2)
 c
 c This is a double-precision version of the routine  sti.
 c
-      double precision dx,dw,dalpha,dbeta,dp0,dp1,dp2,dtiny,d1mach,
+      double precision x,w,alpha,beta,dp0,dp1,dp2,dtiny,d1mach,
      *dhuge,dsum0,dsum1,dsum2,dt
-      dimension dx(ncap),dw(ncap),dalpha(n),dbeta(n),dp0(ncap),
+      dimension x(ncap),w(ncap),alpha(n),beta(n),dp0(ncap),
      *dp1(ncap),dp2(ncap)
 cf2py integer intent(in) :: n
-cf2py integer intent(hide),depend(dx) :: ncap=len(dx)
-cf2py real*8 intent(in) :: dx
-cf2py real*8 intent(in),depend(ncap),check(len(dw)>=ncap) :: dw
-cf2py real*8 intent(out,out=alpha),depend(n),dimension(n) :: dalpha
-cf2py real*8 intent(out,out=beta),depend(n),dimension(n) :: dbeta
+cf2py integer intent(hide),depend(x) :: ncap=len(x)
+cf2py real*8 intent(in) :: x
+cf2py real*8 intent(in),depend(ncap),check(len(w)>=ncap) :: w
+cf2py real*8 intent(out,out=alpha),depend(n),dimension(n) :: alpha
+cf2py real*8 intent(out,out=beta),depend(n),dimension(n) :: beta
 cf2py real*8 intent(hide),depend(ncap),dimension(ncap) :: dp0
 cf2py real*8 intent(hide),depend(ncap),dimension(ncap) :: dp1
 cf2py real*8 intent(hide),depend(ncap),dimension(ncap) :: dp2
@@ -29,11 +29,11 @@ cf2py integer intent(out) :: ierr
       dsum0=0.d0
       dsum1=0.d0
       do 10 m=1,ncap
-        dsum0=dsum0+dw(m)
-        dsum1=dsum1+dw(m)*dx(m)
+        dsum0=dsum0+w(m)
+        dsum1=dsum1+w(m)*x(m)
    10 continue
-      dalpha(1)=dsum1/dsum0
-      dbeta(1)=dsum0
+      alpha(1)=dsum1/dsum0
+      beta(1)=dsum0
       if(n.eq.1) return
       do 20 m=1,ncap
         dp1(m)=0.d0
@@ -43,24 +43,24 @@ cf2py integer intent(out) :: ierr
         dsum1=0.d0
         dsum2=0.d0
         do 30 m=1,ncap
-          if(dw(m).eq.0.d0) goto 30
+          if(w(m).eq.0.d0) goto 30
           dp0(m)=dp1(m)
           dp1(m)=dp2(m)
-          dp2(m)=(dx(m)-dalpha(k))*dp1(m)-dbeta(k)*dp0(m)
+          dp2(m)=(x(m)-alpha(k))*dp1(m)-beta(k)*dp0(m)
           if(dabs(dp2(m)).gt.dhuge .or. dabs(dsum2).gt.dhuge) then
             ierr=k
             return
           end if
-          dt=dw(m)*dp2(m)*dp2(m)
+          dt=w(m)*dp2(m)*dp2(m)
           dsum1=dsum1+dt
-          dsum2=dsum2+dt*dx(m)
+          dsum2=dsum2+dt*x(m)
    30   continue
         if(dabs(dsum1).lt.dtiny) then
           ierr=-k
           return
         end if
-        dalpha(k+1)=dsum2/dsum1
-        dbeta(k+1)=dsum1/dsum0
+        alpha(k+1)=dsum2/dsum1
+        beta(k+1)=dsum1/dsum0
         dsum0=dsum1
    40 continue
       return

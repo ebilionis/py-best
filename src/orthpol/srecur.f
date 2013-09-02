@@ -1,6 +1,6 @@
 c
 c
-      subroutine recur(n,ipoly,al,be,a,b,ierr)
+      subroutine srecur(n,ipoly,al,be,a,b,ierr)
 c
 c This subroutine generates the coefficients  a(k),b(k), k=0,1,...,n-1,
 c in the recurrence relation

@@ -1,6 +1,6 @@
 c
 c
-      subroutine sti(n,ncap,x,w,alpha,beta,ierr,p0,p1,p2)
+      subroutine ssti(n,ncap,x,w,alpha,beta,ierr,p0,p1,p2)
 c
 c This routine applies Stieltjes's procedure'' (cf. Section 2.1 of
 c W. Gautschi,On generating orthogonal polynomials'', SIAM J. Sci.

@@ -1,6 +1,6 @@
 c
 c
-      subroutine lancz(n,ncap,x,w,alpha,beta,ierr,p0,p1)
+      subroutine slancz(n,ncap,x,w,alpha,beta,ierr,p0,p1)
 c
 c This routine carries out the same task as the routine  sti, but
 c uses the more stable Lanczos method. The meaning of the input

@@ -1,18 +1,18 @@
 c
 c
-      subroutine dlancz(n,ncap,dx,dw,dalpha,dbeta,ierr,dp0,dp1)
+      subroutine dlancz(n,ncap,x,w,alpha,beta,ierr,dp0,dp1)
 c
 c This is a double-precision version of the routine  lancz.
 c
-      double precision dx(ncap),dw(ncap),dalpha(n),dbeta(n),
-     *dp0(ncap),dp1(ncap),dpi,dgam,dsig,dt,dxlam,drho,dtmp,
+      double precision x(ncap),w(ncap),alpha(n),beta(n),
+     *dp0(ncap),dp1(ncap),dpi,dgam,dsig,dt,xlam,drho,dtmp,
      *dtsig,dtk
 cf2py integer intent(in) :: n
-cf2py integer intent(hide),depend(dx) :: ncap=len(dx)
-cf2py real*8 intent(in) :: dx
-cf2py real*8 intent(in),depend(ncap),check(len(dw)>=ncap) :: dw
-cf2py real*8 intent(out,out=alpha),depend(n),dimension(n) :: dalpha
-cf2py real*8 intent(out,out=beta),depend(n),dimension(n) :: dbeta
+cf2py integer intent(hide),depend(x) :: ncap=len(x)
+cf2py real*8 intent(in) :: x
+cf2py real*8 intent(in),depend(ncap),check(len(w)>=ncap) :: w
+cf2py real*8 intent(out,out=alpha),depend(n),dimension(n) :: alpha
+cf2py real*8 intent(out,out=beta),depend(n),dimension(n) :: beta
 cf2py real*8 intent(hide),depend(ncap),dimension(ncap) :: dp0
 cf2py real*8 intent(hide),depend(ncap),dimension(ncap) :: dp1
 cf2py integer intent(out) :: ierr
@@ -23,16 +23,16 @@ cf2py integer intent(out) :: ierr
         ierr=0
       end if
       do 10 i=1,ncap
-        dp0(i)=dx(i)
+        dp0(i)=x(i)
         dp1(i)=0.d0
    10 continue
-      dp1(1)=dw(1)
+      dp1(1)=w(1)
       do 30 i=1,ncap-1
-        dpi=dw(i+1)
+        dpi=w(i+1)
         dgam=1.d0
         dsig=0.d0
         dt=0.d0
-        dxlam=dx(i+1)
+        xlam=x(i+1)
         do 20 k=1,i+1
           drho=dp1(k)+dpi
           dtmp=dgam*drho
@@ -44,7 +44,7 @@ cf2py integer intent(out) :: ierr
             dgam=dp1(k)/drho
             dsig=dpi/drho
           end if
-          dtk=dsig*(dp0(k)-dxlam)-dgam*dt
+          dtk=dsig*(dp0(k)-xlam)-dgam*dt
           dp0(k)=dp0(k)-(dtk-dt)
           dt=dtk
           if(dsig.le.0.d0) then
@@ -57,8 +57,8 @@ cf2py integer intent(out) :: ierr
    20   continue
    30 continue
       do 40 k=1,n
-        dalpha(k)=dp0(k)
-        dbeta(k)=dp1(k)
+        alpha(k)=dp0(k)
+        beta(k)=dp1(k)
    40 continue
       return
       end
