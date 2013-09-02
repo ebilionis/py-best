@@ -15,6 +15,7 @@ __all__ = ['QuadratureRule']
 import numpy as np
 import math
 from .. import Object
+from ..core import orthpol
 
 
 def symtr(t):
@@ -46,31 +47,13 @@ def tr(t):
     return phi, dphi
 
 
-def fejer(n):
+def fejer(n, dtype='float64'):
     """Generate the n-point Fejer quadrature rule."""
-    x = np.zeros(n)
-    w = np.zeros(n)
-    nh = n / 2
-    np1h = (n + 1) / 2
-    fn = float(n)
-    for k in range(1, nh + 1):
-        x[k - 1] = -math.cos(0.5 * (2. * k - 1.) * math.pi / fn)
-        x[n - k] = -x[k - 1]
-    if (2 * nh) != n:
-        x[np1h - 1] = 0.
-    for k in range(1, np1h + 1):
-        c1 = 1.
-        c0  = 2. * x[k - 1] * x[k - 1] - 1.
-        t = 2. * c0
-        s = c0 / 3.
-        for m in range(2, nh + 1):
-            c2 = c1
-            c1 = c0
-            c0 = t * c1 - c2
-            s += c0 / (4. * m * m - 1)
-        w[k - 1] = 2. * (1. - 2. * s) / fn
-        w[n - k] = w[k - 1]
-    return x, w
+    if dtype == 'float64':
+        func = orthpol.dfejer
+    else:
+        func = orthpol.fejer
+    return func(n)
 
 
 class QuadratureRule(Object):
