@@ -8,6 +8,13 @@ c
       double precision dal,dbe,da,db,dlmach,d1mach,dkm1,dalpbe,dt,
      *dlga,dal2,dbe2,dgamma
       dimension da(n),db(n)
+cf2py integer intent(in) :: n
+cf2py integer intent(in) :: ipoly
+cf2py real optional,intent(in) :: dal=-.5
+cf2py real optional,intent(in) :: dbe=.5
+cf2py real intent(out,out=a),depend(n),dimension(n) :: da
+cf2py real intent(out,out=b),depend(n),dimension(n) :: db
+cf2py integer intent(out,out=ierr) :: iderr
       if(n.lt.1) then
         iderr=3
         return
@@ -122,7 +129,7 @@ c
       double precision function dlga(dx)
       double precision dbnum,dbden,dx,d1mach,dc,dp,dy,dt,ds
       dimension dbnum(8),dbden(8)
-c 
+c
 c This routine evaluates the logarithm of the gamma function by a
 c combination of recurrence and asymptotic approximation.
 c
@@ -146,7 +153,7 @@ c
 c
 c The quantity  y0  below is the threshold value beyond which asymptotic
 c evaluation gives sufficient accuracy; see Eq. 6.1.42 in M. Abramowitz
-c and I.A. Stegun,Handbook of Mathematical Functions''. The constants 
+c and I.A. Stegun,Handbook of Mathematical Functions''. The constants
 c are .12118868... = ln(10)/19 and .05390522... = ln(|B[20]|/190)/19.
 c
       y0=exp(.121189*dprec+.053905)

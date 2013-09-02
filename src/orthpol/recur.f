@@ -31,23 +31,30 @@ c                     Laguerre polynomials
 c
 c       Output: a,b - arrays containing, respectively, the recursion
 c                     coefficients  a(k-1),b(k-1), k=1,2,...,n.
-c               ierr -an error flag, equal to  0  on normal return, 
-c                     equal to  1  if  al  or  be  are out of range 
-c                     when  ipoly=6  or  ipoly=7, equal to  2  if  b(0) 
-c                     overflows when  ipoly=6  or  ipoly=7, equal to  3 
+c               ierr -an error flag, equal to  0  on normal return,
+c                     equal to  1  if  al  or  be  are out of range
+c                     when  ipoly=6  or  ipoly=7, equal to  2  if  b(0)
+c                     overflows when  ipoly=6  or  ipoly=7, equal to  3
 c                     if  n  is out of range, and equal to  4  if  ipoly
 c                     is not an admissible integer. In the case  ierr=2,
 c                     the coefficient  b(0)  is set equal to the largest
 c                     machine-representable number.
 c
-c The subroutine calls for the function subroutines  r1mach,gamma  and 
+c The subroutine calls for the function subroutines  r1mach,gamma  and
 c alga. The routines  gamma  and  alga , which are included in this
 c file, evaluate respectively the gamma function and its logarithm for
-c positive arguments. They are used only in the cases  ipoly=6  and 
+c positive arguments. They are used only in the cases  ipoly=6  and
 c ipoly=7.
 c
       external gamma
       dimension a(n),b(n)
+cf2py integer intent(in) :: n
+cf2py integer intent(in) :: ipoly
+cf2py real optional,intent(in) :: al=-.5
+cf2py real optional,intent(in) :: be=.5
+cf2py real intent(out),depend(n),dimension(n) :: a
+cf2py real intent(out),depend(n),dimension(n) :: b
+cf2py integer intent(out) :: ierr
       if(n.lt.1) then
         ierr=3
         return
@@ -159,24 +166,24 @@ c
       end
 
       function alga(x)
-c 
+c
 c This is an auxiliary function subroutine (not optimized in any
 c sense) evaluating the logarithm of the gamma function for positive
-c arguments  x. It is called by the subroutine  gamma. The integer  m0 
-c in the first executable statement is the smallest integer  m  such 
-c that  1*3*5* ... *(2*m+1)/(2**m)  is greater than or equal to the 
-c largest machine-representable number. The routine is based on a 
-c rational approximation valid on [.5,1.5] due to W.J. Cody and 
-c K.E. Hillstrom; see Math. Comp. 21, 1967, 198-203, in particular the 
-c case  n=7  in Table II. For the computation of  m0  it calls upon the 
+c arguments  x. It is called by the subroutine  gamma. The integer  m0
+c in the first executable statement is the smallest integer  m  such
+c that  1*3*5* ... *(2*m+1)/(2**m)  is greater than or equal to the
+c largest machine-representable number. The routine is based on a
+c rational approximation valid on [.5,1.5] due to W.J. Cody and
+c K.E. Hillstrom; see Math. Comp. 21, 1967, 198-203, in particular the
+c case  n=7  in Table II. For the computation of  m0  it calls upon the
 c function subroutines  t  and  r1mach. The former, appended below,
 c evaluates the inverse function  t = t(y)  of  y = t ln t.
-c 
-      dimension cnum(8),cden(8) 
-      data cnum/4.120843185847770,85.68982062831317,243.175243524421, 
-     *-261.7218583856145,-922.2613728801522,-517.6383498023218, 
-     *-77.41064071332953,-2.208843997216182/, 
-     *cden/1.,45.64677187585908,377.8372484823942,951.323597679706, 
+c
+      dimension cnum(8),cden(8)
+      data cnum/4.120843185847770,85.68982062831317,243.175243524421,
+     *-261.7218583856145,-922.2613728801522,-517.6383498023218,
+     *-77.41064071332953,-2.208843997216182/,
+     *cden/1.,45.64677187585908,377.8372484823942,951.323597679706,
      *846.0755362020782,262.3083470269460,24.43519662506312,
      *.4097792921092615/
 c
@@ -184,7 +191,7 @@ c The constants in the statement below are  exp(1.)  and  .5*alog(8.).
 c
       m0=2.71828*t((alog(r1mach(2))-1.03972)/2.71828)
       xi=aint(x)
-      if(x-xi.gt..5) xi=xi+1. 
+      if(x-xi.gt..5) xi=xi+1.
       m=ifix(xi)-1
 c
 c Computation of log gamma on the standard interval (1/2,3/2]
@@ -192,7 +199,7 @@ c
       xe=x-real(m)
       snum=cnum(1)
       sden=cden(1)
-      do 10 k=2,8 
+      do 10 k=2,8
         snum=xe*snum+cnum(k)
         sden=xe*sden+cden(k)
    10 continue
@@ -217,22 +224,22 @@ c
 c
 c Computation of log gamma for arguments larger than 5/2
 c
-          mm1=m-1 
+          mm1=m-1
 c
 c The else-clause in the next statement is designed to avoid possible
-c overflow in the computation of  p  in the if-clause, at the expense 
+c overflow in the computation of  p  in the if-clause, at the expense
 c of computing many logarithms.
 c
           if(m.lt.m0) then
-            do 20 k=1,mm1 
-              p=(xe+real(k))*p 
+            do 20 k=1,mm1
+              p=(xe+real(k))*p
    20       continue
-            alga=alga+alog(p) 
+            alga=alga+alog(p)
             return
           else
             alga=alga+alog(xe)
-            do 30 k=1,mm1 
-              alga=alga+alog(xe+real(k)) 
+            do 30 k=1,mm1
+              alga=alga+alog(xe+real(k))
    30       continue
             return
           end if
@@ -244,7 +251,7 @@ c
 c
 c This evaluates the gamma function for real positive  x, using the
 c function subroutines  alga  and  r1mach. In case of overflow, the
-c routine returns the largest machine-representable number and the 
+c routine returns the largest machine-representable number and the
 c error flag  ierr=2.
 c
       almach=alog(r1mach(2))

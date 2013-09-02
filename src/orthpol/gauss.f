@@ -4,46 +4,54 @@ c
 c
 c Given  n  and a measure  dlambda, this routine generates the n-point
 c Gaussian quadrature formula
-c 
+c
 c     integral over supp(dlambda) of f(x)dlambda(x)
 c
 c        = sum from k=1 to k=n of w(k)f(x(k)) + R(n;f).
-c 
-c The nodes are returned as  zero(k)=x(k) and the weights as 
-c weight(k)=w(k), k=1,2,...,n. The user has to supply the recursion 
-c coefficients  alpha(k), beta(k), k=0,1,2,...,n-1, for the measure 
-c dlambda. The routine computes the nodes as eigenvalues, and the 
-c weights in term of the first component of the respective normalized 
+c
+c The nodes are returned as  zero(k)=x(k) and the weights as
+c weight(k)=w(k), k=1,2,...,n. The user has to supply the recursion
+c coefficients  alpha(k), beta(k), k=0,1,2,...,n-1, for the measure
+c dlambda. The routine computes the nodes as eigenvalues, and the
+c weights in term of the first component of the respective normalized
 c eigenvectors of the n-th order Jacobi matrix associated with  dlambda.
 c It uses a translation and adaptation of the algol procedure  imtql2,
-c Numer. Math. 12, 1968, 377-383, by Martin and Wilkinson, as modified 
-c by Dubrulle, Numer. Math. 15, 1970, 450. See also Handbook for 
+c Numer. Math. 12, 1968, 377-383, by Martin and Wilkinson, as modified
+c by Dubrulle, Numer. Math. 15, 1970, 450. See also Handbook for
 c Autom. Comput., vol. 2 - Linear Algebra, pp.241-248, and the eispack
 c routine  imtql2.
 c
-c        Input:  n - - the number of points in the Gaussian quadrature	
+c        Input:  n - - the number of points in the Gaussian quadrature
 c                      formula; type integer
-c                alpha,beta - - arrays of dimension  n  to be filled 
+c                alpha,beta - - arrays of dimension  n  to be filled
 c                      with the values of  alpha(k-1), beta(k-1), k=1,2,
 c                      ...,n
 c                eps - the relative accuracy desired in the nodes
 c                      and weights
 c
-c        Output: zero- array of dimension  n  containing the Gaussian 
+c        Output: zero- array of dimension  n  containing the Gaussian
 c                      nodes (in increasing order)  zero(k)=x(k), k=1,2,
 c                      ...,n
-c                weight - array of dimension  n  containing the 
+c                weight - array of dimension  n  containing the
 c                      Gaussian weights  weight(k)=w(k), k=1,2,...,n
 c                ierr- an error flag equal to  0  on normal return,
 c                      equal to  i  if the QR algorithm does not
-c                      converge within 30 iterations on evaluating the 
+c                      converge within 30 iterations on evaluating the
 c                      i-th eigenvalue, equal to  -1  if  n  is not in
-c                      range, and equal to  -2  if one of the beta's is 
+c                      range, and equal to  -2  if one of the beta's is
 c                      negative.
 c
 c The array  e  is needed for working space.
 c
       dimension alpha(n),beta(n),zero(n),weight(n),e(n)
+cf2py integer intent(hide),depend(alpha) :: n=len(alpha)
+cf2py real intent(in) :: alpha
+cf2py real intent(in),depend(n),dimension(n) :: beta
+cf2py real optional, intent(in) :: eps=1e-6
+cf2py real intent(out),depend(n),dimension(n) :: zero
+cf2py real intent(out),depend(n),dimension(n) :: weight
+cf2py integer intent(out) :: ierr
+cf2py real intent(hide),depend(n),dimension(n) :: e
       if(n.lt.1) then
         ierr=-1
         return
