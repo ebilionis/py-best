@@ -8,6 +8,16 @@ c
      *dhuge,dsum0,dsum1,dsum2,dt
       dimension dx(ncap),dw(ncap),dalpha(n),dbeta(n),dp0(ncap),
      *dp1(ncap),dp2(ncap)
+cf2py integer intent(in) :: n
+cf2py integer intent(hide),depend(dx) :: ncap=len(dx)
+cf2py real*8 intent(in) :: dx
+cf2py real*8 intent(in),depend(ncap),check(len(dw)>=ncap) :: dw
+cf2py real*8 intent(out,out=alpha),depend(n),dimension(n) :: dalpha
+cf2py real*8 intent(out,out=beta),depend(n),dimension(n) :: dbeta
+cf2py real*8 intent(hide),depend(ncap),dimension(ncap) :: dp0
+cf2py real*8 intent(hide),depend(ncap),dimension(ncap) :: dp1
+cf2py real*8 intent(hide),depend(ncap),dimension(ncap) :: dp2
+cf2py integer intent(out) :: ierr
       dtiny=10.d0*d1mach(1)
       dhuge=.1d0*d1mach(2)
       ierr=0

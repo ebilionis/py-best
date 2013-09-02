@@ -7,6 +7,15 @@ c
       double precision dx(ncap),dw(ncap),dalpha(n),dbeta(n),
      *dp0(ncap),dp1(ncap),dpi,dgam,dsig,dt,dxlam,drho,dtmp,
      *dtsig,dtk
+cf2py integer intent(in) :: n
+cf2py integer intent(hide),depend(dx) :: ncap=len(dx)
+cf2py real*8 intent(in) :: dx
+cf2py real*8 intent(in),depend(ncap),check(len(dw)>=ncap) :: dw
+cf2py real*8 intent(out,out=alpha),depend(n),dimension(n) :: dalpha
+cf2py real*8 intent(out,out=beta),depend(n),dimension(n) :: dbeta
+cf2py real*8 intent(hide),depend(ncap),dimension(ncap) :: dp0
+cf2py real*8 intent(hide),depend(ncap),dimension(ncap) :: dp1
+cf2py integer intent(out) :: ierr
       if(n.le.0 .or. n.gt.ncap) then
         ierr=1
         return
@@ -52,5 +61,5 @@ c
         dbeta(k)=dp1(k)
    40 continue
       return
-      end 
+      end
 

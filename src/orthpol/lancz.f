@@ -3,13 +3,22 @@ c
       subroutine lancz(n,ncap,x,w,alpha,beta,ierr,p0,p1)
 c
 c This routine carries out the same task as the routine  sti, but
-c uses the more stable Lanczos method. The meaning of the input 
+c uses the more stable Lanczos method. The meaning of the input
 c and output parameters is the same as in the routine  sti. (This
-c routine is adapted from the routine RKPW in W.B. Gragg and 
-c W.J. Harrod,The numerically stable reconstruction of Jacobi 
+c routine is adapted from the routine RKPW in W.B. Gragg and
+c W.J. Harrod,The numerically stable reconstruction of Jacobi
 c matrices from spectral data'', Numer. Math. 44, 1984, 317-335.)
 c
-      dimension x(ncap),w(ncap),alpha(n),beta(n),p0(ncap),p1(ncap) 
+      dimension x(ncap),w(ncap),alpha(n),beta(n),p0(ncap),p1(ncap)
+cf2py integer intent(in) :: n
+cf2py integer intent(hide),depend(x) :: ncap=len(x)
+cf2py real intent(in) :: x
+cf2py real intent(in),depend(ncap),check(len(w)>=ncap) :: w
+cf2py real intent(out),depend(n),dimension(n) :: alpha
+cf2py real intent(out),depend(n),dimension(n) :: beta
+cf2py real intent(hide),depend(ncap),dimension(ncap) :: p0
+cf2py real intent(hide),depend(ncap),dimension(ncap) :: p1
+cf2py integer intent(out) :: ierr
       if(n.le.0 .or. n.gt.ncap) then
         ierr=1
         return
@@ -55,5 +64,5 @@ c
         beta(k)=p1(k)
    40 continue
       return
-      end 
+      end
 

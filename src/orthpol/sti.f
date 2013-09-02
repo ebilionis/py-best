@@ -16,23 +16,33 @@ c arrays  alpha, beta; the arrays  p0, p1, p2  are working arrays.
 c
 c If there is a threat of underflow or overflow in the calculation
 c of the coefficients  alpha(k)  and  beta(k), the routine exits with
-c the error flag  ierr  set equal to  -k  (in the case of underflow) 
-c or  +k  (in the case of overflow), where  k  is the recursion index 
+c the error flag  ierr  set equal to  -k  (in the case of underflow)
+c or  +k  (in the case of overflow), where  k  is the recursion index
 c for which the problem occurs. The former [latter] can often be avoided
 c by multiplying all weights  w(k)  by a sufficiently large [small]
 c scaling factor prior to entering the routine, and, upon exit, divide
 c the coefficient  beta(0)  by the same factor.
 c
-c This routine should be used with caution if  n  is relatively close 
-c to  ncap, since there is a distinct possibility of numerical 
-c instability developing. (See W. Gautschi,Is the recurrence relation 
-c for orthogonal polynomials always stable?'', BIT, 1993, to appear.) 
+c This routine should be used with caution if  n  is relatively close
+c to  ncap, since there is a distinct possibility of numerical
+c instability developing. (See W. Gautschi,Is the recurrence relation
+c for orthogonal polynomials always stable?'', BIT, 1993, to appear.)
 c In that case, the routine  lancz  should be used.
 c
 c The routine uses the function subroutine  r1mach.
 c
       dimension x(ncap),w(ncap),alpha(n),beta(n),p0(ncap),p1(ncap),
      *p2(ncap)
+cf2py integer intent(in) :: n
+cf2py integer intent(hide),depend(x) :: ncap=len(x)
+cf2py real intent(in) :: x
+cf2py real intent(in),depend(ncap),check(len(w)>=ncap) :: w
+cf2py real intent(out),depend(n),dimension(n) :: alpha
+cf2py real intent(out),depend(n),dimension(n) :: beta
+cf2py real intent(hide),depend(ncap),dimension(ncap) :: p0
+cf2py real intent(hide),depend(ncap),dimension(ncap) :: p1
+cf2py real intent(hide),depend(ncap),dimension(ncap) :: p2
+cf2py integer intent(out) :: ierr
       tiny=10.*r1mach(1)
       huge=.1*r1mach(2)
       ierr=0
@@ -66,8 +76,8 @@ c
         do 30 m=1,ncap
 c
 c The following statement is designed to avoid an overflow condition
-c in the computation of  p2(m)  when the weights  w(m)  go to zero 
-c faster (and underflow) than the  p2(m)  grow. 
+c in the computation of  p2(m)  when the weights  w(m)  go to zero
+c faster (and underflow) than the  p2(m)  grow.
 c
           if(w(m).eq.0.) goto 30
           p0(m)=p1(m)
