@@ -19,6 +19,7 @@ from ..maps import Function
 from ..random import RandomVectorIndependent
 from ._quadrature_rule import *
 from ._lancz import *
+from ..core import orthpol
 
 
 class OrthogonalPolynomial(Function):
