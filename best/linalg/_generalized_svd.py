@@ -13,7 +13,7 @@ __all__ = ['GeneralizedSVD']
 
 import numpy as np
 from .. import Object
-from ..core import ggsvd
+from ..core import lapack
 
 
 class GeneralizedSVD(Object):
@@ -159,47 +159,27 @@ class GeneralizedSVD(Object):
             name    ---     A name for the class.
         """
         super(GeneralizedSVD, self).__init__(name=name)
-        if A.dtype == 'float32' or A.dtype == 'float64':
-            dtype = A.dtype
+        if A.dtype == 'float32':
+            ggsvd = lapack.wsggsvd
         else:
-            dtype = 'float64'
-        self._A = np.ndarray(A.shape, order='F', dtype=dtype)
-        self._A[:] = A
-        self._B = np.ndarray(B.shape, order='F', dtype=dtype)
-        self._B[:] = B
-        self._alpha = np.ndarray(self.n, dtype=dtype)
-        self._beta = np.ndarray(self.n, dtype=dtype)
+            ggsvd = lapack.wdggsvd
         if do_U:
-            self._U = np.ndarray((self.m, self.m), order='F',
-                                 dtype=dtype)
             jobU = 'U'
         else:
-            self._U = np.ndarray(())
             jobU = 'N'
         if do_V:
-            self._V = np.ndarray((self.p, self.p), order='F',
-                                 dtype=dtype)
             jobV = 'V'
         else:
-            self._V = np.ndarray(())
             jobV = 'N'
         if do_Q:
-            self._Q = np.ndarray((self.n, self.n), order='F',
-                                 dtype=dtype)
             jobQ = 'Q'
         else:
-            self._Q = np.ndarray(())
-            self.Q = 'N'
-        self._work = np.ndarray(max(3 * self.n, self.m, self.p) + self.n,
-                                dtype=dtype)
-        self._iwork = np.ndarray(self.n, dtype='i')
-        kl = np.ndarray(2, dtype='i')
-        ierr = ggsvd(jobU, jobV, jobQ, kl, self._A, self._B,
-                     self.alpha, self.beta, self.U, self.V, self.Q,
-                     self.work, self.iwork)
-        self._k = kl[0]
-        self._l = kl[1]
-
+            jobQ = 'N'
+        print ggsvd.__doc__
+        print A.shape
+        print B.shape
+        (self._k, self._l, self._A, self._B, self._alpha, self._beta,
+         self._U, self._V, self._Q, self._sort, info) = ggsvd(A, B)
         if self.m - self.k - self.l >= 0:
             # Construct R
             self._R = np.array(self.A[:self.k + self.l,

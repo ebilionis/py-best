@@ -37,6 +37,8 @@ cf2py threadsafe
 
       CALL DECREASE_PIV( N, PIV )
 
+      RETURN
+
       END
 
       SUBROUTINE WSPSTRF( UPLO, N, A, LDA, PIV, RANK, TOL, WORK, INFO )
@@ -66,5 +68,7 @@ cf2py threadsafe
       CALL SPSTRF( UPLO, N, A, LDA, PIV, RANK, TOL, WORK, INFO )
 
       CALL DECREASE_PIV( N, PIV )
+
+      RETURN
 
       END

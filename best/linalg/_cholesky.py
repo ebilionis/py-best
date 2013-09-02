@@ -13,7 +13,6 @@ __all__ = ['update_cholesky', 'update_cholesky_linear_system']
 
 import numpy as np
 import scipy.linalg
-from ..core import pstrf
 
 
 def update_cholesky(L, B, C):
