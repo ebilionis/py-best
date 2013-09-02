@@ -1,8 +1,8 @@
 c
 c
-      subroutine radau(n,alpha,beta,end,zero,weight,ierr,e,a,b)
+      subroutine sradau(n,alpha,beta,end,zero,weight,ierr,e,a,b)
 c
-c Given  n  and a measure  dlambda, this routine generates the 
+c Given  n  and a measure  dlambda, this routine generates the
 c (n+1)-point Gauss-Radau quadrature formula
 c
 c   integral over supp(dlambda) of f(t)dlambda(t)
@@ -10,7 +10,7 @@ c
 c     = w(0)f(x(0)) + sum from k=1 to k=n of w(k)f(x(k)) + R(n;f).
 c
 c The nodes are returned as  zero(k)=x(k), the weights as  weight(k)
-c =w(k), k=0,1,2,...,n. The user has to supply the recursion 
+c =w(k), k=0,1,2,...,n. The user has to supply the recursion
 c coefficients  alpha(k), beta(k), k=0,1,2,...,n, for the measure
 c dlambda. The nodes and weights are computed as eigenvalues and
 c in terms of the first component of the respective normalized
@@ -39,6 +39,15 @@ c
 c
 c The arrays  alpha,beta,zero,weight,e,a,b  are assumed to have
 c dimension  n+1.
+cf2py integer intent(hide),depend(alpha) :: n=len(alpha)
+cf2py real intent(in) :: alpha
+cf2py real intent(in),depend(n),dimension(n) :: beta
+cf2py real intent(in) :: end
+cf2py real intent(out),depend(n),dimension(n+1) :: zero
+cf2py real intent(out),depend(n),dimension(n+1) :: weight
+cf2py real intent(hide),depend(n),dimension(n+1) :: e
+cf2py real intent(hide),depend(n),dimension(n+1) :: a
+cf2py real intent(hide),depend(n),dimension(n+1) :: b
 c
       epsma=r1mach(3)
 c
@@ -57,7 +66,7 @@ c
         p1=(end-a(k))*p0-b(k)*pm1
    20 continue
       a(np1)=end-b(np1)*p0/p1
-      call gauss(np1,a,b,epsma,zero,weight,ierr,e)
+      call sgauss(np1,a,b,epsma,zero,weight,ierr,e)
       return
       end
 
