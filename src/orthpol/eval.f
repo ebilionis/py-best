@@ -25,10 +25,16 @@ cf2py real intent(out),depend(p),dimension(p+1) :: phi
 
       SUBROUTINE SEVAL_ALL(N, P, ALPHA, BETA, GAMMA, X, PHI)
 
-      INTEGER   P
+      INTEGER   N, P
       REAL      ALPHA( P ), BETA( P ), GAMMA( P ), X( N ),
      $          PHI( N, P + 1)
-
+cf2py integer intent(hide),depend(x) :: n=len(x)
+cf2py integer intent(hide),depend(alpha) :: p=len(alpha)
+cf2py real intent(in) :: alpha
+cf2py real intent(in),depend(p),dimension(p) :: beta
+cf2py real intent(in),depend(p),dimension(p) :: gamma
+cf2py real intent(in) :: x
+cf2py real intent(out),depend(n,p),dimension(n,p) :: phi
       PHI(:,:) = 0.
       PHI(:,1) = 1. / GAMMA(1)
       IF (P.GE.1) THEN
