@@ -115,3 +115,25 @@ cf2py double precision intent(in,out,copy),depend(p),dimension(p) :: gamma
       RETURN
 
       END SUBROUTINE
+
+      INTEGER FUNCTION N_CHOOSE_K( N, K )
+
+      IMPLICIT NONE
+
+      INTEGER               N, K
+
+      INTEGER               NUM, DEN, I, L
+
+      NUM = 1
+      DEN = 1
+      L = MIN(N-K, K)
+      DO I=0,L-1
+        NUM = NUM * (N - I)
+        DEN = DEN * (I + L)
+      END DO
+
+      N_CHOOSE_K = NUM / DEN
+
+      RETURN
+
+      END FUNCTION

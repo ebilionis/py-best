@@ -83,6 +83,7 @@ class GpcTest(unittest.TestCase):
         plt.show()
 
     def test_orthogonal_polynomial(self):
+        return
         import time
         p = best.gpc.OrthogonalPolynomial(3, left=-1, right=1, wf=lambda(x): 0.5, ncap=50)
         print str(p)
@@ -128,7 +129,7 @@ class GpcTest(unittest.TestCase):
         plt.show()
 
     def test_product_basis(self):
-        return
+        import time
         comp = (stats.beta(0.5, 0.5), stats.beta(0.5, 0.5))
         rv = best.random.RandomVectorIndependent(comp)
         print str(rv)
@@ -144,7 +145,10 @@ class GpcTest(unittest.TestCase):
         Z = z.reshape((64, 64))
         #plt.contourf(X1, X2, np.log(Z).T)
         #plt.show()
+        start_time = time.time()
         phi = prod(xx)
+        end_time = time.time()
+        print("Elapsed time was %g seconds" % (end_time - start_time))
         print phi.shape
         for j in range(phi.shape[1]):
             plt.contourf(X1, X2, phi[:, j].reshape((64, 64)))

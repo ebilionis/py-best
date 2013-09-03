@@ -311,12 +311,24 @@ class ProductBasis(Function):
             s += str(self.num_terms[i]) + ' '
         return s
 
+    def __call__(self, x, hyp=None):
+        num_pt = x.shape[0]
+        import time
+        basis_eval_tmp = [self.polynomials[j](x[:, j])
+                          for j in range(self.num_input)]
+        phi = np.ndarray((num_pt, self.num_output))
+        for k in range(self.num_output):
+            phi[:, k] = 1.
+            for j in range(self.num_input):
+                phi[:, k] *= basis_eval_tmp[j][:, self.terms[k][j]]
+        return phi
+
     def _eval(self, x, hyp):
         """Evaluate the polynomials at x."""
         phi = np.ndarray(self.num_output)
         basis_eval_tmp = [[] for j in range(self.num_input)]
         for j in range(self.num_input):
-            basis_eval_tmp[j] = self.polynomials[j](x[j])
+            basis_eval_tmp[j] = self.polynomials[j](x[j]).flatten()
         for k in range(self.num_output):
             phi[k] = 1.
             for j in range(self.num_input):
