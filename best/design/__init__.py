@@ -140,3 +140,77 @@ def latinize(table):
     >>> plt.show()
     """
     return design.latinize(table.T.copy()).T
+
+
+def _sg_string_to_rule(rule_str):
+    """
+    Turn a Sparse Grid rule from a string to an integer.
+
+    Parameters
+    ----------
+    rule_str    :   str
+                    The rule in str form. Choose from:
+
+                        1. "CC", Clenshaw Curtis Closed Fully Nested rule.
+                        2. "F1", Fejer 1 Open Fully Nested rule.
+                        3. "F2", Fejer 2 Open Fully Nested rule.
+                        4. "GP", Gauss Patterson Open Fully Nested rule.
+                        5. "GL", Gauss Legendre Open Weakly Nested rule.
+                        6. "GH", Gauss Hermite Open Weakly Nested rule.
+                        7. "LG", Gauss Laguerre Open Non Nested rule.
+
+    Returns
+    -------
+    rule        :   int
+                    The rule number.
+    """
+    if rule_str == 'CC':
+        return 1
+    elif rule_str == 'F1':
+        return 2
+    elif rule_str == 'F2':
+        return 3
+    elif rule_str == 'GP':
+        return 4
+    elif rule_str == 'GL':
+        return 5
+    elif rule_str == 'GH':
+        return 6
+    elif rule_str == 'LG':
+        return 7
+    raise ValueError('Unkown quadrature rule.')
+
+
+def sparse_grid(num_dim, max_level, rule='CC'):
+    """
+    Compute a Sparse Grid.
+
+    Parameters
+    ----------
+    num_dim     :   int
+                    Number of dimensions.
+    max_level   :   int
+                    The maximum level of the sparse grid.
+    rule        :   str
+                    The quadrature rule. The default is "CC". Choose from:
+
+                        1. "CC", Clenshaw Curtis Closed Fully Nested rule.
+                        2. "F1", Fejer 1 Open Fully Nested rule.
+                        3. "F2", Fejer 2 Open Fully Nested rule.
+                        4. "GP", Gauss Patterson Open Fully Nested rule.
+                        5. "GL", Gauss Legendre Open Weakly Nested rule.
+                        6. "GH", Gauss Hermite Open Weakly Nested rule.
+                        7. "LG", Gauss Laguerre Open Non Nested rule.
+
+    Returns
+    -------
+    grid_point  :   (num_point, num_dim) ndarray
+                    The points of the grid.
+    grid_weight :   num_point ndarray
+                    The weights of the grid points.
+    """
+    rule = _sg_string_to_rule(rule)
+    num_point = design.levels_index_size(num_dim, max_level, rule)
+    grid_weight, grid_point = design.sparse_grid(num_dim, max_level,
+                                                 rule, num_point)
+    return grid_point.T, grid_weight.T
