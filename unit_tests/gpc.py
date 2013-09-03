@@ -83,14 +83,20 @@ class GpcTest(unittest.TestCase):
         plt.show()
 
     def test_orthogonal_polynomial(self):
-        return
+        import time
         p = best.gpc.OrthogonalPolynomial(3, left=-1, right=1, wf=lambda(x): 0.5, ncap=50)
         print str(p)
         print p._evaluate_square_norms()
-        x = np.linspace(-1, 1, 50)
-        print p(x)
-        print p.d(x)
-        plt.plot(x, p(x), x, p.d(x))
+        x = np.linspace(-1, 1, 100)
+        start_time = time.time()
+        phi = p(x)
+        end_time = time.time()
+        print("Elapsed time was %g seconds" % (end_time - start_time))
+        start_time = time.time()
+        dphi = p.d(x)
+        end_time = time.time()
+        print("Elapsed time was %g seconds" % (end_time - start_time))
+        plt.plot(x, p(x))#, x, p.d(x))
         plt.show()
 
     def test_beta(self):
@@ -122,6 +128,7 @@ class GpcTest(unittest.TestCase):
         plt.show()
 
     def test_product_basis(self):
+        return
         comp = (stats.beta(0.5, 0.5), stats.beta(0.5, 0.5))
         rv = best.random.RandomVectorIndependent(comp)
         print str(rv)

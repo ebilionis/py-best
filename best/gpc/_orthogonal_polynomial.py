@@ -87,20 +87,20 @@ class OrthogonalPolynomial(Function):
         if quad is None:
             quad = QuadratureRule(left=left, right=right, wf=wf, ncap=ncap)
         self._alpha, self._beta = lancz(quad.x, quad.w, degree + 1)
-        self._gamma = np.ones(self.degree + 1)
+        self._gamma = np.ones(self.degree + 1, dtype='float64')
         self.normalize()
         super(OrthogonalPolynomial, self).__init__(1, self.degree + 1, name=name)
 
+    def __call__(self, x, hyp=None):
+        """Evaluate the function at x."""
+        return orthpol.poly_eval_all(x, self.alpha, self.beta, self.gamma)
+
+    def d(self, x, hyp=None):
+        return orthpol.poly_deval_all(x, self.alpha, self.beta, self.gamma)
+
     def _eval(self, x, hyp=None):
         """Evaluate the polynomial basis at x."""
-        phi = np.zeros(self.num_output)
-        phi[0] = 1. / self.gamma[0]
-        if self.degree >= 1:
-            phi[1] = (x - self.alpha[0]) * (phi[0] / self.gamma[1])
-        for i in range(2, self.degree + 1):
-            phi[i] = ((x - self.alpha[i - 1]) * phi[i - 1] -
-                self.beta[i - 1] * phi[i - 2]) / self.gamma[i]
-        return phi
+        return orthpol.poly_eval(x, self.alpha, self.beta, self.gamma)
 
     def _d_eval(self, x, hyp=None):
         """Evaluate the derivative of the polynomial.
@@ -108,16 +108,7 @@ class OrthogonalPolynomial(Function):
         Arguments:
             x   ---     The input point(s).
         """
-        phi = self._eval(x, hyp)
-        dphi = np.zeros((self.num_output, 1))
-        if self.degree >= 1:
-            dphi[1, 0] = phi[0] / self.gamma[1]
-        for i in range(2, self.degree + 1):
-            dphi[i, 0] = ((phi[i - 1] +
-                           (x - self.alpha[i - 1]) * dphi[i - 1, 0] -
-                           self.beta[i - 1] * dphi[i - 2, 0]
-                          ) / self.gamma[i])
-        return dphi
+        return orthpol.poly_deval(x, self.alpha, self.beta, self.gamma)
 
     def _evaluate_square_norms(self):
         """Evaluate the square norms of the polynomials."""
@@ -129,11 +120,7 @@ class OrthogonalPolynomial(Function):
 
     def normalize(self):
         """Normalize the polynomials."""
-        self.beta[0] = math.sqrt(self.beta[0])
-        self.gamma[0] = self.beta[0]
-        for i in range(1, self.degree + 1):
-            self.beta[i] = math.sqrt(self.beta[i] * self.gamma[i])
-            self.gamma[i] = self.beta[i]
+        self._beta, self._gamma = orthpol.poly_normalize(self.beta, self.gamma)
         self._is_normalized = True
 
     def _to_string(self, pad):
