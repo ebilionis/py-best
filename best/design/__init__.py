@@ -9,7 +9,7 @@ Date:
 
 
 __all__ = ['latin_center', 'latin_edge', 'latin_random', 'latinize',
-           'sparse_grid', 'faure']
+           'sparse_grid', 'faure', 'halton']
 
 
 from ..core import design
@@ -235,3 +235,23 @@ def faure(num_points, num_dim):
 
     """
     return design.faure_generate(num_dim, num_points).T
+
+
+def halton(num_points, num_dim):
+    """
+    Generate the Halton quasirandom sequence.
+
+    Parameters
+    ----------
+    num_points  :   int
+                    The number of points to be generated.
+    num_dim     :   int
+                    The number of dimensions.
+
+    Returns
+    -------
+    points      :   (num_points, num_dim) ndarray
+                    The first num_points of the num_dim-dimensional.
+
+    """
+    return design.halton_sequence(num_dim, num_points).T
