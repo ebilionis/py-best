@@ -255,3 +255,23 @@ def halton(num_points, num_dim):
 
     """
     return design.halton_sequence(num_dim, num_points).T
+
+
+def hammersley(num_points, num_dim):
+    """
+    Generate the Hammersley quasirandom sequence.
+
+    Parameters
+    ----------
+    num_points  :   int
+                    The number of points to be generated.
+    num_dim     :   int
+                    The number of dimensions.
+
+    Returns
+    -------
+    points      :   (num_points, num_dim) ndarray
+                    The first num_points of the num_dim-dimensional.
+
+    """
+    return design.hammersley_sequence(num_dim, num_points).T
