@@ -8,7 +8,8 @@ Date:
 """
 
 
-__all__ = ['latin_center', 'latin_edge', 'latin_random', 'latinize']
+__all__ = ['latin_center', 'latin_edge', 'latin_random', 'latinize',
+           'sparse_grid', 'faure']
 
 
 from ..core import design
@@ -214,3 +215,23 @@ def sparse_grid(num_dim, max_level, rule='CC'):
     grid_weight, grid_point = design.sparse_grid(num_dim, max_level,
                                                  rule, num_point)
     return grid_point.T, grid_weight.T
+
+
+def faure(num_points, num_dim):
+    """
+    Generate the Faure quasirandom sequence.
+
+    Parameters
+    ----------
+    num_points  :   int
+                    The number of points to be generated.
+    num_dim     :   int
+                    The number of dimensions.
+
+    Returns
+    -------
+    points      :   (num_points, num_dim) ndarray
+                    The first num_points of the num_dim-dimensional.
+
+    """
+    return design.faure_generate(num_dim, num_points).T
