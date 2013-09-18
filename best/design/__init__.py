@@ -9,7 +9,7 @@ Date:
 
 
 __all__ = ['latin_center', 'latin_edge', 'latin_random', 'latinize',
-           'sparse_grid', 'faure', 'halton']
+           'sparse_grid', 'faure', 'halton', 'ihs']
 
 
 from ..core import design
@@ -275,3 +275,30 @@ def hammersley(num_points, num_dim):
 
     """
     return design.hammersley_sequence(num_dim, num_points).T
+
+
+def ihs(num_points, num_dim, seed=None, duplication=5):
+    """
+    Generate the improved distributed hypercube sequence.
+
+    Parameters
+    ----------
+    num_points  :   int
+                    The number of points to be generated.
+    num_dim     :   int
+                    The number of dimensions.
+    seed        :   int
+                    A seed for the random number generator.
+    duplication :   int
+                    See ihs.f90.
+
+    Returns
+    -------
+    points      :   (num_points, num_dim) ndarray
+                    The first num_points of the num_dim-dimensional.
+
+    """
+    if seed is None:
+        seed = design.get_seed()
+    return design.ihs(num_dim, num_points, seed=seed,
+                      duplication=duplication).T
