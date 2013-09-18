@@ -302,3 +302,25 @@ def ihs(num_points, num_dim, seed=None, duplication=5):
         seed = design.get_seed()
     return design.ihs(num_dim, num_points, seed=seed,
                       duplication=duplication).T
+
+
+def sobol(num_points, num_dim, skip=0):
+    """
+    Generate the Hammersley quasirandom sequence.
+
+    Parameters
+    ----------
+    num_points  :   int
+                    The number of points to be generated.
+    num_dim     :   int
+                    The number of dimensions.
+    skip        :   int
+                    Skip that many elements of the sequence.
+
+    Returns
+    -------
+    points      :   (num_points, num_dim) ndarray
+                    The first num_points of the num_dim-dimensional.
+
+    """
+    return design.i8_sobol_generate(num_dim, num_points, skip=skip).T
