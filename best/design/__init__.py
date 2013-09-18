@@ -324,3 +324,25 @@ def sobol(num_points, num_dim, skip=0):
 
     """
     return design.i8_sobol_generate(num_dim, num_points, skip=skip).T
+
+
+def lambert(num_points, num_dim):
+    """
+    Generate the Hammersley quasirandom sequence.
+
+    Parameters
+    ----------
+    num_points  :   int
+                    The number of points to be generated.
+    num_dim     :   int
+                    The number of dimensions (between 1 and 4).
+
+    Returns
+    -------
+    points      :   (num_points, num_dim) ndarray
+                    The first num_points of the num_dim-dimensional.
+
+    """
+    assert num_dim <= 4
+    func = 'lambert' + str(num_dim)
+    return getattr(design, func)(num_points).T
