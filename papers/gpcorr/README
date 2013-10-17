@@ -1,0 +1,84 @@
+This directory contains code that reproduces the examples in
+
+    Bilionis, N. Zabaras, B. A. Konomi, and G. Lin. Multi-output separable
+    Gaussian process: Towards an efficient, fully Bayesian paradigm for
+    uncertainty quantification.
+
+Before moving on, make sure you have compiled every depedency of best as
+explained in the tutorial. If you do not want to install best, then you can
+simply compile it in place by doing:
+
+    $ python setup.py build_ext --inplace
+
+in the root directory of the source code.
+
+Here is a brief explanation of its file:
+
+    + model.py              : Constructs the probabilistic graphical model
+                              corresponding to the GP of the paper. The model
+                              can be sampled either with MCMC or Sequential
+                              Monte Carlo. The make_model(X, Y) command accepts
+                              input and output data that should be read
+                              externally. The hyper-parameters of the model are:
+                                
+                                - ell1  :   The length scales of the first
+                                            component.
+                                - g1    :   The nugget of the first component.
+                                - ell2  :   The length scales of the second
+                                            component.
+                                - g2    :   The nugget of the second component.
+
+    + ko_run_mcmc.py        : Shows how to sample the model using MCMC for the
+                              ko example. Run it by:
+                                
+                                $ python ko_run_mcmc.py
+            
+                              This does not produce any files. It is only there
+                              for demonstration purposes.
+
+    + ko_run_smc.py         : Shows how to sample the model using SMC (and 
+                              in parallel) for the ko example. You can run it
+                              by doing:
+                                
+                                $ mpirun -n 4 python ko_run_smc.py
+                              
+                              It will create a pickled object containing the
+                              particle approximation.
+
+    + plot_hist.py          : This script is provided in order to plot
+                              histograms of the hyper-parameters of the model.
+                              It should be used as follows:
+
+                                $ python plot_hist.py pa_file hyp_name
+                                
+                              where <pa_file> is the pickled file containing
+                              the particle approximation (e.g., as produced by
+                              'ko_run_smc.py') and <hyp_name> is the name of
+                              the hyper-parameter you want to see (i.e., 'ell1',
+                              'ell2', 'g1' or 'g2'). For example:
+
+                                $ python plot_hist.py \
+                                > ko_smc_s\=10_p\=100_m\=1.pickle 'ell1'
+
+    + sample_surrogates.py  : This samples surrogates as described in the paper
+                              (until a specific relative tolerance is reached).
+                              You can use it as follows:
+
+                                $ python sample_surrogates.py <data_file> \
+                                > <pa_file>
+                            
+                              where <data_file> contains the data used to train
+                              the model (see the 'ko_run_smc.py' file for the
+                              right format) and <pa_file> is as above.
+
+    + view_stats.py         : This script can parse the sampled surrogates
+                              created in the previous step to give you their
+                              statistics. It can be used as follows:
+                                
+                                $ python view_stats.py <surr_prefix> <num_sur>
+                              
+                              where <surr_prefix> is the common prefix of the
+                              sampled surrogates (e.g., 'ko_surrogate_s=10')
+                              and <num_sur> is the total number of sampeled
+                              surrogates you have.  
+                                
