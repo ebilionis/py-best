@@ -20,4 +20,5 @@ setup(name='Bayesian Exploration Statistical Toolbox',
                             libraries=['lapack'])],
       packages=['best', 'best.core', 'best.misc', 'best.domain', 'best.gpc',
                 'best.maps', 'best.linalg', 'best.random', 'best.rvm',
-                'best.gp', 'best.design', 'best.uq', 'best.inverse'])
+                'best.gp', 'best.design', 'best.uq', 'best.inverse',
+                'best.smc'])

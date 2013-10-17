@@ -27,7 +27,7 @@ BEST is split in several (mostly) independent submodules:
 
 
 __all__ = ['Object', 'core', 'misc', 'domain', 'maps', 'linalg',
-           'random', 'rvm', 'gp', 'design', 'uq', 'inverse']
+           'random', 'rvm', 'gp', 'design', 'uq', 'inverse', 'smc']
 
 
 from ._basic_objects import *
@@ -44,3 +44,4 @@ from . import gp # Fix
 from . import design
 from . import uq # Fix
 from . import inverse # Fix
+from . import smc

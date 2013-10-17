@@ -650,7 +650,6 @@ class MultioutputGaussianProcess(MarkovChainMonteCarlo):
         self.cov.cov[i](r, self.X[i], A=LA)
         # Add the nuggets
         LA += g * np.eye(LA.shape[0])
-        d = np.linalg.det(LA)
         # Compute the Cholesky decomposition (in place)
         scipy.linalg.cholesky(LA, lower=True, overwrite_a=True)
         log_det_A, log_det_HTAiH = self._compute_inner_dep_of(i, LA, Hs, QLAiH,
@@ -966,7 +965,7 @@ class MultioutputGaussianProcess(MarkovChainMonteCarlo):
 
     def __setstate__(self, state):
         """For pickling."""
-        self.__init__(state['name'])
+        self.__init__(mgp=None, name=state['name'])
         self.num_mcmc = state['num_mcmc']
         self.num_init = state['num_init']
         self._target = state['posterior']
@@ -1122,7 +1121,7 @@ class MultioutputGaussianProcess(MarkovChainMonteCarlo):
         ic = IncompleteCholesky(C)
         C = ic.L
         P = ic.P
-        k = ic.k
+        k = ic.rank
         PC = np.dot(P, C[:, :k])
         unc = np.trace(PC) * np.trace(self.Sigma) / (n *
                 np.prod(self.n_of[1:] * self.q))
@@ -1219,12 +1218,12 @@ class MultioutputGaussianProcess(MarkovChainMonteCarlo):
         """Get a copy of the surrogate."""
         surrogate_sample = MultioutputGaussianProcess()
         surrogate_sample.set_data(self.X, self.H, self.Y)
-        hyp = self.rg_to_hyp
+        hyp = self.rg_to_hyp()
         surrogate_sample.initialize(hyp, eval_state=self.current_state)
         return surrogate_sample
 
     def sample_surrogate(self, X_design, H_design,
-            rel_tol=0.1, abs_tol=1e-3):
+            rel_tol=0.6, abs_tol=0.):
         """Sample a surrogate surface.
 
         Samples a surrogate surface that can be evaluated analytically. The
@@ -1272,7 +1271,7 @@ class MultioutputGaussianProcess(MarkovChainMonteCarlo):
         Y = np.ndarray((n, self.q), order='F')
         Y_max = np.ndarray((n, self.q), order='F')
         C = np.ndarray((n, n), order='F')
-        in0it_unc = None
+        init_unc = None
         n_design = X_design.shape[0]
         while X_design.shape[0] > 0:
             total_unc = 0.
@@ -1400,3 +1399,18 @@ class MultioutputGaussianProcess(MarkovChainMonteCarlo):
         print 'non-zeros of C: ', C.nnz
         quit()
         return Y, C
+
+
+    def get_statistics(self, Xt, Ht, num_samples=10000):
+        Y1 = np.zeros((Xt.shape[0], self.q))
+        Y2 = np.zeros((Xt.shape[0], self.q))
+        for i in xrange(num_samples):
+            x = np.random.rand(self.k_of[0])
+            h = np.ones((1, 1))
+            tmp = self((x, Xt), (h, Ht))
+            Y1 += tmp
+            Y2 += tmp * tmp
+        mean = Y1 / num_samples
+        var = Y2 / num_samples
+        var -= mean ** 2
+        return mean, var
