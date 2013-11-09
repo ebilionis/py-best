@@ -175,9 +175,6 @@ class GeneralizedSVD(Object):
             jobQ = 'Q'
         else:
             jobQ = 'N'
-        print ggsvd.__doc__
-        print A.shape
-        print B.shape
         (self._k, self._l, self._A, self._B, self._alpha, self._beta,
          self._U, self._V, self._Q, self._sort, info) = ggsvd(A, B)
         if self.m - self.k - self.l >= 0:
