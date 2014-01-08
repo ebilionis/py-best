@@ -183,7 +183,7 @@ class CovarianceFunction(Object):
 
     def _to_string(self, pad):
         """Return a string representation of the object."""
-        s = super(CovarianceFunction, self).__to_string(pad) + '\n'
+        s = super(CovarianceFunction, self)._to_string(pad) + '\n'
         s += pad + ' Covariance Function\n'
         s += pad + ' num_input: ' + str(self.num_input) + '\n'
         s += pad + ' num_hyp: ' + str(self.num_hyp)
