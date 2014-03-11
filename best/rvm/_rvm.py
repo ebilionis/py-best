@@ -206,6 +206,7 @@ class RelevanceVectorMachine(Object):
 
     def _finalize(self):
         """Finalize the algorithm."""
+        self._compute_statistics()
         self._weights = np.einsum('ij, i->ij', self.weights,
                                   1. / self.PHI_scales[self.relevant])
         self._sigma_sqrt = np.einsum('ij, i->ij', self.sigma_sqrt,
@@ -368,7 +369,6 @@ class RelevanceVectorMachine(Object):
         #print self.weights.shape
         #print self.PHIs[:, self.relevant].shape
         tmpm = self.Y - np.dot(self.PHIs[:, self.relevant], self.weights)
-
         sum_a_Lambda = np.einsum('ij, ij, i', self.sigma_sqrt,
                                  self.sigma_sqrt, self.alpha)
         self._beta = ((self.num_samples - self.num_relevant + sum_a_Lambda) /
@@ -456,12 +456,12 @@ class RelevanceVectorMachine(Object):
                 s += ', ' + str(prev_log_like + delta_max_log_like)
                 print s
             if math.fabs(self.log_like - prev_log_like) < tol:
-                prev_log_like = self.log_like
-                prev_beta = self.beta
-                self._update_beta()
+                #prev_log_like = self.log_like
+                #prev_beta = self.beta
+                #self._update_beta()
 
-                if verbose:
-                    print '** New beta: ', self.beta
+                #if verbose:
+                #    print '** New beta: ', self.beta
                 if math.fabs(self.log_like - prev_log_like) < tol:
                     if verbose:
                         print '*** Converged!'
